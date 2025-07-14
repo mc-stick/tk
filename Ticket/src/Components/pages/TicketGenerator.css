@@ -1,0 +1,140 @@
+
+.cliente-container {
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  font-family: 'Segoe UI', sans-serif;
+  text-align: center;
+  position: relative;
+}
+
+h1 {
+  font-size: 2rem;
+  margin-bottom: 2rem;
+  color: #000000;
+}
+
+.comenzar-btn {
+  padding: 1rem 3rem;
+  font-size: 1.5rem;
+  border: none;
+  background-color: #28a745;
+  color: white;
+  border-radius: 10px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+}
+
+.comenzar-btn:hover {
+  background-color: #218838;
+}
+
+.botones {
+  display: flex;
+  gap: 20px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.botones button {
+  padding: 1rem 2rem;
+  font-size: 1.2rem;
+  color: white;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background 0.3s ease;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  min-width: 150px;
+}
+
+.botones button:hover {
+  background-color: #199200;
+}
+
+.icono {
+  font-size: 1.5rem;
+}
+
+/* Modal */
+.modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.modal-content {
+  background: white;
+  padding: 2rem 3rem;
+  border-radius: 15px;
+  text-align: center;
+  max-width: 400px;
+  width: 90%;
+}
+
+.modal-content h2 {
+  margin-bottom: 1rem;
+  color: #004aad;
+}
+
+.modal-content .turno {
+  font-size: 2rem;
+  margin: 1rem 0;
+}
+
+.aceptar-btn {
+  background-color: #004aad;
+  color: white;
+  border: none;
+  padding: 0.8rem 2rem;
+  font-size: 1.1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  margin-top: 1rem;
+}
+
+.aceptar-btn:hover {
+  background-color: #002e6e;
+}
+
+.background-image {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background-image: url('../../assets/img/UcneLogo.png');
+  background-repeat: no-repeat;
+  background-size: contain;
+  background-position: center;
+  width: 60%;
+  height: 60%;
+  opacity: 0.27;
+  pointer-events: none; 
+  z-index: 0;
+   
+}
+
+
+
+.cliente-container {
+  position: relative;
+  width: 100%;
+  height: 100vh; 
+  background-color: rgba(0, 0, 255, 0.61) ;
+}
+
+.center{
+  background: radial-gradient(circle, red, green, blue);
+}
+
+
