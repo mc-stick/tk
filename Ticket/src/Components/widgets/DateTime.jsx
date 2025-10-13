@@ -1,31 +1,77 @@
 // DateTime.jsx
 import { useEffect, useState } from "react";
 
+import ImgLogo from "../../assets/img/UcneLogoIcon.png";
+import ImgCustoms from "./ImgCustoms";
+import "./DateTime.css"
+
+
 const DateTime = () => {
   const [now, setNow] = useState(new Date());
 
   useEffect(() => {
-    const interval = setInterval(() => {
-      setNow(new Date());
-    }, 1000);
-
+    const interval = setInterval(() => setNow(new Date()), 1000);
     return () => clearInterval(interval);
   }, []);
 
   return (
-    <h6 style={{ color: "#fff", marginLeft:"20px",paddingLeft:"0px", textAlign: "right", fontSize: "1.5rem", lineHeight: "1.5" }}>
-     {now.toLocaleTimeString()}
-      <br />
-      <hr />
-       {now.toLocaleDateString("es-ES", {
-        weekday: "long", // Día (lunes, martes...)
-        year: "numeric",
-        month: "long",   // Mes completo (enero, febrero...)
-        day: "numeric",
-      })} 
-    </h6>
+    <div style={styles.container}>
+      {/* Logo */}
+      <div style={styles.logo}>
+        <h2 className="Title_cn">UCNE</h2>
+        <ImgCustoms src={ImgLogo} width="50px" />
+      </div>
+
+      {/* Fecha y hora */}
+      <div style={styles.datetime}>
+        <h4 style={styles.text}>
+          {now.toLocaleTimeString()}
+          <span style={{marginLeft:'40px'}}></span>
+          {/* <hr style={{ margin: "5px 0", borderColor: "#fff" }} /> */}
+          {now.toLocaleDateString("es-ES", {
+            weekday: "long",
+            year: "numeric",
+            month: "long",
+            day: "numeric",
+          })}
+        </h4>
+      </div>
+    </div>
   );
 };
 
+const styles = {
+  container: {
+    position: "fixed",
+    top: 0,
+    width: "95%",
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
+    backgroundColor: "#004da5ff",
+    color: "#fff",
+    padding: "10px 100px 10px 10px",
+    zIndex: 1000,
+    boxShadow: "0 2px 5px rgba(0,0,0,0.3)",
+  },
+  logo: {
+    flex: "0 0 auto",
+  },
+  datetime: {
+    flex: "1",
+    textAlign: "right",
+  },
+  text: {
+    margin: 0,
+    fontSize: "1.5rem",
+    lineHeight: "1.4",
+  },
+  Title_cn: {
+  textAlign: 'center',
+  fontSize: '3.5rem',
+  fontWeight: 'bold',
+  color: '#ffffffff',
+  borderBottom: '2px solid #00eeff',
+}
+};
 export default DateTime;
-

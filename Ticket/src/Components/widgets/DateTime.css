@@ -1,0 +1,32 @@
+ .container{
+    position: "fixed";
+    top: 0;
+    width: "95%";
+    display: "flex";
+    justify-content: "space-between";
+    align-items: "center";
+    background-color: "#004da5ff";
+    color: "#fff";
+    padding: "10px 100px 10px 10px";
+    z-index: 1000;
+    box-shadow: "0 2px 5px rgba(0,0,0,0.3)";
+  }
+  .logo{
+    
+  }
+  .datetime{
+    flex: "1";
+    text-align: "right";
+  }
+  .text{
+    margin: 0;
+    font-size: "1.5rem";
+    line-height: "1.4";
+  }
+  .Title_cn{
+  text-align: 'center';
+  font-size: '3.5rem';
+  font-weight: 'bold';
+  color: '#ffffffff';
+  border-bottom: '2px solid #00eeff';
+}
