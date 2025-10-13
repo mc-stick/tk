@@ -1,17 +1,18 @@
 .theme-toggle-icon {
-  background-color: var(--toggle-bg);
-  color: var(--toggle-color);
+  background-color: white;
+  /* color: var(--toggle-color); */
   border: none;
-  font-size: 1.5rem;
+  font-size: 2rem;
   cursor: pointer;
-  transition: transform 0.2s ease, background-color 0.2s;
-  padding: 6px;
+  padding-top: 10px;
+  transition: transform 0.2s ease, background-color 0.3s;
+   /* padding: 6px; */
   border-radius: 50%;
 }
 
 .theme-toggle-icon:hover {
   transform: scale(1.2);
-  background-color: var(--hover-bg);
+  /* background-color: var(--hover-bg); */
 }
 
 /* Variables por tema */
@@ -25,4 +26,5 @@ body.dark {
   --toggle-bg: rgba(255, 196, 0, 0.3); /* fondo más claro para ícono */
   --toggle-color: #fff;
   --hover-bg: rgba(255, 255, 255, 0.25);
+  
 }

@@ -1,21 +1,17 @@
 import { useState, useEffect } from "react";
-import { useTurno } from "../context/TurnoContext";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TopMenu from "../Menu/TopMenu";
 import "./OperatorPanel.css";
 import CustomButton from "../Buttons/CustomButton";
-import { OpTurnoManager } from "./OpTurnoManager";
 import TabsNavigation from "../Menu/TabsComponent";
+import Administrador from "./AdminPages/FileManager"
 
-const OperatorPanel = () => {
-
+const AdminPanel = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { llamarSiguiente, turnoActual, cola} = useTurno();
   // Estado modal cambio contraseña
   const [showModal, setShowModal] = useState(false);
-  const [showBTNFIN, setShowBTNFIN] = useState(false);
 
   // Campos modal
   const [currentPass, setCurrentPass] = useState("");
@@ -37,12 +33,7 @@ const OperatorPanel = () => {
     navigate("/");
   };
   /////////////////////////////////////////////////
-  const handleLlamarSiguiente = () => {
-    llamarSiguiente(("#1"));   //ESTE ES SOLO PARA PRUEBAS.....
-    //llamarSiguiente((user?.username || "#1")); // USAR ESTE......  
 
-    cola.length > 0 ? setShowBTNFIN(true) : setShowBTNFIN(false)
-  };
   /////////////////////////////////////////////////
 
   const handleChangePassword = async () => {
@@ -108,23 +99,23 @@ const OperatorPanel = () => {
     setConfirmPass("");
   };
 
-  //TABS ///////////////////////////////////////////
-    const tabs = [
-  { id: 'home', label: 'Inicio', content: <OpTurnoManager data={{turnoActual,cola, showBTNFIN, handleLlamarSiguiente}}/> },
+  //TABS
+  const tabs = [
+  { id: 'home', label: 'Inicio', content: <p>Bienvenido a la página de inicio.</p> },
   // { id: 'users', label: 'Usuarios', content: <p>Gestión de usuarios.</p> },
   // { id: 'settings', label: 'Configuración', content: <p>Gestión de Configuración.</p> },
-  { id: 'next', label: 'Turnos en espera', content: <p>espera</p> },
+  { id: 'file', label: 'Pantalla Principal', content: <Administrador/> },
 ];
 
   return (
     <div className="operator-container">
       <TopMenu
-        username={user?.username || "OperadorReturn"}
+        username={user?.username || "AdminReturn"}
         onLogout={handleLogout}
       />
       <br />
+      {/* <TabsNavigation  /> */}
       <TabsNavigation style={{ paddingTop: "3rem", margingTop: "3rem" }} tabs={tabs} />
-      
 
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
@@ -166,4 +157,4 @@ const OperatorPanel = () => {
   );
 };
 
-export default OperatorPanel;
+export default AdminPanel;

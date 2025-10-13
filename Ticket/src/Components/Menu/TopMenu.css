@@ -53,13 +53,13 @@ body.dark {
 }
 
 .profile-button {
-  background: var(--bg-profile);
+  /* background: var(--bg-profile); */
   border: none;
   cursor: pointer;
   font-size: 1.5rem;
-  border-radius: 50%;
-  padding: 6px;
-  color: var(--text-primary);
+  border-radius: 20px;
+  /* padding: 6px; */
+  /* color: var(--text-primary); */
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
@@ -113,4 +113,11 @@ body.dark {
 .logout-btn:hover {
   background-color: #ff0015;
   color: white;
+}
+
+.Title-Page{
+  display: block;
+  font-size: 20px;
+  justify-content: center;
+  text-align: center;
 }

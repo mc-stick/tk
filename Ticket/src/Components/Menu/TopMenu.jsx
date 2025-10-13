@@ -2,7 +2,9 @@ import React, { useState, useRef, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import ThemeToggle from "../theme/themeToggle";
+import { FcLock, FcManager, FcLeft, FcMenu, FcServices } from "react-icons/fc";
 import "./TopMenu.css";
+import TopAnimatedHeader from "../anim/TopMenuAnim";
 
 const TopMenu = () => {
   const { user, logout } = useAuth();
@@ -42,38 +44,43 @@ const TopMenu = () => {
 
   return (
     <header className="topmenu-container">
-      <div className="topmenu-left">
+      <TopAnimatedHeader user={user?.username || "Usuario"} />
+      {/* <div className="topmenu-left">
         <span className="user-greeting">
-          👋 Hola, <strong className="usr">{user?.username || "Usuario"}</strong>
+          <FcManager size={32} style={{ marginBottom: "-5px" }} /> Hola,{" "}
+          <strong className="usr">{user?.username || "Usuario"}</strong>
         </span>
       </div>
-
+      <span className="Title-Page">
+        <FcServices size={32} style={{ marginBottom: "-5px" }} />
+        <strong> Panel de Operaciones</strong>
+      </span> */}
       <div className="topmenu-right">
-        <ThemeToggle />
+        {/* <ThemeToggle /> */}
 
         <div className="profile-menu-wrapper" ref={menuRef}>
           <button
             className="profile-button"
             onClick={() => setShowMenu((prev) => !prev)}
-            aria-label="Menú usuario"
-          >
-            <span className="profile-icon">👤</span>
+            aria-label="Menú usuario">
+            <span className="profile-icon">
+              <FcMenu />
+            </span>
           </button>
 
           {showMenu && (
             <div className="profile-dropdown">
               <button onClick={abrirCambioContrasena} className="dropdown-btn">
                 <span role="img" aria-label="cambiar contraseña">
-                  🔐
+                  <FcLock size={32} />
                 </span>{" "}
                 Cambiar contraseña
               </button>
               <button
                 onClick={handleLogout}
-                className="dropdown-btn logout-btn"
-              >
+                className="dropdown-btn logout-btn">
                 <span role="img" aria-label="cerrar sesión">
-                  🔓
+                  <FcLeft size={32} />
                 </span>{" "}
                 Cerrar sesión
               </button>

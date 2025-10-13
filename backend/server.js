@@ -38,7 +38,7 @@ let SQL, db;
   } else {
     db = new SQL.Database();
     db.run(`
-      CREATE TABLE users (
+      CREATE TABLE IF NOT EXISTS users (
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         username TEXT UNIQUE,
         password_hash TEXT,
@@ -54,6 +54,14 @@ let SQL, db;
         fecha TEXT NOT NULL
       );
     `);
+
+    // db.run(`
+    //   CREATE TABLE IF NOT EXISTS servicios (
+    //     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    //     icon TEXT NOT NULL,
+    //     nombre TEXT NOT NULL,
+    //   );
+    // `);
 
     const defaultUsers = [
       { username: 'admin', password: 'admin', role: 'admin' },
