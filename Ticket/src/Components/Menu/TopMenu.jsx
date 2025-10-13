@@ -44,7 +44,7 @@ const TopMenu = () => {
     <header className="topmenu-container">
       <div className="topmenu-left">
         <span className="user-greeting">
-          👋 Hola, <strong>{user?.username || "Usuario"}</strong>
+          👋 Hola, <strong className="usr">{user?.username || "Usuario"}</strong>
         </span>
       </div>
 

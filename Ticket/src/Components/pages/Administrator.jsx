@@ -21,7 +21,6 @@ const Administrador = () => {
 
   const procesarArchivos = (files) => {
     const nuevos = [];
-
     const archivosValidos = files.filter(isFileValid);
     const archivosInvalidos = files.filter((file) => !isFileValid(file));
 
@@ -39,6 +38,7 @@ const Administrador = () => {
           const nuevasImagenes = [...imagenes, ...nuevos];
           setImagenes(nuevasImagenes);
           localStorage.setItem('imagenes', JSON.stringify(nuevasImagenes));
+          window.dispatchEvent(new Event("imagenesActualizadas")); // Evento disparado aquí
         }
       };
       reader.readAsDataURL(file);
@@ -49,12 +49,12 @@ const Administrador = () => {
     const actualizadas = imagenes.filter((_, i) => i !== index);
     setImagenes(actualizadas);
     localStorage.setItem('imagenes', JSON.stringify(actualizadas));
+    window.dispatchEvent(new Event("imagenesActualizadas")); // Evento disparado aquí
   };
 
   const handleDrop = (e) => {
     e.preventDefault();
     const files = Array.from(e.dataTransfer.files);
-
     const isValid = files.every(isFileValid);
     setDragOver(false);
     setDragValid(false);

@@ -7,12 +7,13 @@ import "./OperatorPanel.css";
 import CustomButton from "../Buttons/CustomButton";
 
 const OperatorPanel = () => {
-  const { llamarSiguiente, turnoActual } = useTurno();
+
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-
+  const { llamarSiguiente, turnoActual, cola} = useTurno();
   // Estado modal cambio contraseña
   const [showModal, setShowModal] = useState(false);
+  const [showBTNFIN, setShowBTNFIN] = useState(false);
 
   // Campos modal
   const [currentPass, setCurrentPass] = useState("");
@@ -33,6 +34,14 @@ const OperatorPanel = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
+  /////////////////////////////////////////////////
+  const handleLlamarSiguiente = () => {
+    llamarSiguiente(("#1"));   //ESTE ES SOLO PARA PRUEBAS.....
+    //llamarSiguiente((user?.username || "#1")); // USAR ESTE......  
+
+    cola.length > 0 ? setShowBTNFIN(true) : setShowBTNFIN(false)
+  };
+  /////////////////////////////////////////////////
 
   const handleChangePassword = async () => {
     setErrorMsg("");
@@ -84,7 +93,7 @@ const OperatorPanel = () => {
         setErrorMsg(data.message || "Error al cambiar la contraseña.");
       }
     } catch (error) {
-      setErrorMsg("Error de conexión. Intenta nuevamente.");
+      setErrorMsg("Error de conexión. Intenta nuevamente.", error);
     }
   };
 
@@ -100,7 +109,7 @@ const OperatorPanel = () => {
   return (
     <div className="operator-container">
       <TopMenu
-        username={user?.username || "Operador"}
+        username={user?.username || "OperadorReturn"}
         onLogout={handleLogout}
       />
 
@@ -109,16 +118,34 @@ const OperatorPanel = () => {
         <p>
           Turno actual:{" "}
           <strong className="turno-actual">
-            {turnoActual ? `${turnoActual.tipo}${turnoActual.numero}` : "---"}
+            {turnoActual ? `${turnoActual.tipo}${turnoActual.numero}` : cola.length > 0 ? ( "Hay turnos en espera.") : 'No hay turnos en espera.'}
           </strong>
         </p>
-        <CustomButton
-          onClick={llamarSiguiente}
+        
+        {/* <CustomButton
+          onClick={handleLlamarSiguiente}
           label="Llamar siguiente"
           icon="📣"
           variant="success"
           size="large"
-        />
+        /> */}
+        
+        {cola.length > 0 ? (
+          <CustomButton
+            onClick={handleLlamarSiguiente}
+            label={cola.length === 1 ? "Llamar al último" : "Llamar siguiente"}
+            icon="📣"
+            variant={cola.length === 1 ? "secondary" : "success"}
+            size="large"
+          />
+          
+        ): (showBTNFIN && <CustomButton
+            onClick={handleLlamarSiguiente}
+            label={"Finalizar"}
+            icon="☑️"
+            variant="secondary"
+            size="large"
+          />)}
       </main>
 
       {showModal && (

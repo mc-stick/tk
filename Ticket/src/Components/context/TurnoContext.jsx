@@ -59,17 +59,18 @@ export const TurnoProvider = ({ children }) => {
   }, []);
 
   const generarTurno = (tipo) => {
+
     const nuevoNumero = contadorTurnos + 1;
-    const nuevoTurno = { numero: nuevoNumero, tipo };
+    const nuevoTurno = { numero: nuevoNumero, tipo};
     setCola([...cola, nuevoTurno]);
     setContadorTurnos(nuevoNumero);
     return nuevoTurno;
   };
 
-  const llamarSiguiente = () => {
-    if (cola.length > 0) {
+  const llamarSiguiente = (x) => {
+    if (cola.length >= 0) {
       const [siguiente, ...resto] = cola;
-      setTurnoActual(siguiente);
+      cola.length != 0 ? setTurnoActual({...siguiente, puesto:x}) : setTurnoActual(siguiente);
       setCola(resto);
     }
   };
