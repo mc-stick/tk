@@ -2,11 +2,21 @@ import { useState } from "react";
 import { useTurno } from "../context/TurnoContext";
 import "./TicketGenerator.css";
 import AnimatedButton from "../Buttons/animatedBtn";
+import { FcBusinessContact, FcCellPhone, FcCurrencyExchange } from "react-icons/fc";
+import { FaCircleUser, FaIdCard } from "react-icons/fa6";
+import { InputCard } from "../Inputs/Input";
 
-const opciones = [
-  { tipo: "Caja", icono: "💰" },
+
+
+const Servicios = [
+  { tipo: "Caja", icono: <FcCurrencyExchange/> },
   { tipo: "Servicios", icono: "🛎️" },
   { tipo: "Informes", icono: "📄" },
+];
+const Identify = [
+  { tipo: "Cedula", icono: <FaIdCard color="yellow"/> },
+  { tipo: "Matrícula", icono: <FcBusinessContact/> },
+  { tipo: "Numero de teléfono", icono: <FcCellPhone/>},
 ];
 
 const TicketGenerator = () => {
@@ -15,7 +25,7 @@ const TicketGenerator = () => {
   const [turno, setTurno] = useState(null);
 
   const comenzar = () => {
-    setEstado("seleccion");
+    setEstado("Identificador");
     setTurno(null);
   };
 
@@ -25,10 +35,23 @@ const TicketGenerator = () => {
     setEstado("confirmado");
   };
 
+    const seleccionarId = (tipo) => {
+      console.log(tipo)
+      setEstado("started");
+    return(
+      <>
+      
+      </>
+    )
+
+  };
+
   const aceptar = () => {
     setEstado("inicio");
     setTurno(null);
   };
+
+
 
   return (
     <div className="cliente-container">
@@ -41,7 +64,7 @@ const TicketGenerator = () => {
         <>
           <h1>Seleccione el servicio</h1>
           <div className="botones">
-            {opciones.map(({ tipo, icono }) => (
+            {Servicios.map(({ tipo, icono }) => (
               <AnimatedButton
                 icon={icono}
                 label={tipo}
@@ -49,6 +72,28 @@ const TicketGenerator = () => {
               />
             ))}
           </div>
+        </>
+      )}
+
+
+      {estado === "Identificador" && (
+        <>
+          <h1>Seleciona un metodo de identificación</h1>
+          <div className="botones">
+            {Identify.map(({ tipo, icono }) => (
+              <AnimatedButton
+                icon={icono}
+                label={tipo}
+                onClick={() => seleccionarId(tipo)}
+              />
+            ))}
+          </div>
+        </>
+      )}
+
+       {estado === "started" && (
+        <>
+        <InputCard label='Input' btnlabel='Aceptar' tipo='telefono' onClick={()=>aceptar()}/>
         </>
       )}
 
@@ -70,6 +115,9 @@ const TicketGenerator = () => {
           </div>
         </div>
       )}
+
+
+       
     </div>
   );
 };

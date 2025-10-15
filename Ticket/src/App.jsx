@@ -1,6 +1,5 @@
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { AuthProvider } from "./Components/context/AuthContext";
-
 import Home from "./Components/pages/Home";
 import TicketGenerator from "./Components/pages/TicketGenerator";
 import DisplayScreen from "./Components/pages/Display/DisplayScreen";
@@ -12,6 +11,8 @@ import CreateUser from "./Components/pages/CreateUser";
 import { TurnoProvider } from "./Components/context/TurnoContext";
 import AddUserForm from "./Components/add/addUser";
 import AdminPanel from "./Components/pages/AdminPages/AdminPanel";
+
+import './index.css'
 
 function App() {
   return (
