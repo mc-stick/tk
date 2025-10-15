@@ -1,0 +1,99 @@
+.formattedInputContainer {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  max-width: 500px;
+  margin: auto;
+  background-color: rgba(255, 255, 255, 0.74);
+  border: solid white 1px;
+  border-radius: 20px;
+  padding: 50px;
+}
+
+.inputCardLabel {
+  padding: 0.8rem;
+  font-size: 1.2rem;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  width: 100%;
+  margin-bottom: 20px;
+  text-align: center;
+  background-color: #f9f9f9;
+  transition: border-color 0.3s ease;
+}
+
+.inputInvalidate{
+    border: 1px solid #ff0000b7;
+    background-color: #ff242486;
+}
+
+.inputValidate{
+    border: 1px solid #028b09;
+    background-color: #69ff2486;
+}
+
+.inputCardLabel:focus {
+  border-color: #007bff;
+  outline: none;
+}
+
+.numericKeyboard {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+  width: 100%;
+}
+
+.keyBtn {
+  padding: 15px;
+  font-size: 1.1rem;
+  background-color: #004aad;
+  color: white;
+  font-weight: bold;
+  border: none;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+  border: solid white 1px;
+}
+
+.keyBtn:hover {
+  background-color: #00337f;
+  transform: scale(1.05);
+  border: solid white 1px;
+
+}
+
+.deleteBtn {
+  grid-column: span 2;
+  background-color: #dc3545;
+  border: solid white 1px;
+}
+
+.deleteBtn:hover {
+  background-color: #b02a37;
+  border: solid white 1px;
+}
+
+.acceptBtn {
+    margin-top: 15px;
+  grid-column: span 3;
+  background-color: #048300;
+  border: solid white 1px;
+}
+
+.acceptBtn:hover {
+  background-color: #035500;
+  border: solid white 1px;
+  color: white;
+}
+
+.keytransparent{
+    padding: 15px;
+  font-size: 1.5rem;
+  background-color: transparent;
+  color: rgb(0, 0, 0);
+  font-weight: bold;
+  border: none;
+  transition: background-color 0.2s ease, transform 0.1s ease;
+}

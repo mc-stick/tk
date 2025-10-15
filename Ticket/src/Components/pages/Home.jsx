@@ -7,6 +7,8 @@ import {
   FcTabletAndroid,
 } from "react-icons/fc";
 
+import './Home.css'
+
 const Home = () => {
   const navigate = useNavigate();
 

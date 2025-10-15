@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import "./TabsComponents.css";
+import { FaDisplay } from 'react-icons/fa6';
 
 const TabsNavigation = ({ tabs = [] }) => {
   const [activeTab, setActiveTab] = useState(tabs[0]?.id || '');
@@ -16,6 +17,7 @@ const TabsNavigation = ({ tabs = [] }) => {
             className={`tab ${activeTab === tab.id ? 'active' : ''}`}
             onClick={() => setActiveTab(tab.id)}
           >
+            <span style={{marginRight:'10px', marginBottom:'-5px', fontSize:'1.2rem'}}>{tab.icon}</span>
             {tab.label}
           </button>
         ))}

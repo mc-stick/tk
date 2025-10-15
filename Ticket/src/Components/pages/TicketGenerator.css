@@ -8,11 +8,13 @@
   font-family: 'Segoe UI', sans-serif;
   text-align: center;
   position: relative;
+  background-color: rgba(210, 105, 30, 0.356);
 }
 
 h1 {
   font-size: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 10rem;
+  margin-top: -3rem;
   color: #000000;
 }
 
@@ -36,13 +38,15 @@ h1 {
   gap: 20px;
   flex-wrap: wrap;
   justify-content: center;
+  
 }
 
 .botones button {
+  background-color: #ffffffee;
   padding: 1rem 2rem;
   font-size: 1.2rem;
-  color: white;
-  border: none;
+  color: rgb(0, 0, 0);
+  border: solid black 3px;
   border-radius: 8px;
   cursor: pointer;
   transition: background 0.3s ease;
@@ -53,7 +57,7 @@ h1 {
 }
 
 .botones button:hover {
-  background-color: #199200;
+  background-color: #00928b;
 }
 
 .icono {
@@ -108,30 +112,19 @@ h1 {
 }
 
 .background-image {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  background-image: url('../../assets/img/UcneLogo.png');
-  background-repeat: no-repeat;
-  background-size: contain;
-  background-position: center;
-  width: 60%;
-  height: 60%;
-  opacity: 0.27;
-  pointer-events: none; 
-  z-index: 0;
-   
+ background-color: #004aad;
+   z-index: inherit;
 }
 
 
 
-.cliente-container {
+/* .cliente-container {
   position: relative;
   width: 100%;
   height: 100vh; 
   background-color: rgba(0, 0, 255, 0.61) ;
-}
+  z-index: 999;
+} */
 
 .center{
   background: radial-gradient(circle, red, green, blue);

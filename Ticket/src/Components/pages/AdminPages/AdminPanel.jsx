@@ -6,6 +6,9 @@ import "../OperatorPanel.css";
 import CustomButton from "../../Buttons/CustomButton";
 import TabsNavigation from "../../Menu/TabsComponent";
 import Administrador from "./FileManager"
+import '../../../index.css' 
+import { FaDisplay, FaHouse, FaHouseMedical } from "react-icons/fa6";
+
 
 const AdminPanel = () => {
   const { user, logout } = useAuth();
@@ -99,16 +102,17 @@ const AdminPanel = () => {
     setConfirmPass("");
   };
 
+  
   //TABS
   const tabs = [
-  { id: 'home', label: 'Inicio', content: <p>Bienvenido a la página de inicio.</p> },
+  { id: 'home', label: 'Inicio', content: <p>Bienvenido a la página de inicio.</p>, icon:<FaHouse/> },
   // { id: 'users', label: 'Usuarios', content: <p>Gestión de usuarios.</p> },
   // { id: 'settings', label: 'Configuración', content: <p>Gestión de Configuración.</p> },
-  { id: 'file', label: 'Pantalla Principal', content: <Administrador/> },
+  { id: 'file', label: 'Pantalla Principal', content: <Administrador/>, icon:<FaDisplay /> },
 ];
 
   return (
-    <div className="operator-container">
+    <div className="operator-container input-page-container_index">
       <TopMenu
         username={user?.username || "AdminReturn"}
         onLogout={handleLogout}
