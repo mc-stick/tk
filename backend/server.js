@@ -51,9 +51,25 @@ let SQL, db;
         id INTEGER PRIMARY KEY AUTOINCREMENT,
         tipo TEXT NOT NULL,
         numero INTEGER NOT NULL,
-        fecha TEXT NOT NULL
+        fecha TEXT NOT NULL,
+        puesto TEXT NOT NULL,
+        estado TEXT
       );
     `);
+
+    // 🔄 [TURNOS] Crear tabla de contador si no existe
+db.run(`
+  CREATE TABLE IF NOT EXISTS contador (
+    id INTEGER PRIMARY KEY,
+    valor INTEGER
+  );
+`);
+
+// 🔄 [TURNOS] Insertar contador inicial si no existe
+const contadorCheck = db.exec("SELECT * FROM contador WHERE id = 1");
+if (contadorCheck.length === 0) {
+  db.run("INSERT INTO contador (id, valor) VALUES (1, 0)");
+}
 
     // db.run(`
     //   CREATE TABLE IF NOT EXISTS servicios (
@@ -66,6 +82,8 @@ let SQL, db;
     const defaultUsers = [
       { username: 'admin', password: 'admin', role: 'admin' },
       { username: 'operator', password: 'operator', role: 'operator' },
+      { username: 'operator2', password: 'operator', role: 'operator' },
+      { username: 'operator3', password: 'operator', role: 'operator' },
     ];
 
     for (const user of defaultUsers) {
@@ -149,6 +167,76 @@ let SQL, db;
   app.get('/protected', authenticateToken, (req, res) => {
     res.json({ message: `Hola ${req.user.username}, rol: ${req.user.role}` });
   });
+
+
+  //TUNROS DB /////////////////////////////////////////////////////////////////////////////////////////////////////////
+
+  // 🔄 [TURNOS] Obtener turno actual
+app.get('/turnoactual', (req, res) => {
+  const result = db.exec("SELECT * FROM turnos WHERE estado = 'actual' LIMIT 1");
+  if (result.length > 0) {
+    const row = result[0].values[0];
+    const [id, numero, tipo, puesto, estado] = row;
+    res.json({ id, numero, tipo, puesto, estado });
+  } else {
+    res.json(null);
+  }
+});
+
+// 🔄 [TURNOS] Obtener cola
+app.get('/cola', (req, res) => {
+  const result = db.exec("SELECT * FROM turnos WHERE estado = 'en_espera' ORDER BY id ASC");
+  const cola = result.length > 0
+    ? result[0].values.map(([id, numero, tipo, puesto, estado]) => ({ id, numero, tipo, puesto, estado }))
+    : [];
+  res.json(cola);
+});
+
+// 🔄 [TURNOS] Generar nuevo turno
+app.post('/generarturno', (req, res) => {
+  const { tipo } = req.body;
+  if (!tipo) return res.status(400).json({ message: 'Tipo requerido' });
+
+  const contadorResult = db.exec("SELECT valor FROM contador WHERE id = 1");
+  const contador = contadorResult.length > 0 ? contadorResult[0].values[0][0] : 0;
+  const nuevoNumero = contador + 1;
+
+  const fecha = new Date().toISOString();
+console.log(nuevoNumero,tipo,fecha)
+  db.run(
+  `INSERT INTO turnos (numero, tipo, estado, fecha, puesto) VALUES (?, ?, ?, ?, ?)`,
+  [nuevoNumero, tipo, 'en_espera', fecha, 't']
+);
+  db.run(`UPDATE contador SET valor = ? WHERE id = 1`, [nuevoNumero]);
+  saveDatabase();
+
+  res.json({ numero: nuevoNumero, tipo });
+});
+
+// 🔄 [TURNOS] Llamar siguiente turno
+app.post('/llamarsiguiente', (req, res) => {
+  const { puesto } = req.body;
+
+  // Marcar actual como atendido
+  db.run(`UPDATE turnos SET estado = 'atendido' WHERE estado = 'actual'`);
+
+  // Obtener siguiente en cola
+  const result = db.exec("SELECT * FROM turnos WHERE estado = 'en_espera' ORDER BY id ASC LIMIT 1");
+  if (result.length > 0) {
+    const row = result[0].values[0];
+    const [id, numero, tipo] = row;
+
+    db.run(`UPDATE turnos SET estado = 'actual', puesto = ? WHERE id = ?`, [puesto, id]);
+    saveDatabase();
+
+    res.json({ id, numero, tipo, puesto, estado: 'actual' });
+  } else {
+    res.json(null);
+  }
+});
+
+
+  ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
   // Cambiar contraseña
   app.post('/change-password', authenticateToken, async (req, res) => {

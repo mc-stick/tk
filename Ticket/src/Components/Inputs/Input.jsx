@@ -34,16 +34,16 @@ const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
 
     if (tipo === 'telefono') {
       limpio=limpio.slice(0, lengt_str);
-      const match = limpio.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
-      if (!match) return limpio;
-      return [match[1], match[2], match[3]].filter(Boolean).join('-');
+      // const match = limpio.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
+      // if (!match) return limpio;
+      // return [match[1], match[2], match[3]].filter(Boolean).join('-');
     }
 
     if (tipo === 'cedula') {
       limpio=limpio.slice(0, lengt_str);
-      const match = limpio.match(/^(\d{0,3})(\d{0,7})(\d{0,1})$/);
-      if (!match) return limpio;
-      return [match[1], match[2], match[3]].filter(Boolean).join('-');
+      // const match = limpio.match(/^(\d{0,3})(\d{0,7})(\d{0,1})$/);
+      // if (!match) return limpio;
+      // return [match[1], match[2], match[3]].filter(Boolean).join('-');
     }
 
     if (tipo === 'matricula') {

@@ -1,0 +1,14 @@
+.btn-llamar {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: bold;
+  transition: background 0.2s ease;
+}
+
+.btn-llamar:hover {
+  background-color: #218838;
+}

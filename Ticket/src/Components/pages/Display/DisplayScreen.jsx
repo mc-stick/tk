@@ -19,9 +19,11 @@ const DisplayScreen = () => {
       setImagenes(data);
       setActual(0);
     };
+    
 
     window.addEventListener("nuevoTurnoLlamado", (e) => {
       setUsuarioLlamado(e.detail.user);
+      
     });
 
     window.addEventListener("finalizarUltimoTurno", () => {

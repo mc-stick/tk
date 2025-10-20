@@ -1,78 +1,47 @@
 import { createContext, useState, useContext, useEffect } from 'react';
+import axios from 'axios';
 
 const TurnoContext = createContext();
 
 export const TurnoProvider = ({ children }) => {
-  const [turnoActual, setTurnoActual] = useState(() => {
-    const turnoGuardado = localStorage.getItem('turnoActual');
-    return turnoGuardado ? JSON.parse(turnoGuardado) : null;
-  });
+  const [turnoActual, setTurnoActual] = useState(null);
+  const [cola, setCola] = useState([]);
+  const [cargando, setCargando] = useState(true);
 
-  const [cola, setCola] = useState(() => {
-    const colaGuardada = localStorage.getItem('cola');
-    return colaGuardada ? JSON.parse(colaGuardada) : [];
-  });
-
-  const [contadorTurnos, setContadorTurnos] = useState(() => {
-    const contadorGuardado = localStorage.getItem('contadorTurnos');
-    return contadorGuardado ? Number(contadorGuardado) : 0;
-  });
-
-  // Guardar en localStorage cada vez que cambia turnoActual
-  useEffect(() => {
-    if (turnoActual) {
-      localStorage.setItem('turnoActual', JSON.stringify(turnoActual));
-    } else {
-      localStorage.removeItem('turnoActual');
+  const fetchData = async () => {
+    try {
+      const [resTurno, resCola] = await Promise.all([
+        axios.get('http://localhost:4000/turnoactual'),
+        axios.get('http://localhost:4000/cola'),
+      ]);
+      setTurnoActual(resTurno.data);
+      setCola(resCola.data);
+      setCargando(false);
+    } catch (err) {
+      console.error('Error al obtener datos:', err);
     }
-  }, [turnoActual]);
-
-  // Guardar en localStorage cada vez que cambia cola
-  useEffect(() => {
-    if (cola.length > 0) {
-      localStorage.setItem('cola', JSON.stringify(cola));
-    } else {
-      localStorage.removeItem('cola');
-    }
-  }, [cola]);
-
-  // Guardar en localStorage el contadorTurnos
-  useEffect(() => {
-    localStorage.setItem('contadorTurnos', contadorTurnos.toString());
-  }, [contadorTurnos]);
-
-  // Escuchar cambios en localStorage en otras pestañas para sincronizar estado
-  useEffect(() => {
-    const manejarCambioStorage = (event) => {
-      if (event.key === 'turnoActual') {
-        setTurnoActual(event.newValue ? JSON.parse(event.newValue) : null);
-      }
-      if (event.key === 'cola') {
-        setCola(event.newValue ? JSON.parse(event.newValue) : []);
-      }
-      if (event.key === 'contadorTurnos') {
-        setContadorTurnos(event.newValue ? Number(event.newValue) : 0);
-      }
-    };
-    window.addEventListener('storage', manejarCambioStorage);
-    return () => window.removeEventListener('storage', manejarCambioStorage);
-  }, []);
-
-  const generarTurno = (tipo) => {
-
-    const nuevoNumero = contadorTurnos + 1;
-    const nuevoTurno = { numero: nuevoNumero, tipo};
-    setCola([...cola, nuevoTurno]);
-    setContadorTurnos(nuevoNumero);
-    return nuevoTurno;
   };
 
-  const llamarSiguiente = (x) => {
-    if (cola.length >= 0) {
-      const [siguiente, ...resto] = cola;
-      cola.length != 0 ? setTurnoActual({...siguiente, puesto:x}) : setTurnoActual(siguiente);
-      setCola(resto);
-    }
+  useEffect(() => {
+    fetchData(); // Llamada inicial
+
+    const intervalo = setInterval(() => {
+      fetchData(); // Llamada cada X segundos
+    }, 3000); // 3 segundos
+
+    return () => clearInterval(intervalo); // Limpieza al desmontar
+  }, []); // Solo una vez al montar
+
+  const generarTurno = async (tipo) => {
+    const res = await axios.post('http://localhost:4000/generarturno', { tipo });
+    await fetchData(); // Opcional si quieres refrescar justo después
+    return res.data;
+  };
+
+  const llamarSiguiente = async (puesto) => {
+    const res = await axios.post('http://localhost:4000/llamarsiguiente', { puesto });
+    await fetchData();
+    return res.data;
   };
 
   return (
@@ -82,6 +51,7 @@ export const TurnoProvider = ({ children }) => {
         cola,
         generarTurno,
         llamarSiguiente,
+        cargando,
       }}
     >
       {children}

@@ -28,7 +28,7 @@ const Identify = [
     label: "Matrícula",
     tipo: "matricula",
     icono: <FaIdCardAlt />,
-    lengt_str: 8,
+    lengt_str: 1, ///////////////////////////////////////////////////// cambiar a 8
   },
   { label: "Teléfono", tipo: "telefono", icono: <FaPhone />, lengt_str: 10 },
 
@@ -121,7 +121,11 @@ const TicketGenerator = () => {
             <p><FaTicketAlt  style={{margin:'-20px',fontSize:'40',color:'green'}}/> </p>
             <p className="turno">
               <strong>
-                {turno.tipo[0]}-{turno.numero}
+                {/* {turno.tipo[0]}-{turno.numero} */}
+
+                {turno && turno.tipo
+    ? `${turno.tipo[0]}-${turno.numero}`
+    : 'Ningún turno'}
               </strong>
             </p>
             <p>

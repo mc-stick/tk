@@ -8,11 +8,13 @@ import CustomButton from "../Buttons/CustomButton";
 import { OpTurnoManager } from "./OpTurnoManager";
 import TabsNavigation from "../Menu/TabsComponent";
 
-const OperatorPanel = () => {
+import axios from "axios";
+import OpListEspera from "../listas/listaEsperaOp";
 
+const OperatorPanel = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  const { llamarSiguiente, turnoActual, cola} = useTurno();
+  const { llamarSiguiente, turnoActual, cola } = useTurno();
   // Estado modal cambio contraseña
   const [showModal, setShowModal] = useState(false);
   const [showBTNFIN, setShowBTNFIN] = useState(false);
@@ -37,11 +39,15 @@ const OperatorPanel = () => {
     navigate("/");
   };
   /////////////////////////////////////////////////
-  const handleLlamarSiguiente = () => {
-    llamarSiguiente(("#1"));   //ESTE ES SOLO PARA PRUEBAS.....
-    //llamarSiguiente((user?.username || "#1")); // USAR ESTE......  
+  const handleLlamarSiguiente = (x = true) => {
+    //llamarSiguiente(("#1"));   //ESTE ES SOLO PARA PRUEBAS.....
+    //llamarSiguiente(user?.username || "#1") // USAR ESTE......
 
-    cola.length > 0 ? setShowBTNFIN(true) : setShowBTNFIN(false)
+    x == true
+      ? llamarSiguiente(user?.username || "#1")
+      : llamarSiguiente(x || "#1");
+
+    cola.length > 0 ? setShowBTNFIN(true) : setShowBTNFIN(false);
   };
   /////////////////////////////////////////////////
 
@@ -109,12 +115,33 @@ const OperatorPanel = () => {
   };
 
   //TABS ///////////////////////////////////////////
-    const tabs = [
-  { id: 'home', label: 'Inicio', content: <OpTurnoManager data={{turnoActual,cola, showBTNFIN, handleLlamarSiguiente}}/> },
-  // { id: 'users', label: 'Usuarios', content: <p>Gestión de usuarios.</p> },
-  // { id: 'settings', label: 'Configuración', content: <p>Gestión de Configuración.</p> },
-  { id: 'next', label: 'Turnos en espera', content: <p>espera</p> },
-];
+  const tabs = [
+    {
+      id: "home",
+      label: "Inicio",
+      content: (
+        <OpTurnoManager
+          data={{ turnoActual, cola, showBTNFIN, handleLlamarSiguiente }}
+        />
+      ),
+    },
+    // { id: 'users', label: 'Usuarios', content: <p>Gestión de usuarios.</p> },
+    // { id: 'settings', label: 'Configuración', content: <p>Gestión de Configuración.</p> },
+    {
+      id: "next",
+      label: "Turnos en espera",
+      content: (
+        <OpListEspera
+          data={{ turnoActual, cola }}
+          onLlamarTurno={(turno) => {
+            console.log("Turno seleccionado para llamar:", turno);
+            // Podés hacer una llamada API personalizada aquí, por ejemplo:
+            handleLlamarSiguiente
+          }}
+        />
+      ),
+    },
+  ];
 
   return (
     <div className="operator-container">
@@ -123,8 +150,10 @@ const OperatorPanel = () => {
         onLogout={handleLogout}
       />
       <br />
-      <TabsNavigation style={{ paddingTop: "3rem", margingTop: "3rem" }} tabs={tabs} />
-      
+      <TabsNavigation
+        style={{ paddingTop: "3rem", margingTop: "3rem" }}
+        tabs={tabs}
+      />
 
       {showModal && (
         <div className="modal-overlay" onClick={closeModal}>
