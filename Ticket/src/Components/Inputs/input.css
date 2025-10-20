@@ -27,10 +27,10 @@
     background-color: #ff242486;
 }
 
-.inputValidate{
+/* .inputValidate{
     border: 1px solid #028b09;
     background-color: #69ff2486;
-}
+} */
 
 .inputCardLabel:focus {
   border-color: #007bff;

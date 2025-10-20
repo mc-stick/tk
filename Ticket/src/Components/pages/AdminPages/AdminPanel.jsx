@@ -8,6 +8,7 @@ import TabsNavigation from "../../Menu/TabsComponent";
 import Administrador from "./FileManager"
 import '../../../index.css' 
 import { FaDisplay, FaHouse, FaHouseMedical } from "react-icons/fa6";
+import AdminPage from "./AdminPage";
 
 
 const AdminPanel = () => {
@@ -105,9 +106,7 @@ const AdminPanel = () => {
   
   //TABS
   const tabs = [
-  { id: 'home', label: 'Inicio', content: <p>Bienvenido a la página de inicio.</p>, icon:<FaHouse/> },
-  // { id: 'users', label: 'Usuarios', content: <p>Gestión de usuarios.</p> },
-  // { id: 'settings', label: 'Configuración', content: <p>Gestión de Configuración.</p> },
+  { id: 'home', label: 'Inicio', content: <AdminPage/>, icon:<FaHouse/> },
   { id: 'file', label: 'Pantalla Principal', content: <Administrador/>, icon:<FaDisplay /> },
 ];
 

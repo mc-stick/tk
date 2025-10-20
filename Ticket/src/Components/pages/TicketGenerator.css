@@ -41,7 +41,7 @@ h1 {
   
 }
 
-.botones button {
+/* .botones button {
   background-color: #ffffffee;
   padding: 1rem 2rem;
   font-size: 1.2rem;
@@ -54,7 +54,7 @@ h1 {
   align-items: center;
   gap: 10px;
   min-width: 150px;
-}
+} */
 
 .botones button:hover {
   background-color: #00928b;

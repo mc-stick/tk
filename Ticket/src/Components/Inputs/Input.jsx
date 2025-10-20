@@ -54,16 +54,19 @@ const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
   };
 
   const handleChange = (e) => {
+    
     const valorInput = e.target.value;
     const formateado = formatearValor(valorInput);
     setValor(formateado);
-
+    
+    
   };
 
   const agregarCaracter = (caracter) => {
     const limpio = valor.replace(/\D/g, '');
     const nuevoValor = limpio + caracter;
     setValor(formatearValor(nuevoValor));
+    setValidate(true)
   };
 
   const borrarUltimo = () => {
@@ -75,12 +78,18 @@ const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
     setEstado(x);
   }
 
+
+
   const Submit =(x)=>{
-    
-    if (x.toString().length === (lengt_str+2)) {
+    console.log(x.toString().length, lengt_str)
+    if (x.toString().length == lengt_str) {
     setVal(x);
-    //setEstado('seleccion');
+    
+    setValidate(true)
+    
+    setEstado('seleccion');
     }else{setValidate(false)}
+    
   }
 
   return (
@@ -94,10 +103,10 @@ const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
         className={`inputCardLabel ${validate ? 'inputValidate' : 'inputInvalidate'}`}
         value={valor}
         onChange={handleChange}
-        placeholder={`Ingrese ${label}`}
+        placeholder={`Ingrese su ${label}`}
         readOnly // desactiva teclado físico
       />
-      {validate || (<><p style={{marginTop:'-10px', color:'red', fontWeight:"bold", backgroundColor:'white', borderRadius:'5px', padding:'5px'}}>Ingresa {label} válido.</p></>)}
+      {validate || (<><p style={{marginTop:'-10px', color:'red', fontWeight:"bold", backgroundColor:'white', borderRadius:'5px', padding:'5px'}}>Ingrese número válido.</p></>)}
 
       <div className="numericKeyboard">
         {[1, 2, 3, 4, 5, 6, 7, 8, 9, 0].map((num) => (
@@ -115,6 +124,7 @@ const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
         <button className="keyBtn acceptBtn" onClick={()=>Submit(valor)}>
           <FaCheck/>
         </button>
+        
       </div>
         
       

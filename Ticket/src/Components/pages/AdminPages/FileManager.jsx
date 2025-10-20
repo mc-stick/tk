@@ -110,14 +110,7 @@ const Administrador = () => {
             <label
               className={`upload-label ${
                 dragOver ? (dragValid ? "valid" : "invalid") : ""
-              }`}>
-              {dragOver ? (
-                <>
-                  ELEMENTO NO VÁLIDO. <hr />
-                  Solo imagenes o videos.
-                </>
-              ) : (
-                <>
+              }`}><>
                   Seleccionar archivos
                   <input
                     type="file"
@@ -127,7 +120,7 @@ const Administrador = () => {
                     className="hidden-input"
                   />
                 </>
-              )}
+             
             </label>
           </div>
         </div>

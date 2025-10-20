@@ -18,7 +18,7 @@
   border: 2px dashed var(--text-secondary);
   padding: 2rem;
   border-radius: 12px;
-  background-color: var(--card-bg);
+  background-color: rgba(131, 131, 131, 0.24);
   color: var(--text-secondary);
   transition: 0.3s ease;
   margin-bottom: 2rem;
@@ -32,25 +32,25 @@
 
 .drop-zone.invalid{
   border-color: #e53e3e; /* rojo */
-  background-color: rgba(229, 62, 62, 0.1);
+  background-color: rgba(229, 62, 62, 0.548);
 }
 
 .drop-content {
-  background-color: rgb(171, 213, 250);
+  /* background-color: rgb(171, 213, 250); */
   display: flex;
   justify-content: space-around;
   flex-direction: column;
   align-items: center;
-  border: solid rgb(82, 82, 82) 2px;
+  border:none;
   /* box-shadow: 0 0 4 5 black; */
-  border-radius: 20px;
-  padding: 0px 10%;
+  /* border-radius: 20px;
+  padding: 0px 10%; */
 }
 
-.drop-content.invalid {
+/* .drop-content.invalid {
   background-color: rgb(255, 35, 35);
   color: white;
-}
+} */
 
 .drop-icon {
   font-size: 3rem;
@@ -73,12 +73,14 @@
 }
 
 .upload-label:hover {
-  background-color: rgb(81, 255, 0);
+  background-color: rgb(0, 119, 255);
+  color: white;
 }
 
 .upload-label.invalid{
   background-color: rgb(255, 0, 0);
-   border: solid rgb(0, 0, 0) 2px;
+   border: solid rgb(255, 253, 253) 2px;
+   color: white;
 }
 
 .hidden-input {

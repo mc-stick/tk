@@ -5,9 +5,11 @@ import '../../index.css'
 import AnimatedButton from "../Buttons/animatedBtn";
 import { FcBusinessContact, FcCellPhone, FcCurrencyExchange, FcInfo, FcReadingEbook } from "react-icons/fc";
 import { FaCircleUser, FaIdCard } from "react-icons/fa6";
-import { FaIdCardAlt, FaPhone } from "react-icons/fa";
+import { FaIdCardAlt, FaPhone, FaTicketAlt } from "react-icons/fa";
 import FormattedInput  from "../Inputs/Input";
 import '../Inputs/input.css'
+import ucneIcon from '../../assets/img/UcneLogoIcon.png'
+import ImgCustoms from "../widgets/ImgCustoms";
 
 
 
@@ -17,9 +19,9 @@ const Servicios = [
   { tipo: "Informes", icono: <FcInfo/> },
 ];
 const Identify = [
-  { label:'Cédula', tipo: "cedula", icono: <FaIdCard />, lengt_str: 11 },
+  { label:'Cédula', tipo: "cedula", icono: <FaIdCard />, lengt_str: 13 },
   { label:'Matrícula', tipo: "matricula", icono: <FaIdCardAlt/>, lengt_str: 8 },
-  { label:'Teléfono', tipo: "telefono", icono: <FaPhone/>, lengt_str: 10},
+  { label:'Teléfono', tipo: "telefono", icono: <FaPhone/>, lengt_str: 12},
 ];
 
 const TicketGenerator = () => {
@@ -55,7 +57,7 @@ const TicketGenerator = () => {
     <div className="cliente-container input-page-container_index">
        <div className="overlay" />
       {estado === "inicio" && (
-        <AnimatedButton icon="🟢" label="Comenzar" onClick={comenzar} />
+        <AnimatedButton icon={<ImgCustoms src={ucneIcon} width="50px" style={{marginLeft:"25%"}}  />} label="Comenzar" onClick={comenzar} />
       )}
 
       {estado === "seleccion" && (
@@ -64,6 +66,7 @@ const TicketGenerator = () => {
           <div className="botones">
             {Servicios.map(({ tipo, icono }) => (
               <AnimatedButton
+              key={tipo}
                 icon={icono}
                 label={tipo}
                 onClick={() => seleccionarServicio(tipo)}
@@ -100,7 +103,8 @@ const TicketGenerator = () => {
       {estado === "confirmado" && turno && (
         <div className="modal">
           <div className="modal-content">
-            <h2>🎟️ Tu turno ha sido generado</h2>
+            <h2> Tu turno se ha generado.</h2>
+            <p><FaTicketAlt  style={{margin:'-20px',fontSize:'40',color:'green'}}/> </p>
             <p className="turno">
               <strong>
                 {turno.tipo[0]}-{turno.numero}
