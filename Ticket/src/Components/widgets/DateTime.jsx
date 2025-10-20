@@ -18,8 +18,10 @@ const DateTime = () => {
     <div style={styles.container}>
       {/* Logo */}
       <div style={styles.logo}>
-        <h2 className="Title_cn">UCNE</h2>
-        <ImgCustoms src={ImgLogo} width="50px" />
+        <ImgCustoms src={ImgLogo}  width="30px" />
+        
+        <h2 className="Title_cn" style={{flexDirection:'column', marginLeft:'20px'}}>UCNE</h2>
+        {/* <ImgCustoms src={ImgLogo} width="50px" /> */}
       </div>
 
       {/* Fecha y hora */}
@@ -55,7 +57,10 @@ const styles = {
     boxShadow: "0 2px 5px rgba(0,0,0,0.3)",
   },
   logo: {
-    flex: "0 0 auto",
+    display: 'flex', 
+    flexDirection: 'row', 
+    justifyContent: 'center', 
+    alignItems: 'center' 
   },
   datetime: {
     flex: "1",
@@ -67,6 +72,7 @@ const styles = {
     lineHeight: "1.4",
   },
   Title_cn: {
+    display:'grid',
   textAlign: 'center',
   fontSize: '3.5rem',
   fontWeight: 'bold',
