@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useTurno } from "../context/TurnoContext";
 import "./TicketGenerator.css";
 import "../../index.css";
@@ -10,36 +10,49 @@ import {
   FcInfo,
   FcReadingEbook,
 } from "react-icons/fc";
-import { FaCircleUser, FaIdCard } from "react-icons/fa6";
-import { FaIdCardAlt, FaPhone, FaTicketAlt } from "react-icons/fa";
-import FormattedInput  from "../Inputs/Input";
-import '../Inputs/input.css'
+import { FaIdCard, FaIdCardAlt, FaPhone, FaTicketAlt } from "react-icons/fa";
+import FormattedInput from "../Inputs/Input";
+import "../Inputs/input.css";
 import ImgCustoms from "../widgets/ImgCustoms";
 import ImgLogo from "../../assets/img/UcneLogoIcon.png";
-
-const Servicios = [
-  { tipo: "Caja", icono: <FcCurrencyExchange /> },
-  { tipo: "Servicios", icono: <FcReadingEbook /> },
-  { tipo: "Informes", icono: <FcInfo /> },
-];
-const Identify = [
-  { label: "Cédula", tipo: "cedula", icono: <FaIdCard />, lengt_str: 11 },
-  {
-    label: "Matrícula",
-    tipo: "matricula",
-    icono: <FaIdCardAlt />,
-    lengt_str: 1, ///////////////////////////////////////////////////// cambiar a 8
-  },
-  { label: "Teléfono", tipo: "telefono", icono: <FaPhone />, lengt_str: 10 },
-
-];
 
 const TicketGenerator = () => {
   const { generarTurno } = useTurno();
   const [estado, setEstado] = useState("inicio"); // inicio | seleccion | confirmado
   const [val, setVal] = useState(""); // valor devuelto del componente cedula o matr
   const [turno, setTurno] = useState(null);
+  const [servicios, setServicios] = useState([]);
+  const [identificaciones, setIdentificaciones] = useState([]);
 
+  // === Cargar datos desde la DB ===
+  const fetchServicios = async () => {
+    try {
+      const res = await fetch("http://localhost:4001/api/services");
+      if (!res.ok) throw new Error("Error al cargar servicios");
+      const data = await res.json();
+      setServicios(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  const fetchIdentificaciones = async () => {
+    try {
+      const res = await fetch("http://localhost:4001/api/docs");
+      if (!res.ok) throw new Error("Error al cargar identificaciones");
+      const data = await res.json();
+      setIdentificaciones(data);
+    } catch (err) {
+      console.error(err);
+    }
+  };
+
+  useEffect(() => {
+    fetchServicios();
+    fetchIdentificaciones();
+  }, []);
+
+  // === Funciones del flujo ===
   const comenzar = () => {
     setEstado("Identificador");
     setTurno(null);
@@ -51,9 +64,8 @@ const TicketGenerator = () => {
     setEstado("confirmado");
   };
 
-  const seleccionarId = (tipo, label, lengt_str) => {
-    console.log(tipo, label);
-    setEstado(["started", tipo, label, lengt_str]);
+  const seleccionarId = (tipo, label, size) => {
+    setEstado(["started", tipo, label, size]);
   };
 
   const aceptar = () => {
@@ -61,75 +73,99 @@ const TicketGenerator = () => {
     setTurno(null);
   };
 
+  // === Mapeo dinámico de íconos según tipo ===
+  const iconoServicio = (tipo) => {
+    switch (tipo) {
+      case "Caja":
+        return <FcCurrencyExchange />;
+      case "Servicios":
+        return <FcReadingEbook />;
+      case "Informes":
+        return <FcInfo />;
+      default:
+        return <FcBusinessContact />;
+    }
+  };
+
   return (
     <div className="cliente-container input-page-container_index">
       <div className="overlay" />
+
       {estado === "inicio" && (
-        // <AnimatedButton icon={<ImgCustoms src={ucneIcon} width="50px" style={{marginLeft:"25%"}}  />} label="Comenzar" onClick={comenzar} />
-         <AnimatedButton style={{justifyContent:'center'}} icon={<ImgCustoms style={{margin:'30px' }} src={ImgLogo} width="90px" />} label="Comenzar" onClick={comenzar} />
+        <AnimatedButton
+          style={{ justifyContent: "center" }}
+          icon={
+            <ImgCustoms style={{ margin: "30px" }} src={ImgLogo} width="90px" />
+          }
+          label="Comenzar"
+          onClick={comenzar}
+        />
+      )}
+
+      {estado === "Identificador" && (
+        <div className="formattedInputContainer">
+          <h1>Selecciona un método de identificación</h1>
+          <div className="botones">
+            {identificaciones.map(({ tipo, name, size }) => (
+              <AnimatedButton
+                key={name}
+                icon={<FaIdCard />}
+                label={name}
+                onClick={() => seleccionarId(tipo, name, size)}
+              />
+            ))}
+          </div>
+        </div>
+      )}
+      
+      {estado[0] === "started" && (
+        <FormattedInput
+          tipo={estado[1]}
+          setEstado={setEstado}
+          setVal={setVal}
+          label={estado[2]}
+          size={estado[3]}
+        />
       )}
 
       {estado === "seleccion" && (
         <div className="formattedInputContainer">
           <h1>Seleccione el servicio</h1>
           <div className="botones">
-            {Servicios.map(({ tipo, icono }) => (
+            {servicios.map(({ service_id, name }) => (
               <AnimatedButton
-              key={tipo}
-                icon={icono}
-                label={tipo}
-                onClick={() => seleccionarServicio(tipo)}
+                key={service_id}
+                icon={iconoServicio(name)}
+                label={name}
+                onClick={() => seleccionarServicio(name)}
               />
             ))}
           </div>
         </div>
       )}
 
-      {estado === "Identificador" && (
-        <div className="formattedInputContainer">
-          <h1>Seleciona un metodo de identificación</h1>
-          <div className="botones">
-            {Identify.map(({ tipo, icono, label, lengt_str }) => (
-              <AnimatedButton
-                key={label}
-                icon={icono}
-                label={label}
-                onClick={() => seleccionarId(tipo, label, lengt_str)}
-              />
-            ))}
-          </div>
-        </div>
-      )}
-
-      {estado[0] === "started" && (
-        <>
-          {/* <InputCard label='Input' btnlabel='Aceptar' tipo='telefono' onClick={()=>aceptar()}/> */}
-          <FormattedInput
-            tipo={estado[1]}
-            setEstado={setEstado}
-            setVal={setVal}
-            label={estado[2]}
-            lengt_str={estado[3]}
-          />
-        </>
-      )}
 
       {estado === "confirmado" && turno && (
         <div className="modal">
           <div className="modal-content">
-            <h2> Tu turno se ha generado.</h2>
-            <p><FaTicketAlt  style={{margin:'-20px',fontSize:'40',color:'green'}}/> </p>
+            <h2>Tu turno se ha generado</h2>
+            <p>
+              <FaTicketAlt
+                style={{ margin: "-20px", fontSize: 40, color: "green" }}
+              />
+            </p>
             <p className="turno">
               <strong>
-                {/* {turno.tipo[0]}-{turno.numero} */}
-
                 {turno && turno.tipo
-    ? `${turno.tipo[0]}-${turno.numero}`
-    : 'Ningún turno'}
+                  ? `${turno.tipo[0]}-${turno.numero}`
+                  : "Ningún turno"}
               </strong>
             </p>
             <p>
-              Dirección: <strong>{turno.tipo}</strong>
+              Dirección:{" "}
+              <strong>
+                {turno.tipo} valor{val}
+              </strong>
             </p>
             <button className="aceptar-btn" onClick={aceptar}>
               Aceptar

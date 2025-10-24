@@ -2,15 +2,15 @@ import React from "react";
 import AdminTable from "./AdminTable";
 import "./AdminPage.css";
 import { FaDisplay, FaHouse } from "react-icons/fa6";
-import Administrador from "./FileManager";
-import TabsNavigation from "../../Menu/TabsComponent";
+import Administrador from "../Components/pages/AdminPages/FileManager";
+import TabsNavigation from "../Components/Menu/TabsComponent";
 
 const AdminPage = () => {
   
 
   return (
     <div className="admin-container">
-      <h1>Panel de Administración</h1>
+      <h1>OBSOLETO _ BORRAR</h1>
 
 
       <div className="admin-section">

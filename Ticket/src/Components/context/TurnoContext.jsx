@@ -1,47 +1,96 @@
-import { createContext, useState, useContext, useEffect } from 'react';
-import axios from 'axios';
+import { createContext, useState, useContext, useEffect } from "react";
+import axios from "axios";
 
 const TurnoContext = createContext();
 
 export const TurnoProvider = ({ children }) => {
-  const [turnoActual, setTurnoActual] = useState(null);
-  const [cola, setCola] = useState([]);
-  const [cargando, setCargando] = useState(true);
+  const [cola, setCola] = useState([]);          // Tickets pendientes
+  const [turnoActual, setTurnoActual] = useState(null); // Ticket en atención
+  const [loading, setLoading] = useState(true);
 
-  const fetchData = async () => {
+  // 🔹 Traer todos los tickets y separar turnoActual y cola
+  const fetchTickets = async () => {
     try {
-      const [resTurno, resCola] = await Promise.all([
-        axios.get('http://localhost:4000/turnoactual'),
-        axios.get('http://localhost:4000/cola'),
-      ]);
-      setTurnoActual(resTurno.data);
-      setCola(resCola.data);
-      setCargando(false);
-    } catch (err) {
-      console.error('Error al obtener datos:', err);
+      setLoading(true);
+      const res = await axios.get("http://localhost:4001/api/tickets");
+      const tickets = res.data || [];
+
+      // Ticket en atención = status_name "Llamado"
+      const actual = tickets.find(t => t.status_name === "Llamado") || null;
+      // Cola = tickets pendientes
+      const pendientes = tickets.filter(t => t.status_name === "Pendiente");
+
+      setTurnoActual(actual);
+      setCola(pendientes);
+    } catch (error) {
+      console.error("Error al obtener tickets:", error);
+    } finally {
+      setLoading(false);
     }
   };
 
   useEffect(() => {
-    fetchData(); // Llamada inicial
+    fetchTickets();
+    const interval = setInterval(fetchTickets, 3000); // refrescar cada 3s
+    return () => clearInterval(interval);
+  }, []);
 
-    const intervalo = setInterval(() => {
-      fetchData(); // Llamada cada X segundos
-    }, 3000); // 3 segundos
-
-    return () => clearInterval(intervalo); // Limpieza al desmontar
-  }, []); // Solo una vez al montar
-
-  const generarTurno = async (tipo) => {
-    const res = await axios.post('http://localhost:4000/generarturno', { tipo });
-    await fetchData(); // Opcional si quieres refrescar justo después
-    return res.data;
+  // 🔹 Crear ticket nuevo
+  const generarTurno = async ({ service_id, client_identifier }) => {
+    try {
+      const res = await axios.post("http://localhost:4001/api/tickets", {
+        service_id,
+        client_identifier,
+        status_id: 1, // Pendiente
+        assigned_employee_id: null,
+        counter_id: null,
+        notes: ""
+      });
+      await fetchTickets();
+      return res.data.data || null;
+    } catch (error) {
+      console.error("Error al generar ticket:", error);
+      return null;
+    }
   };
 
-  const llamarSiguiente = async (puesto) => {
-    const res = await axios.post('http://localhost:4000/llamarsiguiente', { puesto });
-    await fetchData();
-    return res.data;
+  // 🔹 Llamar siguiente ticket (primer pendiente) y actualizar estado usando procedure
+  const llamarSiguiente = async (employee_id) => {
+    if (cola.length === 0) return null;
+
+    const siguiente = cola[0]; // primer ticket pendiente
+    try {
+      await axios.put(
+        `http://localhost:4001/api/tickets/${siguiente.ticket_id}/status`,
+        {
+          new_status_id: 2, // Llamado
+          employee_id,
+          comment: "Llamado al cliente"
+        }
+      );
+      await fetchTickets();
+      return siguiente;
+    } catch (error) {
+      console.error("Error al llamar siguiente ticket:", error);
+      return null;
+    }
+  };
+
+  // 🔹 Llamar un ticket específico por ID
+  const llamarTurnoPorId = async (ticket_id, employee_id, new_status_id = 2) => {
+    try {
+      await axios.put(
+        `http://localhost:4001/api/tickets/${ticket_id}/status`,
+        {
+          new_status_id,
+          employee_id,
+          comment: "Llamado por ID"
+        }
+      );
+      await fetchTickets();
+    } catch (error) {
+      console.error("Error al llamar ticket por ID:", error);
+    }
   };
 
   return (
@@ -51,7 +100,8 @@ export const TurnoProvider = ({ children }) => {
         cola,
         generarTurno,
         llamarSiguiente,
-        cargando,
+        llamarTurnoPorId,
+        loading,
       }}
     >
       {children}

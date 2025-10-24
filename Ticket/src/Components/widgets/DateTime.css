@@ -25,8 +25,8 @@
   }
   .Title_cn{
   text-align: 'center';
-  font-size: '3.5rem';
+  font-size: '4.5rem';
   font-weight: 'bold';
-  color: '#ffffffff';
+  color: 'red';
   border-bottom: '2px solid #00eeff';
 }

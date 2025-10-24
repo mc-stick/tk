@@ -44,9 +44,9 @@
   padding: 20px;
   text-align: center;
   font-family: "Segoe UI", sans-serif;
-  box-shadow: 0 0 10px rgba(0,0,0,0.1);
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.842);
   border-radius: 10px;
-  background-color: #ffffff;
+  background-color: #0000007e;
 }
 
 .Login_formStyle {

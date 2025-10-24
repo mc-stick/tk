@@ -59,7 +59,7 @@ const TopAnimatedHeader = ({ user }) => {
       >
         <span className="user-greeting">
           <FcManager size={32} style={{ marginBottom: "-5px" }} /> Hola,{" "}
-          <strong className="usr">{user?.username || "Usuario"}</strong>
+          <strong className="usr">{user}</strong>
         </span>
       </div>
 

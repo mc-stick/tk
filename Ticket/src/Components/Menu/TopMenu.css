@@ -53,19 +53,19 @@ body.dark {
 }
 
 .profile-button {
-  /* background: var(--bg-profile); */
+  background:white;
   border: none;
   cursor: pointer;
-  font-size: 1.5rem;
+  font-size: 2rem;
   border-radius: 20px;
   /* padding: 6px; */
   /* color: var(--text-primary); */
   transition: background-color 0.2s ease, color 0.2s ease;
 }
 
-.profile-button:hover {
+/* .profile-button:hover {
   background-color: var(--hover-bg);
-}
+} */
 
 .profile-dropdown {
   position: absolute;
@@ -120,4 +120,10 @@ body.dark {
   font-size: 20px;
   justify-content: center;
   text-align: center;
+}
+
+.profile-name{
+
+  font-size: 1.5rem;
+  font-weight: 550;
 }

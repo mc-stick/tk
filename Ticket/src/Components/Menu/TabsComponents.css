@@ -1,8 +1,8 @@
 .tabs-container {
           display: flex;
-          border-bottom: 2px solid #ddd;
+          /* border-bottom: 2px solid #ddd; */
           background-color: #0077ffcb;
-          border-radius: 10px 10px 0px 0px;
+          /* border-radius: 10px 10px 0px 0px; */
         }
 
         .tab {
@@ -22,14 +22,15 @@
         }
 
         .tab.active {
-          color: #ffffff;
-          border-bottom: 3px solid #ffffff;
+          color: #000000;
+          /* border-bottom: 3px solid #ff7b00; */
           font-weight: bold;
+          background-color: rgb(255, 255, 255);
         }
 
         .tab-content {
           padding: 20px;
-          background-color: #f9f9f9ec;
+          background-color: #f9f9f9e5;
           min-height: 150px;
           border:2px solid #ddd;
           border-top: none;

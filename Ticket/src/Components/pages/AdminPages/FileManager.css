@@ -110,7 +110,20 @@
   background-color: var(--card-bg);
   border-radius: 8px;
   overflow: hidden;
+  cursor: pointer;
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+}
+.imagen-wrapper:hover {
+   box-shadow: 0px 0px 10px rgb(140, 150, 0);
+}
+
+.activo{
+   border:1px solid green;
+   box-shadow: 0px 0px 10px green;
+}
+.desactivado{
+  border: 1px solid rgba(255, 0, 0, 0.103);
+  box-shadow: 0px 0px 10px rgba(255, 0, 0, 0.623);
 }
 
 .imagen-thumbnail {
@@ -124,13 +137,13 @@
   position: absolute;
   top: 4px;
   right: 4px;
-  background-color: #e63946;
-  color: white;
+  background-color: #ff0000;
+  color: rgb(255, 255, 255);
   border: none;
-  border-radius: 50%;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   font-size: 14px;
+  font-weight: bold;
   cursor: pointer;
   transition: background-color 0.3s ease;
 }

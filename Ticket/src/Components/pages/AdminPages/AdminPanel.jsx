@@ -3,12 +3,17 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TopMenu from "../../Menu/TopMenu";
 import "../OperatorPanel.css";
-import CustomButton from "../../Buttons/CustomButton";
+// import CustomButton from "../../Buttons/CustomButton";
 import TabsNavigation from "../../Menu/TabsComponent";
-import Administrador from "./FileManager"
 import '../../../index.css' 
-import { FaDisplay, FaHouse, FaHouseMedical } from "react-icons/fa6";
-import AdminPage from "./AdminPage";
+import { FaDisplay, FaHouse, FaHouseMedical, FaIdCard, FaPerson, FaPersonChalkboard, FaPersonCircleExclamation, FaServicestack } from "react-icons/fa6";
+// import AdminPage from "../../../OBSOLETO/AdminPage";
+import ServiceCrud from "../../cruds/serviceCrud";
+import RoleCrud from "../../cruds/roles";
+import EmployeeCrud from "../../cruds/user";
+import DocTypeCrud from "../../cruds/doc_type";
+import FileManager from "./FileManager";
+import PuestoCrud from "../../cruds/puesto";
 
 
 const AdminPanel = () => {
@@ -106,8 +111,13 @@ const AdminPanel = () => {
   
   //TABS
   const tabs = [
-  { id: 'home', label: 'Inicio', content: <AdminPage/>, icon:<FaHouse/> },
-  { id: 'file', label: 'Pantalla Principal', content: <Administrador/>, icon:<FaDisplay /> },
+  // { id: 'home', label: 'Inicio', content: <AdminPage/>, icon:<FaHouse/> },
+  { id: 'file', label: 'Pantalla Principal', content: <FileManager/>, icon:<FaDisplay /> },
+  { id: 'services', label: 'Servicios', content: <ServiceCrud/>, icon:<FaServicestack /> },
+  { id: 'roles', label: 'Roles', content: <RoleCrud/>, icon:<FaPersonCircleExclamation /> },
+  { id: 'puesto', label: 'Puestos', content: <PuestoCrud/>, icon:<FaPersonChalkboard /> },
+  { id: 'docs', label: 'Tipos de documentos', content: <DocTypeCrud/>, icon:<FaIdCard /> },
+  { id: 'emplid', label: 'Empleados', content: <EmployeeCrud/>, icon:<FaPerson /> },
 ];
 
   return (

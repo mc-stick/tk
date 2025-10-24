@@ -1,6 +1,7 @@
-import { createContext, useState, useEffect, useContext } from 'react';
-import axios from 'axios';
-import * as jwt_decode from 'jwt-decode'; // ✅ Importación compatible con Vite
+// src/context/AuthContext.jsx
+import { createContext, useState, useEffect, useContext } from "react";
+import axios from "axios";
+import {jwtDecode} from "jwt-decode"; // ✅ Import correcto
 
 const AuthContext = createContext();
 
@@ -8,47 +9,62 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const token = localStorage.getItem('token');
+    const token = localStorage.getItem("token");
     if (token) {
       try {
-        const decoded = jwt_decode.jwtDecode(token); // ✅ usa jwtDecode
+        const decoded = jwtDecode(token);
         if (decoded.exp * 1000 > Date.now()) {
-          setUser({ username: decoded.username, role: decoded.role, token });
+          setUser({
+            username: decoded.username,
+            role: decoded.roles || decoded.role, // compatibilidad
+            token,
+          });
         } else {
-          localStorage.removeItem('token');
+          localStorage.removeItem("token");
         }
-      } catch {
-        localStorage.removeItem('token');
+      } catch (err) {
+        console.error("Error decodificando token:", err);
+        localStorage.removeItem("token");
       }
     }
   }, []);
 
+  // ✅ login que devuelve el resultado
   const login = async (username, password) => {
     try {
-      const res = await axios.post('http://localhost:4000/login', { username, password });
-      const { token } = res.data;
-
-      const decoded = jwt_decode.jwtDecode(token); // ✅ usa jwtDecode
-
-      localStorage.setItem('token', token);
-      setUser({
-        username: decoded.username,
-        role: decoded.role,
-        token,
+      const res = await axios.post("http://localhost:4001/api/employees/login", {
+        username,
+        password,
       });
 
-      return { success: true };
+      const { token } = res.data;
+
+      if (!token) throw new Error("No se recibió token");
+
+      const decoded = jwtDecode(token);
+      //console.log('decoded', decoded)
+
+      localStorage.setItem("token", token);
+      setUser({
+        username: decoded.username,
+        role: decoded.roles || decoded.role,
+        token,
+        employee_id: decoded.employee_id,
+        full_name: decoded.full_name
+      });
+
+      return { success: true, role: decoded.roles || decoded.role, is_active: decoded.is_active};
     } catch (error) {
-      console.error('Error al iniciar sesión:', error);
+      console.error("Error al iniciar sesión:", error);
       return {
         success: false,
-        message: error.response?.data?.message || 'Error al iniciar sesión',
+        message: error.response?.data?.message || "Error al iniciar sesión",
       };
     }
   };
 
   const logout = () => {
-    localStorage.removeItem('token');
+    localStorage.removeItem("token");
     setUser(null);
   };
 

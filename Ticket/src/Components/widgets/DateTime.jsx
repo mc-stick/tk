@@ -18,15 +18,16 @@ const DateTime = () => {
     <div style={styles.container}>
       {/* Logo */}
       <div style={styles.logo}>
-        <ImgCustoms src={ImgLogo}  width="30px" />
+        <ImgCustoms src={ImgLogo}  width="40px" />
         
-        <h2 className="Title_cn" style={{flexDirection:'column', marginLeft:'20px'}}>UCNE</h2>
+        <h4 className="text" style={{flexDirection:'column', marginLeft:'20px', fontSize:'2rem'}}>UCNE</h4>
         {/* <ImgCustoms src={ImgLogo} width="50px" /> */}
       </div>
 
       {/* Fecha y hora */}
       <div style={styles.datetime}>
         <h4 style={styles.text}>
+          
           {now.toLocaleTimeString()}
           <span style={{marginLeft:'40px'}}></span>
           {/* <hr style={{ margin: "5px 0", borderColor: "#fff" }} /> */}

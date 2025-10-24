@@ -24,7 +24,7 @@ import { FaArrowLeft, FaCheck, FaLeftLong, FaRightLong } from "react-icons/fa6";
 //   return <div>InputCard</div>;
 // };
 
-const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
+const FormattedInput = ({ tipo, setEstado, label, setVal, size }) => {
   
   const [valor, setValor] = useState('');
   const [validate, setValidate] = useState(true);
@@ -33,21 +33,21 @@ const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
     let limpio = valorBruto.replace(/\D/g, '');
 
     if (tipo === 'telefono') {
-      limpio=limpio.slice(0, lengt_str);
+      limpio=limpio.slice(0, size);
       // const match = limpio.match(/^(\d{0,3})(\d{0,3})(\d{0,4})$/);
       // if (!match) return limpio;
       // return [match[1], match[2], match[3]].filter(Boolean).join('-');
     }
 
     if (tipo === 'cedula') {
-      limpio=limpio.slice(0, lengt_str);
+      limpio=limpio.slice(0, size);
       // const match = limpio.match(/^(\d{0,3})(\d{0,7})(\d{0,1})$/);
       // if (!match) return limpio;
       // return [match[1], match[2], match[3]].filter(Boolean).join('-');
     }
 
     if (tipo === 'matricula') {
-      return limpio.slice(0, lengt_str);
+      return limpio.slice(0, size);
     }
 
     return limpio;
@@ -81,8 +81,8 @@ const FormattedInput = ({ tipo, setEstado, label, lengt_str, setVal }) => {
 
 
   const Submit =(x)=>{
-    console.log(x.toString().length, lengt_str)
-    if (x.toString().length == lengt_str) {
+    console.log(x.toString().length, size, x)
+    if (x.toString().length == size) {
     setVal(x);
     
     setValidate(true)

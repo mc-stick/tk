@@ -40,9 +40,9 @@ const AdminTable = ({ endpoint, fields, title }) => {
 
   return (
     <div style={{ marginBottom: 40 }}>
-      <h2>{title}</h2>
+      <h2>{title} OBSOLETO</h2>
 
-      <form onSubmit={handleSubmit}>
+      {/* <form onSubmit={handleSubmit}>
         {fields.map(field => (
           <input
             key={field}
@@ -55,7 +55,7 @@ const AdminTable = ({ endpoint, fields, title }) => {
           />
         ))}
 
-        {/* Solo mostrar campo de contraseña si es el endpoint de usuarios */}
+        
         {endpoint === 'users' && (
           <input
             name="password"
@@ -85,7 +85,7 @@ const AdminTable = ({ endpoint, fields, title }) => {
             </tr>
           ))}
         </tbody>
-      </table>
+      </table> */}
     </div>
   );
 };

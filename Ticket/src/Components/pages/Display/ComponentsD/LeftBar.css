@@ -46,6 +46,18 @@
   transition: background 0.3s ease, transform 0.2s;
   color: #ffffff;
 }
+.turno-itemFinal {
+  font-size: 2.5rem;
+  font-weight: bold;
+  background-color: #0068adad;
+  padding: 14px 18px;
+  border: 1px solid #ffffff;
+  border-radius: 8px;
+  transition: background 0.3s ease, transform 0.2s;
+  color: #ffffff;
+}
+
+
 
 /* .turno-item1:hover {
   background-color: #ffffff;
