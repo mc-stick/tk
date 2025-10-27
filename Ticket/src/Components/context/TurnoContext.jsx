@@ -6,7 +6,9 @@ const TurnoContext = createContext();
 export const TurnoProvider = ({ children }) => {
   const [cola, setCola] = useState([]);          // Tickets pendientes
   const [turnoActual, setTurnoActual] = useState(null); // Ticket en atención
+  const [totalatend, setTotalatend] = useState(null); // Ticket en atención
   const [loading, setLoading] = useState(true);
+  
 
   // 🔹 Traer todos los tickets y separar turnoActual y cola
   const fetchTickets = async () => {
@@ -15,14 +17,20 @@ export const TurnoProvider = ({ children }) => {
       const res = await axios.get("http://localhost:4001/api/tickets");
       const tickets = res.data || [];
 
+      //console.log('tickets',tickets)
+
       // Ticket en atención = status_name "Llamado"
       const actual = tickets.find(t => t.status_name === "Atendiendo") || null;
+      // const actual = tickets.filter(t => t.status_name === "Atendiendo");
+
       // Cola = tickets pendientes
       const pendientes = tickets.filter(t => t.status_name === "En espera");
+      const pendientess = tickets.filter(t => t.status_name === "Atendiendo");
 
       //console.log("actual",actual, "pendiente",pendientes);
       setTurnoActual(actual);
       setCola(pendientes);
+      setTotalatend(pendientess)
     } catch (error) {
       console.error("Error al obtener tickets:", error);
     } finally {
@@ -55,7 +63,7 @@ export const TurnoProvider = ({ children }) => {
   //   }
   // };
   const generarTurno = async ( tipo, val ) => {
-   // console.log('turno context', tipo, val);
+    console.log('turno context', tipo, val);
   try {
     const res = await axios.post("http://localhost:4001/api/tickets", {
       service_id:tipo,
@@ -99,13 +107,15 @@ export const TurnoProvider = ({ children }) => {
   };
 
   // 🔹 Llamar un ticket específico por ID
-  const llamarTurnoPorId = async (ticket_id, employee_id, new_status_id = 2) => {
+  const llamarTurnoPorId = async (ticket_id, employee_id, service_id, status_id) => {
+    console.log('llamar turno tcontx new',ticket_id,employee_id,status_id, service_id)
     try {
       await axios.put(
         `http://localhost:4001/api/tickets/${ticket_id}/status`,
         {
-          new_status_id,
+          status_id,
           employee_id,
+          service_id,
           comment: "Llamado por ID"
         }
       );
@@ -114,6 +124,8 @@ export const TurnoProvider = ({ children }) => {
       console.error("Error al llamar ticket por ID:", error);
     }
   };
+
+  //console.log('turno y cola', turnoActual,cola)
 
   return (
     <TurnoContext.Provider
@@ -124,6 +136,7 @@ export const TurnoProvider = ({ children }) => {
         llamarSiguiente,
         llamarTurnoPorId,
         loading,
+        totalatend,
       }}
     >
       {children}

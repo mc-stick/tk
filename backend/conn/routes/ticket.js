@@ -32,23 +32,24 @@ ORDER BY t.ticket_id DESC;
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const [rows] = await pool.query(`
-    SELECT 
-      t.ticket_id,
-      s.name AS service_name,
-      t.client_identifier,
-      ts.name AS status_name,
-      e.full_name AS assigned_employee,
-      sc.name AS counter_name,
-      t.created_at,
-      t.called_at,
-      t.completed_at,
-      t.notes
-    FROM tickets t
-    JOIN services s ON t.service_id = s.service_id
-    JOIN ticket_statuses ts ON t.status_id = ts.status_id
-    LEFT JOIN employees e ON t.assigned_employee_id = e.employee_id
-    LEFT JOIN puesto p ON t.puesto_id = p.id
-    WHERE t.ticket_id = ?;
+   SELECT 
+    t.ticket_id,
+    s.name AS service_name,
+    t.client_identifier,
+    ts.name AS status_name,
+    e.full_name AS assigned_employee,
+    p.nombre AS puesto_name,      -- renamed alias here
+    t.created_at,
+    t.called_at,
+    t.completed_at,
+    t.notes
+FROM tickets t
+JOIN services s ON t.service_id = s.service_id
+JOIN ticket_statuses ts ON t.status_id = ts.status_id
+LEFT JOIN employees e ON t.assigned_employee_id = e.employee_id
+LEFT JOIN puesto p ON t.puesto_id = p.id
+WHERE t.ticket_id = ?;
+
   `, [id]);
   res.json(rows[0] || null);
 });
@@ -93,7 +94,7 @@ router.post('/', async (req, res) => {
     );
 
     // El procedimiento devuelve {"ticket_id": X}
-    res.json(rows[0][0]);
+    res.json(rows[0]);
   } catch (error) {
     console.error('Error al crear ticket:', error);
     res.status(500).json({ error: 'Error al crear el ticket' });
@@ -104,11 +105,12 @@ router.post('/', async (req, res) => {
 // Actualizar estado del ticket
 router.put('/:id/status', async (req, res) => {
   const { id } = req.params;
-  const { new_status_id, employee_id, comment } = req.body;
-  await pool.query('CALL sp_update_ticket_status(?, ?, ?, ?)', [
-    id, new_status_id, employee_id, comment
+  const { status_id, employee_id, service_id, notes="actualizar" } = req.body;
+  console.log(id,status_id, employee_id,service_id, notes," updated ticket")
+  await pool.query('CALL sp_update_ticket_status_full(?, ?, ?, ?, ?)', [
+    id, status_id, employee_id, service_id, notes
   ]);
-  res.json({ message: 'Estado del ticket actualizado' });
+  res.json({ message: `Estado del ticket ${id} actualizado a ${status_id}, ${employee_id}, ${ notes}` });
 });
 
 // Eliminar ticket

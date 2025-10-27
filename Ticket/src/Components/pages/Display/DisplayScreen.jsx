@@ -7,13 +7,14 @@ import ImgCustoms from "../../widgets/ImgCustoms.jsx";
 import LeftBar from "./ComponentsD/LeftBar.jsx";
 
 const DisplayScreen = () => {
-  const { turnoActual, cola } = useTurno();
+  const { turnoActual, cola, totalatend } = useTurno();
   const [imagenes, setImagenes] = useState([]);
   const [actual, setActual] = useState(0);
   const intervalRef = useRef(null);
   const [usuarioLlamado, setUsuarioLlamado] = useState(null);
 
   const API_URL = "http://localhost:4001/api/img"; // Ajusta según tu backend
+  //console.log(turnoActual, cola,"desde display screen")
 
   // Función para traer imágenes desde la DB
   const fetchImagenes = async () => {
@@ -44,9 +45,9 @@ const DisplayScreen = () => {
   useEffect(() => {
     fetchImagenes(); // Carga inicial
 
-    window.addEventListener("nuevoTurnoLlamado", (e) => {
-      setUsuarioLlamado(e.detail.user);
-    });
+    // window.addEventListener("nuevoTurnoLlamado", (e) => {
+    //   setUsuarioLlamado(e.detail.user);
+    // });
 
     window.addEventListener("finalizarUltimoTurno", () => {
       window.location.reload();
@@ -88,7 +89,7 @@ const DisplayScreen = () => {
   return (
     <div className="pantalla-layout">
       <DateTime />
-      <LeftBar data={{ turnoActual, cola, DateTime, ImgCustoms }} />
+      <LeftBar data={{ turnoActual, cola, DateTime, ImgCustoms, totalatend }} />
 
       <div className="imagen-panel">
         {imagenes.length > 0 ? (

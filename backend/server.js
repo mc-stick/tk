@@ -9,6 +9,7 @@ import docRoutes from './conn/routes/Identify.js';
 import ticketRoutes from './conn/routes/ticket.js';
 import puestoRoutes from './conn/routes/puesto.js';
 import views from './conn/routes/views.js';
+import msgtw from './conn/twilio/apiTwi.js';
 import dotenv from 'dotenv';
 
 const app = express();
@@ -27,5 +28,7 @@ app.use('/api/docs', docRoutes);
 app.use('/api/tickets', ticketRoutes);
 app.use('/api/puesto', puestoRoutes);
 app.use('/api/views', views);
+
+app.use('/api/msg', msgtw); //msg
 
 app.listen(PORT, () => console.log(`Servidor corriendo en http://localhost:${PORT}`));

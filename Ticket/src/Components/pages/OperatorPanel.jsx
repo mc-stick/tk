@@ -23,10 +23,10 @@ const OperatorPanel = () => {
     const siguiente = await llamarSiguiente(puesto);
 
     if (siguiente) {
-      console.log("Siguiente turno llamado:", siguiente);
+      //console.log("Siguiente turno llamado:", siguiente);
       setShowBTNFIN(true);
     } else {
-      console.warn("No hay turnos pendientes en la cola.");
+      //console.warn("No hay turnos pendientes en la cola.");
       setShowBTNFIN(false);
     }
   };
@@ -34,12 +34,14 @@ const OperatorPanel = () => {
   /////////////////////////////////////////////////
   // 🔹 Llamar ticket específico (manual)
   const handleLlamarTurnoManual = async (turno) => {
-    
-    const puesto = user?.full_name || "#1";
+    console.log('tueno',turno)
+    const puesto = user?.puesto_id;
+    //console.log('user',user)
+
    
     try {
-      await llamarTurnoPorId(turno.ticket_id, puesto);
-      console.log("Turno llamado manualmente:", turno.ticket_id);
+      await llamarTurnoPorId(turno.ticket_id, puesto, turno.assigned_employee, turno.status_id);
+      //console.log("Turno llamado manualmente:", turno.ticket_id, puesto, turno.assigned_employee);
       setShowBTNFIN(true);
     } catch (error) {
       console.error("Error al llamar turno manualmente:", error);

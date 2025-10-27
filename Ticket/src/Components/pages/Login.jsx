@@ -19,6 +19,7 @@ const Login = ({ role }) => {
 
     if (res.success && res.is_active) {
       const userRole = res.role;
+      //console.log(res)
 
       if (role === "admin" && userRole.includes("admin") ) {
         navigate("/administrador");

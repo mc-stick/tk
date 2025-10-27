@@ -116,7 +116,7 @@ export default function EditProfile({ employeeId }) {
             name="username"
             value={form.username}
             onChange={handleChange}
-            disabled={loading}
+            disabled
             required
             style={{
               width: "100%",

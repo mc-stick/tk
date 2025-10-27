@@ -16,7 +16,7 @@ const LeftBar = ({ data }) => {
 
   if (data.turnoActual) {
     turnosTotales.push(data.turnoActual);
-    turnosTotales[0].map((t) => atender.push(t));
+    turnosTotales.map((t) => atender.push(t));
   }
 
   if (data.cola && data.cola.length > 0) {
@@ -24,13 +24,17 @@ const LeftBar = ({ data }) => {
   }
 
   // Filtrar los turnos a mostrar
-  const turnosVisibles = atender.filter(
-    (t) => t.estado === "atendiendo" && t.isactive
+  const turnosVisibles = data.totalatend.filter(
+    (t) => t.status_name === "Atendiendo"
   );
+
+  console.log(data.cola,"visibles", turnosVisibles )
 
   useEffect(() => {
     const prevIds = prevTurnosRef.current.map((t) => t.id);
     const nuevosTurnos = turnosVisibles.filter((t) => !prevIds.includes(t.id));
+
+    //console.log("alertas",prevIds, nuevosTurnos, turnosVisibles)
 
     if (nuevosTurnos.length > 0) {
       const nuevoTurno = nuevosTurnos[0]; // Solo el primero nuevo
@@ -51,12 +55,14 @@ const LeftBar = ({ data }) => {
 
       prevTurnosRef.current = turnosVisibles;
     }
+    
   }, [turnosVisibles]);
+
 
   return (
     <>
       {/* 📌 Elemento de audio oculto */}
-      <audio ref={audioRef} src={logo} preload="auto" /> {/* 👉 AÑADIDO */}
+      
 
       {turnosVisibles.length > 0 && (
         <div className="turno-panels1">
@@ -66,13 +72,13 @@ const LeftBar = ({ data }) => {
           <ul className="turno-lista-scroll1">
             {turnosVisibles.slice(0, 10).map((t, i) => (
               <li
-                key={t.id ?? i}
+                key={t.ticket_id ?? i}
                 className={`turno-item1 ${
-                  t.id === ultimoAnimado && mostrarAnimacion ? "alerta" : ""
+                  t.ticket_id === ultimoAnimado && mostrarAnimacion ? "alerta" : ""
                 }`}
-              >
+              ><audio ref={audioRef} src={logo} preload="auto" /> {/* 👉 AÑADIDO */}
                 {/* <FaBell color="orange" size={42} /> */}
-                {t.puesto ? `${t.numero} - Puesto ${t.puesto}` : "En espera."}
+                {t.ticket_id ? `${t.ticket_id} - Puesto ${t.puesto_name}` : "En espera."}
               </li>
             ))}
           </ul>

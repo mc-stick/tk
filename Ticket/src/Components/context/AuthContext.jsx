@@ -1,7 +1,7 @@
 // src/context/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
-import {jwtDecode} from "jwt-decode"; // ✅ Import correcto
+import { jwtDecode } from "jwt-decode"; // ✅ Import correcto
 
 const AuthContext = createContext();
 
@@ -13,11 +13,15 @@ export const AuthProvider = ({ children }) => {
     if (token) {
       try {
         const decoded = jwtDecode(token);
+        //console.log(decoded,"decodes")
         if (decoded.exp * 1000 > Date.now()) {
           setUser({
             username: decoded.username,
             role: decoded.roles || decoded.role, // compatibilidad
             token,
+            puesto_id: decoded.puesto_id,
+            puesto_name: decoded.puesto_name,
+            employee_id: decoded.employee_id,
           });
         } else {
           localStorage.removeItem("token");
@@ -32,10 +36,13 @@ export const AuthProvider = ({ children }) => {
   // ✅ login que devuelve el resultado
   const login = async (username, password) => {
     try {
-      const res = await axios.post("http://localhost:4001/api/employees/login", {
-        username,
-        password,
-      });
+      const res = await axios.post(
+        "http://localhost:4001/api/employees/login",
+        {
+          username,
+          password,
+        }
+      );
 
       const { token } = res.data;
 
@@ -50,10 +57,16 @@ export const AuthProvider = ({ children }) => {
         role: decoded.roles || decoded.role,
         token,
         employee_id: decoded.employee_id,
-        full_name: decoded.full_name
+        full_name: decoded.full_name,
+        puesto_id: decoded.puesto_id,
+        puesto_name: decoded.puesto_name,
       });
 
-      return { success: true, role: decoded.roles || decoded.role, is_active: decoded.is_active};
+      return {
+        success: true,
+        role: decoded.roles || decoded.role,
+        is_active: decoded.is_active,
+      };
     } catch (error) {
       console.error("Error al iniciar sesión:", error);
       return {

@@ -77,12 +77,16 @@ router.post('/login', async (req, res) => {
   try {
     // Obtener empleado y password_hash y roles
     const [rows] = await pool.query(`
-      SELECT e.*, GROUP_CONCAT(r.name SEPARATOR ', ') AS roles
-      FROM employees e
-      LEFT JOIN employee_roles er ON e.employee_id = er.employee_id
-      LEFT JOIN roles r ON er.role_id = r.role_id
-      WHERE e.username = ?
-      GROUP BY e.employee_id
+      SELECT 
+    e.*,
+    p.nombre AS puesto_name,           
+    GROUP_CONCAT(r.name SEPARATOR ', ') AS roles
+FROM employees e
+LEFT JOIN puesto p ON e.puesto_id = p.id 
+LEFT JOIN employee_roles er ON e.employee_id = er.employee_id
+LEFT JOIN roles r ON er.role_id = r.role_id
+WHERE e.username = ?
+GROUP BY e.employee_id;
     `, [username]);
 
     if (rows.length === 0) {
@@ -98,14 +102,26 @@ router.post('/login', async (req, res) => {
       return res.status(401).json({ message: 'Usuario o contraseña incorrecta.' });
     }
 
+
+    
+
     // Crear payload para JWT
+    //console.log(user,"user from employee")
     const payload = {
       employee_id: user.employee_id,
       username: user.username,
       is_active: user.is_active,
       full_name: user.full_name,
-      roles: user.roles, // string con roles separados por coma
+      roles: user.roles,// string con roles separados por coma
+      puesto_id: user.puesto_id, 
+      puesto_name: user.puesto_name, 
     };
+
+   
+      if (user.puesto_id === 1 && user.roles !=='admin') {
+        console.log('user', user.puesto_id, user.roles )
+        return res.status(401).json({ message: 'No tienes un puesto asignado.' })
+      }
 
     // Generar token (1h expiracion)
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });

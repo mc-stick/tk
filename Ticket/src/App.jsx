@@ -13,6 +13,7 @@ import AddUserForm from "./Components/add/addUser";
 import AdminPanel from "./Components/pages/AdminPages/AdminPanel";
 
 import './index.css'
+import Twilio_app from "./Components/twilio/twiApi";
 
 function App() {
   return (
@@ -22,6 +23,7 @@ function App() {
           <Routes>
             <Route path="*" element={<Home/>} />
             <Route path="/" element={<Home />} />
+            <Route path="/twilio" element={<Twilio_app />} />
             <Route path="/cliente" element={<TicketGenerator />} />
             <Route path="/pantalla" element={<DisplayScreen />} />
             <Route path="/addUser" element={<AddUserForm />} />
