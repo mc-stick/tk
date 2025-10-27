@@ -9,7 +9,7 @@ router.post('/', async (req, res) => {
   console.log(msg,from,to)
   try {
     console.log(msg,from,to)
-    //const result = await createMessage(msg,from,to);
+    const result = await createMessage(msg,from,to);
     res.json({ success: true, result });
   } catch (error) {
     console.error(error);
