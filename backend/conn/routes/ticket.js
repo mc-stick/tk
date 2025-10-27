@@ -54,14 +54,52 @@ router.get('/:id', async (req, res) => {
 });
 
 
+// // Crear ticket
+// router.post('/', async (req, res) => {
+//   const { service_id, client_identifier, status_id, assigned_employee_id, counter_id, notes } = req.body;
+//   const [rows] = await pool.query('CALL sp_add_ticket(?, ?, ?, ?, ?, ?)', [
+//     service_id, client_identifier, status_id, assigned_employee_id, counter_id, notes
+//   ]);
+//   res.json({ message: 'Ticket creado', data: rows[0][0] });
+// });
+
 // Crear ticket
 router.post('/', async (req, res) => {
-  const { service_id, client_identifier, status_id, assigned_employee_id, counter_id, notes } = req.body;
-  const [rows] = await pool.query('CALL sp_add_ticket(?, ?, ?, ?, ?, ?)', [
-    service_id, client_identifier, status_id, assigned_employee_id, counter_id, notes
-  ]);
-  res.json({ message: 'Ticket creado', data: rows[0][0] });
+  try {
+    const {
+      service_id,
+      client_identifier,
+      status_id,
+      assigned_employee_id,
+      puesto_id,
+      called_at,
+      completed_at,
+      notes
+    } = req.body;
+
+    // Llamada al nuevo procedimiento insert_ticket
+    const [rows] = await pool.query(
+      'CALL insert_ticket(?, ?, ?, ?, ?, ?, ?, ?)',
+      [
+        service_id,
+        client_identifier,
+        status_id,
+        assigned_employee_id,
+        puesto_id,
+        called_at || null,
+        completed_at || null,
+        notes || null
+      ]
+    );
+
+    // El procedimiento devuelve {"ticket_id": X}
+    res.json(rows[0][0]);
+  } catch (error) {
+    console.error('Error al crear ticket:', error);
+    res.status(500).json({ error: 'Error al crear el ticket' });
+  }
 });
+
 
 // Actualizar estado del ticket
 router.put('/:id/status', async (req, res) => {

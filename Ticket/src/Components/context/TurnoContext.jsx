@@ -16,10 +16,11 @@ export const TurnoProvider = ({ children }) => {
       const tickets = res.data || [];
 
       // Ticket en atención = status_name "Llamado"
-      const actual = tickets.find(t => t.status_name === "Llamado") || null;
+      const actual = tickets.find(t => t.status_name === "Atendiendo") || null;
       // Cola = tickets pendientes
-      const pendientes = tickets.filter(t => t.status_name === "Pendiente");
+      const pendientes = tickets.filter(t => t.status_name === "En espera");
 
+      //console.log("actual",actual, "pendiente",pendientes);
       setTurnoActual(actual);
       setCola(pendientes);
     } catch (error) {
@@ -36,23 +37,44 @@ export const TurnoProvider = ({ children }) => {
   }, []);
 
   // 🔹 Crear ticket nuevo
-  const generarTurno = async ({ service_id, client_identifier }) => {
-    try {
-      const res = await axios.post("http://localhost:4001/api/tickets", {
-        service_id,
-        client_identifier,
-        status_id: 1, // Pendiente
-        assigned_employee_id: null,
-        counter_id: null,
-        notes: ""
-      });
-      await fetchTickets();
-      return res.data.data || null;
-    } catch (error) {
-      console.error("Error al generar ticket:", error);
-      return null;
-    }
-  };
+  // const generarTurno = async ({ service_id, client_identifier }) => {
+  //   try {
+  //     const res = await axios.post("http://localhost:4001/api/tickets", {
+  //       service_id,
+  //       client_identifier,
+  //       status_id: 1, // Pendiente
+  //       assigned_employee_id: null,
+  //       counter_id: null,
+  //       notes: ""
+  //     });
+  //     await fetchTickets();
+  //     return res.data.data || null;
+  //   } catch (error) {
+  //     console.error("Error al generar ticket:", error);
+  //     return null;
+  //   }
+  // };
+  const generarTurno = async ( tipo, val ) => {
+   // console.log('turno context', tipo, val);
+  try {
+    const res = await axios.post("http://localhost:4001/api/tickets", {
+      service_id:tipo,
+      client_identifier:val,
+      status_id: 1,              // Pendiente
+      assigned_employee_id: null,
+      puesto_id:null,                 // ✅ reemplaza counter_id
+      called_at: null,           // ✅ nuevo campo
+      completed_at: null,        // ✅ nuevo campo
+      notes: ""
+    });
+    await fetchTickets();
+    return res.data || null;
+  } catch (error) {
+    console.error("Error al generar ticket:", error);
+    return null;
+  }
+};
+
 
   // 🔹 Llamar siguiente ticket (primer pendiente) y actualizar estado usando procedure
   const llamarSiguiente = async (employee_id) => {

@@ -10,27 +10,35 @@ const OpListEspera = ({ data, onLlamarTurno, btn, user }) => {
 
   // Construir lista de turnos
 
+ // console.log(data);
   const turnosTotales = [];
   const atender = [];
 
   if (data.turnoActual) {
     turnosTotales.push(data.turnoActual);
-    turnosTotales[0].map((t) => atender.push(t));
+    turnosTotales.map((t) => atender.push(t));
   }
 
   if (data.cola && data.cola.length > 0) {
+    // console.log(data.cola);
+    if (data.cola.status_name !="En espera")
     turnosTotales.push(...data.cola);
   }
+  //console.log(turnosTotales);
 
   // Filtrar los turnos a mostrar
   const turnosVisibles = atender.filter(
     (t) =>
-      t.estado === "atendiendo" && t.isactive && t.puesto === data.user.username
+      //console.log(t.status_name, t.assigned_employee, data.user.full_name, atender, turnosTotales)
+      t.status_name === "Atendiendo" &&  t.assigned_employee === data.user.full_name
   );
+
+  // console.log(atender);
+  
 
   // Filtrar solo turnos con estado "espera"
   const turnosEnEspera = turnosTotales.filter(
-    (t) => t.estado === "espera" && t.isactive === 1
+    (t) => t.status_name === "En espera"
   );
 
   useEffect(() => {
@@ -54,9 +62,13 @@ const OpListEspera = ({ data, onLlamarTurno, btn, user }) => {
     }
   };
 
+ console.log(atender, turnosVisibles);
+//turnosTotales.map((t, i) => (console.log(t)))
+
   return (
     <>
       {turnosVisibles.length > 0 && turnosEnEspera.length == 0 && (
+        <>
         <ul className="turno-lista-scroll1">
           {/* <p> {btn}</p> */}
           <span>Cuando finalice el turno presiona el boton <strong>"ATENDIDO"</strong> .</span>
@@ -75,8 +87,8 @@ const OpListEspera = ({ data, onLlamarTurno, btn, user }) => {
                 }}>
                 <span>
                   {/* <FaExclamation color="red" size={42} style={{ marginRight: "6px" }} /> */}
-                  {t.puesto
-                    ? ` #${t.id} - (${t.tipo})`
+                  {t.ticket_id
+                    ? ` #${t.ticket_id} - (${t.service_name}) `
                     : `#${t.id} - ${t.tipo}`}
                 </span>
                 <button className="btn-llamar" onClick={() => handleLlamar(t)}>
@@ -86,11 +98,14 @@ const OpListEspera = ({ data, onLlamarTurno, btn, user }) => {
             </li>
           ))}
         </ul>
+        <hr />
+        </>
       )}
+      
       {turnosEnEspera.length > 0 ? (
         <ul className="turno-lista-scroll1">
           {/* <p> {btn}</p> */}
-
+        <span>Turnos<strong> en espera</strong> .</span>
           {turnosEnEspera.map((t, i) => (
             <li
               key={t.id ?? i}
@@ -106,8 +121,8 @@ const OpListEspera = ({ data, onLlamarTurno, btn, user }) => {
                 }}>
                 <span>
                   {/* <FaBell color="orange" size={18} style={{ marginRight: "6px" }} /> */}
-                  {t.puesto
-                    ? ` #${t.id} - (${t.tipo})`
+                  {t.ticket_id
+                    ? ` #${t.ticket_id} - (${t.service_name})`
                     : `#${t.id} - ${t.tipo}`}
                 </span>
                 <button className="btn-llamar" onClick={() => handleLlamar(t)}>
@@ -119,7 +134,7 @@ const OpListEspera = ({ data, onLlamarTurno, btn, user }) => {
           ))}
         </ul>
       ) : (
-        <> <hr />
+        <> 
           
          
           <span><strong>No hay turnos en espera.</strong></span>

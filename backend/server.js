@@ -16,7 +16,7 @@ app.use(cors());
 app.use(express.json());
 dotenv.config();
 
-const PORT = process.env.PORT || 4000;
+const PORT = process.env.PORT || 4001;
 
 // Rutas API
 app.use('/api/services', serviceRoutes);

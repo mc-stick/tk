@@ -16,28 +16,40 @@ const OperatorPanel = () => {
   const [showBTNFIN, setShowBTNFIN] = useState(false);
 
   /////////////////////////////////////////////////
-  const handleLlamarSiguiente = () => {
-    //llamarSiguiente(("#1"));   //ESTE ES SOLO PARA PRUEBAS.....
-    llamarSiguiente(user?.username || "#1"); // USAR ESTE......
-
-    cola.length > 0 ? setShowBTNFIN(true) : setShowBTNFIN(false);
-  };
-
-  const handleLlamarTurnoManual = async (turnoId) => {
-    // const turnoId = 42; // o lo que selecciones desde un input
-    // console.log(x.tipo)
-
+  // 🔹 Llamar siguiente ticket desde la cola
+  const handleLlamarSiguiente = async () => {
     const puesto = user?.username || "#1";
-    const resultado = await llamarTurnoPorId(turnoId.id, puesto);
 
-    if (resultado) {
-      console.log("Turno llamado manualmente:", resultado);
+    const siguiente = await llamarSiguiente(puesto);
+
+    if (siguiente) {
+      console.log("Siguiente turno llamado:", siguiente);
+      setShowBTNFIN(true);
     } else {
-      console.warn("No se pudo llamar el turno.");
+      console.warn("No hay turnos pendientes en la cola.");
+      setShowBTNFIN(false);
     }
   };
 
-  //TABS ///////////////////////////////////////////
+  /////////////////////////////////////////////////
+  // 🔹 Llamar ticket específico (manual)
+  const handleLlamarTurnoManual = async (turno) => {
+    
+    const puesto = user?.full_name || "#1";
+   
+    try {
+      await llamarTurnoPorId(turno.ticket_id, puesto);
+      console.log("Turno llamado manualmente:", turno.ticket_id);
+      setShowBTNFIN(true);
+    } catch (error) {
+      console.error("Error al llamar turno manualmente:", error);
+    }
+  };
+
+  //console.log(turnoActual, cola, user);
+
+  /////////////////////////////////////////////////
+  // 🔹 Tabs del panel
   const tabs = [
     {
       id: "next",
@@ -45,11 +57,7 @@ const OperatorPanel = () => {
       content: (
         <OpListEspera
           data={{ turnoActual, cola, user }}
-          onLlamarTurno={(turno) => {
-            console.log("Turno seleccionado para llamar:", turno);
-            // Podés hacer una llamada API personalizada aquí, por ejemplo:
-            handleLlamarTurnoManual(turno);
-          }}
+          onLlamarTurno={handleLlamarTurnoManual}
           btn={
             <OpTurnoManager
               data={{ turnoActual, cola, showBTNFIN, handleLlamarSiguiente }}
@@ -65,12 +73,13 @@ const OperatorPanel = () => {
     },
   ];
 
+  /////////////////////////////////////////////////
   return (
     <div className="operator-container">
       <TopMenu />
       <br />
       <TabsNavigation
-        style={{ paddingTop: "3rem", margingTop: "3rem" }}
+        style={{ paddingTop: "3rem", marginTop: "3rem" }}
         tabs={tabs}
       />
     </div>

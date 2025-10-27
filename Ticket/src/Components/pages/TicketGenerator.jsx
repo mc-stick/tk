@@ -59,7 +59,9 @@ const TicketGenerator = () => {
   };
 
   const seleccionarServicio = (tipo) => {
-    const nuevo = generarTurno(tipo);
+    // console.log("numero tipo",tipo, val);
+    const nuevo = generarTurno(tipo, val);
+    
     setTurno(nuevo);
     setEstado("confirmado");
   };
@@ -86,6 +88,8 @@ const TicketGenerator = () => {
         return <FcBusinessContact />;
     }
   };
+
+  // console.log("turnooo",turno);
 
   return (
     <div className="cliente-container input-page-container_index">
@@ -137,7 +141,7 @@ const TicketGenerator = () => {
                 key={service_id}
                 icon={iconoServicio(name)}
                 label={name}
-                onClick={() => seleccionarServicio(name)}
+                onClick={() => seleccionarServicio(service_id)}
               />
             ))}
           </div>
