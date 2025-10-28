@@ -25,6 +25,7 @@ LEFT JOIN puesto p ON t.puesto_id = p.id
 ORDER BY t.ticket_id DESC;
 
   `);
+  //console.log(res.json(rows))
   res.json(rows);
 });
 

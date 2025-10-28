@@ -1,24 +1,24 @@
 import React, { useEffect, useState } from "react";
-import './Crud.css'
+import './Crud.css';
+import { FaCircleXmark, FaPen } from "react-icons/fa6";
 
 const API_URL = "http://localhost:4001/api/docs";
 
 export default function DocTypeCrud() {
-  const [docs, setdocs] = useState([]);
-  const [form, setForm] = useState({ name: "", description: "", size:"" });
+  const [docs, setDocs] = useState([]);
+  const [form, setForm] = useState({ name: "", description: "", size: "" });
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Obtener docs
-  const fetchdocs = async () => {
+  const fetchDocs = async () => {
     setLoading(true);
     setError(null);
     try {
       const res = await fetch(API_URL);
       if (!res.ok) throw new Error("Error al cargar documentos");
       const data = await res.json();
-      setdocs(data);
+      setDocs(data);
     } catch (err) {
       setError(err.message);
     } finally {
@@ -27,19 +27,14 @@ export default function DocTypeCrud() {
   };
 
   useEffect(() => {
-    fetchdocs();
+    fetchDocs();
   }, []);
 
-  // Manejar inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Crear o actualizar documento
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
@@ -50,7 +45,6 @@ export default function DocTypeCrud() {
     setError(null);
     try {
       if (editingId) {
-        // Update
         const res = await fetch(`${API_URL}/${editingId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -58,7 +52,6 @@ export default function DocTypeCrud() {
         });
         if (!res.ok) throw new Error("Error al actualizar documento");
       } else {
-        // Create
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -66,9 +59,9 @@ export default function DocTypeCrud() {
         });
         if (!res.ok) throw new Error("Error al crear documento");
       }
-      setForm({ name: "", description: "", size:"" });
+      setForm({ name: "", description: "", size: "" });
       setEditingId(null);
-      fetchdocs();
+      fetchDocs();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -76,24 +69,20 @@ export default function DocTypeCrud() {
     }
   };
 
-  // Editar documento
   const handleEdit = (doc) => {
-    setForm({ name: doc.name, description: doc.description || "" , size: doc.size || ""});
+    setForm({ name: doc.name, description: doc.description || "", size: doc.size || "" });
     setEditingId(doc.document_type_id);
     setError(null);
   };
 
-  // Eliminar documento
   const handleDelete = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este documento?")) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-      });
-      if (!res.ok) throw new Error("Error al eliminar");
-      fetchdocs();
+      const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
+      if (!res.ok) throw new Error("Error al eliminar documento");
+      fetchDocs();
     } catch (err) {
       setError(err.message);
     } finally {
@@ -101,90 +90,76 @@ export default function DocTypeCrud() {
     }
   };
 
-  console.log(docs)
-
   return (
-    <div style={{ maxWidth: 600, margin: "20px auto", fontFamily: "Arial, sans-serif" }}>
+    <div className="crud-container">
       <h2>{editingId ? "Editar tipo de documento" : "Agregar tipo de documento"}</h2>
-      {error && (
-        <p style={{ color: "red", fontWeight: "bold", marginBottom: 10 }}>{error}</p>
-      )}
+      {error && <p className="error-msg">{error}</p>}
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="name" style={{ fontWeight: 600 }}>
-            Tipo de documento:
-          </label>
-          <input className="textBox"
+      <form onSubmit={handleSubmit} className="crud-form">
+        <div className="form-group">
+          <label htmlFor="name">Tipo de documento:</label>
+          <input
             id="name"
             name="name"
             value={form.name}
             onChange={handleChange}
             required
             disabled={loading}
-           
+            className="textBox"
           />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="description" style={{ fontWeight: 600 }}>
-            Descripción:
-          </label>
-          <input className="textBox"
+        <div className="form-group">
+          <label htmlFor="description">Descripción:</label>
+          <input
             id="description"
             name="description"
             value={form.description}
             onChange={handleChange}
             disabled={loading}
-           
+            className="textBox"
           />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="size" style={{ fontWeight: 600 }}>
-            Tamaño:
-          </label>
-          <input className="textBox"
+        <div className="form-group">
+          <label htmlFor="size">Tamaño:</label>
+          <input
             id="size"
             name="size"
             value={form.size}
             onChange={handleChange}
             disabled={loading}
-           
+            className="textBox"
           />
         </div>
-      <div >
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn"
-        >
-          {editingId ? "Actualizar" : "Crear"}
-        </button>
 
-        {editingId && (
-          <button className="delete-btn btn"
-            type="button"
-            onClick={() => {
-              setEditingId(null);
-              setForm({ doc: "", description: "" });
-              setError(null);
-            }}
-            disabled={loading}
-           
-          >
-            Cancelar
+        <div className="form-buttons">
+          <button type="submit" className="btn submit-btn" disabled={loading}>
+            {editingId ? "Actualizar" : "Crear"}
           </button>
-        )}</div>
+
+          {editingId && (
+            <button
+              type="button"
+              className="btn cancel-btn"
+              onClick={() => {
+                setEditingId(null);
+                setForm({ name: "", description: "", size: "" });
+                setError(null);
+              }}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
 
       <h3>Lista de Tipos de documentos</h3>
-      {loading && <p>Cargando documentos...</p>}
-      {!loading && docs.length === 0 && <p>No hay tipos de documentos registrados.</p>}
+      {loading && <p className="info-msg">Cargando documentos...</p>}
+      {!loading && docs.length === 0 && <p className="info-msg">No hay tipos de documentos registrados.</p>}
 
-      <table
-        
-      >
+      <table className="crud-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -201,20 +176,12 @@ export default function DocTypeCrud() {
               <td>{doc.name}</td>
               <td>{doc.description}</td>
               <td>{doc.size}</td>
-              <td className="flex">
-                <button className="edit-btn"
-                  onClick={() => handleEdit(doc)}
-                  disabled={loading}
-                  
-                >
-                  Editar
+              <td className="action-buttons">
+                <button className="edit-btn" onClick={() => handleEdit(doc)} disabled={loading}>
+                 <FaPen/> Editar
                 </button>
-                <button className="delete-btn"
-                  onClick={() => handleDelete(doc.document_type_id)}
-                  disabled={loading}
-                 
-                >
-                  Eliminar
+                <button className="delete-btn" onClick={() => handleDelete(doc.document_type_id)} disabled={loading}>
+                <FaCircleXmark/> Eliminar
                 </button>
               </td>
             </tr>

@@ -1,106 +1,59 @@
 import React, { useEffect, useState, useRef } from "react";
 import "./LeftBar.css";
-import { FaBell } from "react-icons/fa6";
-import logo from "../../../../assets/sound/dingdong.mp3"
+import dingSound from "../../../../assets/sound/dingdong.mp3";
 
 const LeftBar = ({ data }) => {
-  const [ultimoAnimado, setUltimoAnimado] = useState(null);
-  const [mostrarAnimacion, setMostrarAnimacion] = useState(false);
+  const [nuevoTurno, setNuevoTurno] = useState(null);
   const prevTurnosRef = useRef([]);
+  const audioRef = useRef(null);
 
-  // 📌 Referencia al audio
-  const audioRef = useRef(null); // 👉 AÑADIDO
+  // Obtener turnos actualmente "Atendiendo"
+  const turnosVisibles = data?.totalatend?.filter((t) => t.status_name === "Atendiendo") || [];
 
-  const turnosTotales = [];
-  const atender = [];
-
-  if (data.turnoActual) {
-    turnosTotales.push(data.turnoActual);
-    turnosTotales.map((t) => atender.push(t));
-  }
-
-  if (data.cola && data.cola.length > 0) {
-    turnosTotales.push(...data.cola);
-  }
-
-  // Filtrar los turnos a mostrar
-  const turnosVisibles = data.totalatend.filter(
-    (t) => t.status_name === "Atendiendo"
-  );
-
-  console.log(data.cola,"visibles", turnosVisibles )
-
+  // Detectar nuevo turno
   useEffect(() => {
     const prevIds = prevTurnosRef.current.map((t) => t.id);
-    const nuevosTurnos = turnosVisibles.filter((t) => !prevIds.includes(t.id));
+    const nuevos = turnosVisibles.filter((t) => !prevIds.includes(t.id));
 
-    //console.log("alertas",prevIds, nuevosTurnos, turnosVisibles)
+    if (nuevos.length > 0) {
+      const turno = nuevos[0];
+      setNuevoTurno(turno.id);
 
-    if (nuevosTurnos.length > 0) {
-      const nuevoTurno = nuevosTurnos[0]; // Solo el primero nuevo
-      if (nuevoTurno) {
-        setUltimoAnimado(nuevoTurno.id);
-        setMostrarAnimacion(true);
-
-        // 📌 Reproducir sonido si hay animación
-        if (audioRef.current) {
-          audioRef.current.currentTime = 0; // Reiniciar audio
-          audioRef.current
-            .play()
-            .catch((err) => console.error("Error al reproducir audio:", err));
-        }
-
-        setTimeout(() => setMostrarAnimacion(false), 3000);
+      // reproducir sonido
+      if (audioRef.current) {
+        audioRef.current.currentTime = 0;
+        audioRef.current
+          .play()
+          .catch((err) => console.warn("No se pudo reproducir audio:", err));
       }
 
-      prevTurnosRef.current = turnosVisibles;
+      // quitar animación luego de 3s
+      setTimeout(() => setNuevoTurno(null), 3000);
     }
-    
+
+    prevTurnosRef.current = turnosVisibles;
   }, [turnosVisibles]);
 
+  if (turnosVisibles.length === 0) return null;
 
   return (
-    <>
-      {/* 📌 Elemento de audio oculto */}
-      
+    <div className="leftbar-container">
+      <audio ref={audioRef} src={dingSound} preload="auto" />
+      <h2 className="leftbar-title"> ATENDIENDO</h2>
 
-      {turnosVisibles.length > 0 && (
-        <div className="turno-panels1">
-          <br />
-          <h1 className="turno-title1">ATENDIENDO</h1>
-
-          <ul className="turno-lista-scroll1">
-            {turnosVisibles.slice(0, 10).map((t, i) => (
-              <li
-                key={t.ticket_id ?? i}
-                className={`turno-item1 ${
-                  t.ticket_id === ultimoAnimado && mostrarAnimacion ? "alerta" : ""
-                }`}
-              ><audio ref={audioRef} src={logo} preload="auto" /> {/* 👉 AÑADIDO */}
-                {/* <FaBell color="orange" size={42} /> */}
-                {t.ticket_id ? `${t.ticket_id} - Puesto ${t.puesto_name}` : "En espera."}
-              </li>
-            ))}
-          </ul>
-
-          {/* SOLO PARA MOSTRAR LA LISTA DE ESPERA COMPLETA. */}
-          {/* <h1 className="turno-title1">EN ESPERA</h1>
-          <ul className="turno-lista-scroll1">
-            {turnosTotales.slice(1, 10).map((t, i) => (
-              <li
-                key={t.id ?? i}
-                className={`turno-item1 ${
-                  t.id === ultimoAnimado && mostrarAnimacion ? "alerta" : ""
-                }`}
-              >
-                <FaBell color="orange" size={42} />
-                {t.puesto ? ` ${t.id} Caja ${t.estado}` : "En espera."}
-              </li>
-            ))}
-          </ul> */}
-        </div>
-      )}
-    </>
+      <ul className="leftbar-list">
+        {turnosVisibles.slice(0, 8).map((t) => (
+          <li
+            key={t.ticket_id}
+            className={`leftbar-item ${
+              nuevoTurno === t.id ? "leftbar-item-active" : ""
+            }`}>
+            <span className="leftbar-ticket">{t.ticket_id}</span>
+            <span className="leftbar-puesto">{t.puesto_name}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
   );
 };
 

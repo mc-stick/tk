@@ -1,8 +1,11 @@
 import { useEffect, useState } from "react";
 import { FcManager, FcServices } from "react-icons/fc";
+import { useNavigate } from "react-router-dom";
 
 const TopAnimatedHeader = ({ user }) => {
   const [startTransition, setStartTransition] = useState(false);
+
+  const navigate= useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -49,6 +52,20 @@ const TopAnimatedHeader = ({ user }) => {
         .hidden-after {
           display: none;
         }
+
+         /*  volver a home btn */
+         .panelOP{
+          font-size:1.5rem;
+          cursor: pointer;
+
+         }
+
+         .Title-Page:hover{
+          color:#b18700;
+          font-size:1.8rem;
+          
+         }
+
       `}</style>
 
       {/* Saludo inicial */}
@@ -65,10 +82,11 @@ const TopAnimatedHeader = ({ user }) => {
 
       {/* Título aparece después */}
       <span
+        onClick={() => navigate("/")}
         className={`Title-Page ${startTransition ? "slide-down" : "hidden-after"}`}
       >
         <FcServices size={32} style={{ marginBottom: "-5px" }} />
-        <strong> Panel de Operaciones</strong>
+        <strong title="Volver a inicio" className="panelOP" > Panel de Operaciones</strong>
       </span>
     </>
   );

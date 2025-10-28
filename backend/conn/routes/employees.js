@@ -50,11 +50,28 @@ router.post('/', async (req, res) => {
 
 // Actualizar empleado
 router.put('/:id', async (req, res) => {
-  const { username,password_hash, full_name, puesto_id, is_active } = req.body;
+  const { username,password_hash, full_name, puesto_id, is_active, edit } = req.body;
   const { id } = req.params;
-  await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
-    id, username, full_name, puesto_id, is_active, password_hash
-  ]);
+  
+
+  edit ? (
+    
+    await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?)', [
+        id, username, full_name, password_hash
+      ])
+     
+
+  ) : (
+
+      await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
+      id, username, full_name, puesto_id, is_active, password_hash
+    ])
+
+  )
+
+ 
+
+  
   res.json({ message: 'Empleado actualizado' });
 });
 

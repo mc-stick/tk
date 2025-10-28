@@ -76,7 +76,9 @@ export const TurnoProvider = ({ children }) => {
       notes: ""
     });
     await fetchTickets();
-    return res.data || null;
+    //console.log(res.data,"genera turno")
+    //return res.data || null;
+    return tipo, val || null;
   } catch (error) {
     console.error("Error al generar ticket:", error);
     return null;

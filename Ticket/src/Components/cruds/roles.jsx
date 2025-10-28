@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import './Crud.css'
+import './Crud.css';
+import { FaCircleXmark, FaPen } from "react-icons/fa6";
 
 const API_URL = "http://localhost:4001/api/roles";
 
@@ -10,7 +11,6 @@ export default function RoleCrud() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Obtener roles
   const fetchRoles = async () => {
     setLoading(true);
     setError(null);
@@ -30,16 +30,11 @@ export default function RoleCrud() {
     fetchRoles();
   }, []);
 
-  // Manejar inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: value,
-    }));
+    setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Crear o actualizar rol
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.name.trim()) {
@@ -50,7 +45,6 @@ export default function RoleCrud() {
     setError(null);
     try {
       if (editingId) {
-        // Update
         const res = await fetch(`${API_URL}/${editingId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -58,7 +52,6 @@ export default function RoleCrud() {
         });
         if (!res.ok) throw new Error("Error al actualizar rol");
       } else {
-        // Create
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -76,22 +69,18 @@ export default function RoleCrud() {
     }
   };
 
-  // Editar rol
   const handleEdit = (role) => {
     setForm({ name: role.name, description: role.description || "" });
     setEditingId(role.role_id);
     setError(null);
   };
 
-  // Eliminar rol
   const handleDelete = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este rol?")) return;
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch(`${API_URL}/${id}`, {
-        method: "DELETE",
-      });
+      const res = await fetch(`${API_URL}/${id}`, { method: "DELETE" });
       if (!res.ok) throw new Error("Error al eliminar rol");
       fetchRoles();
     } catch (err) {
@@ -102,73 +91,63 @@ export default function RoleCrud() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "20px auto", fontFamily: "Arial, sans-serif" }}>
+    <div className="crud-container">
       <h2>{editingId ? "Editar Rol" : "Agregar Rol"}</h2>
-      {error && (
-        <p style={{ color: "red", fontWeight: "bold", marginBottom: 10 }}>{error}</p>
-      )}
+      {error && <p className="error-msg">{error}</p>}
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="name" style={{ fontWeight: 600 }}>
-            Nombre del rol:
-          </label>
-          <input className="textBox"
+      <form onSubmit={handleSubmit} className="crud-form">
+        <div className="form-group">
+          <label htmlFor="name">Nombre del rol:</label>
+          <input
             id="name"
             name="name"
             value={form.name}
             onChange={handleChange}
             required
             disabled={loading}
-           
+            className="textBox"
           />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="description" style={{ fontWeight: 600 }}>
-            Descripción:
-          </label>
-          <input className="textBox"
+        <div className="form-group">
+          <label htmlFor="description">Descripción:</label>
+          <input
             id="description"
             name="description"
             value={form.description}
             onChange={handleChange}
             disabled={loading}
-           
+            className="textBox"
           />
         </div>
-      <div >
-        <button
-          type="submit"
-          disabled={loading}
-          className="btn"
-        >
-          {editingId ? "Actualizar" : "Crear"}
-        </button>
 
-        {editingId && (
-          <button className="delete-btn btn"
-            type="button"
-            onClick={() => {
-              setEditingId(null);
-              setForm({ role: "", description: "" });
-              setError(null);
-            }}
-            disabled={loading}
-           
-          >
-            Cancelar
+        <div className="form-buttons">
+          <button type="submit" className="btn submit-btn" disabled={loading}>
+            {editingId ? "Actualizar" : "Crear"}
           </button>
-        )}</div>
+
+          {editingId && (
+            <button
+              type="button"
+              className="btn cancel-btn"
+              onClick={() => {
+                setEditingId(null);
+                setForm({ name: "", description: "" });
+                setError(null);
+              }}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
 
       <h3>Lista de Roles</h3>
-      {loading && <p>Cargando roles...</p>}
-      {!loading && roles.length === 0 && <p>No hay roles registrados.</p>}
+      {loading && <p className="info-msg">Cargando roles...</p>}
+      {!loading && roles.length === 0 && <p className="info-msg">No hay roles registrados.</p>}
 
-      <table
-        
-      >
+      <table className="crud-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -183,20 +162,20 @@ export default function RoleCrud() {
               <td>{role.role_id}</td>
               <td>{role.name}</td>
               <td>{role.description}</td>
-              <td className="flex">
-                <button className="edit-btn"
+              <td className="action-buttons">
+                <button
+                  className="edit-btn"
                   onClick={() => handleEdit(role)}
                   disabled={loading}
-                  
                 >
-                  Editar
+                 <FaPen/> Editar
                 </button>
-                <button className="delete-btn"
+                <button
+                  className="delete-btn"
                   onClick={() => handleDelete(role.role_id)}
                   disabled={loading}
-                 
                 >
-                  Eliminar
+                 <FaCircleXmark/> Eliminar
                 </button>
               </td>
             </tr>

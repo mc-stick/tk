@@ -1,58 +1,68 @@
-// src/context/AuthContext.jsx
 import { createContext, useState, useEffect, useContext } from "react";
 import axios from "axios";
-import { jwtDecode } from "jwt-decode"; // ✅ Import correcto
+import { jwtDecode } from "jwt-decode";
 
 const AuthContext = createContext();
 
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
+  const [loading, setLoading] = useState(true); // estado de carga inicial
 
   useEffect(() => {
-    const token = localStorage.getItem("token");
-    if (token) {
+    const checkStoredToken = () => {
+      const token = localStorage.getItem("token");
+      if (!token) {
+        setLoading(false);
+        return;
+      }
+
       try {
         const decoded = jwtDecode(token);
-        //console.log(decoded,"decodes")
+
+        // 🔐 Verificar expiración
         if (decoded.exp * 1000 > Date.now()) {
           setUser({
             username: decoded.username,
-            role: decoded.roles || decoded.role, // compatibilidad
+            role: decoded.roles || decoded.role,
             token,
             puesto_id: decoded.puesto_id,
             puesto_name: decoded.puesto_name,
             employee_id: decoded.employee_id,
           });
         } else {
+          // Token expirado
+          console.warn("Token expirado. Eliminando...");
           localStorage.removeItem("token");
         }
       } catch (err) {
         console.error("Error decodificando token:", err);
         localStorage.removeItem("token");
+      } finally {
+        // ✅ Siempre marcar el fin de la carga, haya o no token válido
+        setLoading(false);
       }
-    }
+    };
+
+    checkStoredToken();
   }, []);
 
-  // ✅ login que devuelve el resultado
   const login = async (username, password) => {
     try {
-      const res = await axios.post(
-        "http://localhost:4001/api/employees/login",
-        {
-          username,
-          password,
-        }
-      );
+      const res = await axios.post("http://localhost:4001/api/employees/login", {
+        username,
+        password,
+      });
 
       const { token } = res.data;
-
       if (!token) throw new Error("No se recibió token");
 
       const decoded = jwtDecode(token);
-      //console.log('decoded', decoded)
 
+      // Guardar el token en localStorage
       localStorage.setItem("token", token);
-      setUser({
+
+      // Actualizar estado del usuario
+      const newUser = {
         username: decoded.username,
         role: decoded.roles || decoded.role,
         token,
@@ -60,7 +70,9 @@ export const AuthProvider = ({ children }) => {
         full_name: decoded.full_name,
         puesto_id: decoded.puesto_id,
         puesto_name: decoded.puesto_name,
-      });
+      };
+
+      setUser(newUser);
 
       return {
         success: true,
@@ -82,7 +94,7 @@ export const AuthProvider = ({ children }) => {
   };
 
   return (
-    <AuthContext.Provider value={{ user, login, logout }}>
+    <AuthContext.Provider value={{ user, login, logout, loading }}>
       {children}
     </AuthContext.Provider>
   );

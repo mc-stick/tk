@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import './Crud.css';
+import { FaCircleXmark, FaPen } from "react-icons/fa6";
 
 const API_URL = "http://localhost:4001/api/puesto";
 
@@ -10,7 +11,6 @@ export default function PuestoCrud() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Obtener puestos
   const fetchPuestos = async () => {
     setLoading(true);
     setError(null);
@@ -30,13 +30,11 @@ export default function PuestoCrud() {
     fetchPuestos();
   }, []);
 
-  // Manejar inputs
   const handleChange = (e) => {
     const { name, value } = e.target;
     setForm((prev) => ({ ...prev, [name]: value }));
   };
 
-  // Crear o actualizar puesto
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!form.nombre.trim()) {
@@ -47,7 +45,6 @@ export default function PuestoCrud() {
     setError(null);
     try {
       if (editingId) {
-        // Actualizar
         const res = await fetch(`${API_URL}/${editingId}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
@@ -55,7 +52,6 @@ export default function PuestoCrud() {
         });
         if (!res.ok) throw new Error("Error al actualizar puesto");
       } else {
-        // Crear
         const res = await fetch(API_URL, {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -73,14 +69,12 @@ export default function PuestoCrud() {
     }
   };
 
-  // Editar puesto
   const handleEdit = (puesto) => {
     setForm({ nombre: puesto.nombre, descripcion: puesto.descripcion || "" });
     setEditingId(puesto.id);
     setError(null);
   };
 
-  // Eliminar puesto
   const handleDelete = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este puesto?")) return;
     setLoading(true);
@@ -97,43 +91,45 @@ export default function PuestoCrud() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: "20px auto", fontFamily: "Arial, sans-serif" }}>
+    <div className="crud-container">
       <h2>{editingId ? "Editar puesto" : "Agregar puesto"}</h2>
-      {error && <p style={{ color: "red", fontWeight: "bold", marginBottom: 10 }}>{error}</p>}
+      {error && <p className="error-msg">{error}</p>}
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="nombre" style={{ fontWeight: 600 }}>Nombre del puesto:</label>
-          <input className="textBox"
+      <form onSubmit={handleSubmit} className="crud-form">
+        <div className="form-group">
+          <label htmlFor="nombre">Nombre del puesto:</label>
+          <input
             id="nombre"
             name="nombre"
             value={form.nombre}
             onChange={handleChange}
             required
             disabled={loading}
+            className="textBox"
           />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="descripcion" style={{ fontWeight: 600 }}>Descripción:</label>
-          <input className="textBox"
+        <div className="form-group">
+          <label htmlFor="descripcion">Descripción:</label>
+          <input
             id="descripcion"
             name="descripcion"
             value={form.descripcion}
             onChange={handleChange}
             disabled={loading}
+            className="textBox"
           />
         </div>
 
-        <div>
-          <button type="submit" disabled={loading} className="btn">
+        <div className="form-buttons">
+          <button type="submit" className="btn submit-btn" disabled={loading}>
             {editingId ? "Actualizar" : "Crear"}
           </button>
 
           {editingId && (
             <button
               type="button"
-              className="delete-btn btn"
+              className="btn cancel-btn"
               onClick={() => {
                 setEditingId(null);
                 setForm({ nombre: "", descripcion: "" });
@@ -148,10 +144,10 @@ export default function PuestoCrud() {
       </form>
 
       <h3>Lista de puestos</h3>
-      {loading && <p>Cargando puestos...</p>}
-      {!loading && puestos.length === 0 && <p>No hay puestos registrados.</p>}
+      {loading && <p className="info-msg">Cargando puestos...</p>}
+      {!loading && puestos.length === 0 && <p className="info-msg">No hay puestos registrados.</p>}
 
-      <table>
+      <table className="crud-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -166,12 +162,20 @@ export default function PuestoCrud() {
               <td>{puesto.id}</td>
               <td>{puesto.nombre}</td>
               <td>{puesto.descripcion}</td>
-              <td className="flex">
-                <button className="edit-btn" onClick={() => handleEdit(puesto)} disabled={loading}>
-                  Editar
+              <td className="action-buttons">
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEdit(puesto)}
+                  disabled={loading}
+                >
+                 <FaPen/> Editar
                 </button>
-                <button className="delete-btn" onClick={() => handleDelete(puesto.id)} disabled={loading}>
-                  Eliminar
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(puesto.id)}
+                  disabled={loading}
+                >
+                 <FaCircleXmark/>  Eliminar
                 </button>
               </td>
             </tr>

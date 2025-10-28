@@ -1,8 +1,8 @@
-// src/pages/Login.jsx
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./Home.css";
+import "./Login.css"
+import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 
 const Login = ({ role }) => {
   const [username, setUsername] = useState("");
@@ -10,6 +10,10 @@ const Login = ({ role }) => {
   const [error, setError] = useState("");
   const { login } = useAuth();
   const navigate = useNavigate();
+
+  useEffect(() => {
+    document.title = "UCNE | Iniciar sesión";
+  }, []);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -19,9 +23,8 @@ const Login = ({ role }) => {
 
     if (res.success && res.is_active) {
       const userRole = res.role;
-      //console.log(res)
 
-      if (role === "admin" && userRole.includes("admin") ) {
+      if (role === "admin" && userRole.includes("admin")) {
         navigate("/administrador");
       } else if (role === "operator" && userRole.includes("operator")) {
         navigate("/operador");
@@ -29,43 +32,45 @@ const Login = ({ role }) => {
         setError("No tienes permisos para acceder a esta sección");
       }
     } else {
-      res.is_active ? setError(res.message)
-      :
-      setError('Usuario no encontrado/deshabilitado.');
+      res.is_active
+        ? setError(res.message)
+        : setError("Usuario no encontrado o deshabilitado.");
     }
   };
 
   return (
-    <div className="Login_containerStyle">
-      <h2 style={{ color: "white" }}>
-        Iniciar sesión {role === "admin" ? "Administrador" : "Operador"}
-      </h2>
+    <div className="login-container">
+      <div className="login-card">
+        <img src={ImgLogo} alt="UCNE Logo" className="login-logo" />
+        <h2 className="login-title">
+          Iniciar sesión{" "}
+          <span>{role === "admin" ? "Administrador" : "Operador"}</span>
+        </h2>
 
-      {error && <p style={{ color: "#ff0000ff", backgroundColor:"#ffffff8e", borderRadius:'5px' }}>{error}</p>}
+        {error && <p className="login-error">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="Login_formStyle">
-        <input
-          type="text"
-          placeholder="Usuario"
-          value={username}
-          onChange={(e) => setUsername(e.target.value)}
-          required
-          className="Login_inputStyle"
-        />
-        <input
-          type="password"
-          placeholder="Contraseña"
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-          className="Login_inputStyle"
-        />
-        <button type="submit" className="Login_btnStyle">
-          Ingresar
-        </button>
-      </form>
-
-      
+        <form onSubmit={handleSubmit} className="login-form">
+          <input
+            type="text"
+            placeholder="Usuario"
+            value={username}
+            onChange={(e) => setUsername(e.target.value)}
+            required
+            className="login-input"
+          />
+          <input
+            type="password"
+            placeholder="Contraseña"
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+            className="login-input"
+          />
+          <button type="submit" className="login-btn">
+            Ingresar
+          </button>
+        </form>
+      </div>
     </div>
   );
 };

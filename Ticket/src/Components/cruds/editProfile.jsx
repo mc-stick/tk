@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import "./EditProfile.css"; // Nuevo archivo de estilos
 
 const API_URL = "http://localhost:4001/api/employees";
 
@@ -7,7 +8,7 @@ export default function EditProfile({ employeeId }) {
     username: "",
     full_name: "",
     email: "",
-    password: "", // nueva contraseña opcional, vacía = no cambia
+    password: "",
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -21,12 +22,11 @@ export default function EditProfile({ employeeId }) {
         const res = await fetch(`${API_URL}/${employeeId}`);
         if (!res.ok) throw new Error("Error cargando perfil");
         const data = await res.json();
-        console.log(data)
         setForm({
           username: data.username || "",
           full_name: data.full_name || "",
           email: data.email || "",
-          password: "", // no se muestra la contraseña actual por seguridad
+          password: "",
         });
       } catch (err) {
         setError(err.message);
@@ -47,7 +47,6 @@ export default function EditProfile({ employeeId }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
     if (!form.username.trim()) {
       setError("El username es obligatorio");
       return;
@@ -56,25 +55,14 @@ export default function EditProfile({ employeeId }) {
       setError("El nombre completo es obligatorio");
       return;
     }
-    if (!form.email.trim()) {
-      setError("El email es obligatorio");
-      return;
-    }
 
     setLoading(true);
     setError(null);
     setSuccessMsg(null);
 
     try {
-      // Solo enviamos password si se cambió
-      const payload = {
-        username: form.username,
-        full_name: form.full_name,
-        email: form.email,
-      };
-      if (form.password.trim() !== "") {
-        payload.password = form.password; // backend debe manejar hashing
-      }
+      const payload = { username: form.username, full_name: form.full_name, edit: true };
+      if (form.password.trim() !== "") payload.password = form.password;
 
       const res = await fetch(`${API_URL}/${employeeId}`, {
         method: "PUT",
@@ -88,7 +76,7 @@ export default function EditProfile({ employeeId }) {
       }
 
       setSuccessMsg("Perfil actualizado correctamente");
-      setForm((f) => ({ ...f, password: "" })); // limpiar password
+      setForm((f) => ({ ...f, password: "" }));
     } catch (err) {
       setError(err.message);
     } finally {
@@ -97,84 +85,43 @@ export default function EditProfile({ employeeId }) {
   };
 
   return (
-    <div style={{ maxWidth: 400, margin: "20px auto", fontFamily: "Arial, sans-serif" }}>
+    <div className="edit-profile-container">
       <h2>Editar Perfil</h2>
 
-      {loading && <p>Cargando...</p>}
+      {loading && <p className="info-msg">Cargando...</p>}
+      {error && <p className="error-msg">{error}</p>}
+      {successMsg && <p className="success-msg">{successMsg}</p>}
 
-      {error && <p style={{ color: "red" }}>{error}</p>}
-
-      {successMsg && <p style={{ color: "green" }}>{successMsg}</p>}
-
-      <form onSubmit={handleSubmit}>
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="username" style={{ fontWeight: 600 }}>
-            Username:
-          </label>
+      <form onSubmit={handleSubmit} className="edit-profile-form">
+        <div className="form-group">
+          <label htmlFor="username">Username:</label>
           <input
             id="username"
             name="username"
             value={form.username}
             onChange={handleChange}
             disabled
-            required
-            style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              fontSize: "15px",
-            }}
           />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="full_name" style={{ fontWeight: 600 }}>
-            Nombre completo:
-          </label>
+        <div className="form-group">
+          <label htmlFor="full_name">Nombre completo:</label>
           <input
             id="full_name"
             name="full_name"
             value={form.full_name}
             onChange={handleChange}
             disabled={loading}
-            required
-            style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              fontSize: "15px",
-            }}
           />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="email" style={{ fontWeight: 600 }}>
-            Email:
-          </label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={form.email}
-            onChange={handleChange}
-            disabled={loading}
-            required
-            style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              fontSize: "15px",
-            }}
-          />
+        <div className="form-group" style={{ display: "none" }}>
+          <label htmlFor="email">Email:</label>
+          <input type="email" id="email" name="email" value={form.email} onChange={handleChange} />
         </div>
 
-        <div style={{ marginBottom: 12 }}>
-          <label htmlFor="password" style={{ fontWeight: 600 }}>
-            Nueva contraseña (opcional):
-          </label>
+        <div className="form-group">
+          <label htmlFor="password">Nueva contraseña (opcional):</label>
           <input
             type="password"
             id="password"
@@ -183,31 +130,14 @@ export default function EditProfile({ employeeId }) {
             onChange={handleChange}
             disabled={loading}
             placeholder="Dejar en blanco para no cambiar"
-            style={{
-              width: "100%",
-              padding: "8px",
-              borderRadius: "5px",
-              border: "1px solid #ccc",
-              fontSize: "15px",
-            }}
           />
         </div>
 
-        <button
-          type="submit"
-          disabled={loading}
-          style={{
-            backgroundColor: "#007bff",
-            color: "white",
-            padding: "10px 15px",
-            borderRadius: "5px",
-            border: "none",
-            fontWeight: "600",
-            cursor: "pointer",
-          }}
-        >
-          Guardar Cambios
-        </button>
+        {!successMsg && (
+          <button type="submit" disabled={loading} className="submit-btn">
+            Guardar Cambios
+          </button>
+        )}
       </form>
     </div>
   );

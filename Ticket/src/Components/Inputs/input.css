@@ -1,99 +1,171 @@
-.formattedInputContainer {
+/* Contenedor principal centrado */
+.registro-container {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 500px;
-  margin: auto;
-  background-color: rgba(255, 255, 255, 0.74);
-  border: solid white 1px;
-  border-radius: 20px;
-  padding: 50px;
+  justify-content: center;
+  padding: 40px 20px;
+  position: relative;
+  height: 100vh;
+  background: linear-gradient(135deg, #f7faff 0%, #e2ecff 100%);
+  animation: fadeIn 0.6s ease-in-out;
 }
 
-.inputCardLabel {
-  padding: 0.8rem;
-  font-size: 1.2rem;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  width: 100%;
-  margin-bottom: 20px;
+/* Botón de volver */
+.back-btn {  
+  display: flex;
+  position: absolute;
+  /* top: 40px; */
+  padding-left: 15px;
+  background: transparent;
+  border: none;
+  font-size: 2rem;
+  color: #003366;
+  cursor: pointer;
+  transition: transform 0.2s ease;
+}
+.back-btn:hover {
+  transform: scale(1.1);
+}
+
+/* Tarjeta del formulario */
+.registro-card {
+  background: #fff;
+  padding: 40px 30px;
+  border-radius: 16px;
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
   text-align: center;
-  background-color: #f9f9f9;
-  transition: border-color 0.3s ease;
+  max-width: 400px;
+  width: 100%;
+  animation: slideUp 0.5s ease-out;
 }
 
-.inputInvalidate{
-    border: 1px solid #ff0000b7;
-    background-color: #ff242486;
+.registro-titulo {
+  color: #003366;
+  font-size: 1.8rem;
+  margin-bottom: 0.5rem;
 }
 
-/* .inputValidate{
-    border: 1px solid #028b09;
-    background-color: #69ff2486;
-} */
+.registro-subtitulo {
+  color: #666;
+  font-size: 1rem;
+  margin-bottom: 1.5rem;
+}
 
-.inputCardLabel:focus {
-  border-color: #007bff;
+/* Campo de entrada */
+.registro-input {
+  width: 90%;
+  padding: 12px 15px;
+  font-size: 1.2rem;
+  border-radius: 10px;
+  border: 2px solid #ccc;
   outline: none;
+  text-align: center;
+  transition: all 0.25s ease;
+  margin-bottom: 0.5rem;
+}
+.registro-input.valid {
+  border-color: #0eb74c;
+}
+.registro-input.invalid {
+  border-color: #e63946;
+}
+.registro-input:focus {
+  border-color: #003366;
+  box-shadow: 0 0 5px rgba(0, 51, 102, 0.3);
 }
 
-.numericKeyboard {
+/* Error */
+.error-text {
+  color: #e63946;
+  font-weight: bold;
+  background-color: #fff4f4;
+  border-radius: 8px;
+  padding: 6px 10px;
+  margin-bottom: 10px;
+  font-size: 0.9rem;
+}
+
+/* Teclado numérico */
+.keyboard {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 12px;
-  width: 100%;
-}
+  margin-top: 25px;
+} 
 
-.keyBtn {
-  padding: 15px;
-  font-size: 1.1rem;
-  background-color: #004aad;
-  color: white;
-  font-weight: bold;
+.key-btn {
+  background: #f2f6fc;
   border: none;
-  border-radius: 8px;
+  border-radius: 12px;
+  padding: 18px;
+  font-size: 1.4rem;
+  color: #003366;
   cursor: pointer;
-  transition: background-color 0.2s ease, transform 0.1s ease;
-  border: solid white 1px;
+  transition: all 0.2s ease;
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.1);
 }
 
-.keyBtn:hover {
-  background-color: #00337f;
+.key-btn:hover {
+  background: #dbe8ff;
   transform: scale(1.05);
-  border: solid white 1px;
-
 }
 
-.deleteBtn {
+/* Botones especiales */
+.delete-btn-key {
+  background: #ff1f1f;
   grid-column: span 2;
-  background-color: #dc3545;
-  border: solid white 1px;
-}
-
-.deleteBtn:hover {
-  background-color: #b02a37;
-  border: solid white 1px;
-}
-
-.acceptBtn {
-    margin-top: 15px;
-  grid-column: span 3;
-  background-color: #048300;
-  border: solid white 1px;
-}
-
-.acceptBtn:hover {
-  background-color: #035500;
-  border: solid white 1px;
   color: white;
 }
 
-.keytransparent{
-    padding: 15px;
-  font-size: 1.5rem;
-  background-color: transparent;
-  color: rgb(0, 0, 0);
+.accept-btn {
+  background: #07c407e1;
+  color: #ffffff;
+  grid-column: span 3;
   font-weight: bold;
-  border: none;
-  transition: background-color 0.2s ease, transform 0.1s ease;
+}
+
+.delete-btn-key:hover {
+  background: #ffdad6;
+}
+
+.accept-btn:hover {
+  background: #b7f0c4;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(25px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 600px) {
+  .registro-card {
+    padding: 30px 20px;
+  }
+  .registro-input {
+    font-size: 1rem;
+  }
+  .key-btn {
+    padding: 15px;
+    font-size: 1.2rem;
+  }
 }

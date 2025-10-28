@@ -1,177 +1,231 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useTurno } from "../context/TurnoContext";
 import "./TicketGenerator.css";
+import "./ticketgeneServ.css";
 import "../../index.css";
 import AnimatedButton from "../Buttons/animatedBtn";
 import {
   FcBusinessContact,
-  FcCellPhone,
   FcCurrencyExchange,
   FcInfo,
   FcReadingEbook,
 } from "react-icons/fc";
-import { FaIdCard, FaIdCardAlt, FaPhone, FaTicketAlt } from "react-icons/fa";
+import { FaIdCard } from "react-icons/fa";
 import FormattedInput from "../Inputs/Input";
 import "../Inputs/input.css";
 import ImgCustoms from "../widgets/ImgCustoms";
 import ImgLogo from "../../assets/img/UcneLogoIcon.png";
+import { SendTwilioSms } from "../twilio/TwMsg";
 
 const TicketGenerator = () => {
   const { generarTurno } = useTurno();
-  const [estado, setEstado] = useState("inicio"); // inicio | seleccion | confirmado
-  const [val, setVal] = useState(""); // valor devuelto del componente cedula o matr
+
+  const [estado, setEstado] = useState("inicio");
+  const [val, setVal] = useState("");
   const [turno, setTurno] = useState(null);
   const [servicios, setServicios] = useState([]);
   const [identificaciones, setIdentificaciones] = useState([]);
 
-  // === Cargar datos desde la DB ===
-  const fetchServicios = async () => {
-    try {
-      const res = await fetch("http://localhost:4001/api/services");
-      if (!res.ok) throw new Error("Error al cargar servicios");
-      const data = await res.json();
-      setServicios(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
+  const timerRef = useRef(null);
 
-  const fetchIdentificaciones = async () => {
-    try {
-      const res = await fetch("http://localhost:4001/api/docs");
-      if (!res.ok) throw new Error("Error al cargar identificaciones");
-      const data = await res.json();
-      setIdentificaciones(data);
-    } catch (err) {
-      console.error(err);
-    }
-  };
-
+  // --- 🔹 Detección de inactividad ---
   useEffect(() => {
-    fetchServicios();
-    fetchIdentificaciones();
+    const resetInactivity = () => {
+      if (timerRef.current) clearTimeout(timerRef.current);
+      if (estado !== "inicio") {
+        timerRef.current = setTimeout(() => {
+         
+          setEstado("inicio");
+          setTurno(null);
+          setVal("");
+        }, 6000); // 1 minuto = 60,000 ms
+      }
+    };
+
+    // Eventos que cuentan como actividad del usuario
+    const eventos = ["mousemove", "mousedown", "keydown", "touchstart"];
+    eventos.forEach((ev) => window.addEventListener(ev, resetInactivity));
+
+    // Configura el temporizador inicial
+    resetInactivity();
+
+    return () => {
+      eventos.forEach((ev) => window.removeEventListener(ev, resetInactivity));
+      if (timerRef.current) clearTimeout(timerRef.current);
+    };
+  }, [estado]);
+
+  // --- Cargar datos iniciales ---
+  useEffect(() => {
+    document.title = "UCNE | Cliente";
+
+    const fetchData = async () => {
+      try {
+        const [servRes, idRes] = await Promise.all([
+          fetch("http://localhost:4001/api/services"),
+          fetch("http://localhost:4001/api/docs"),
+        ]);
+
+        if (!servRes.ok || !idRes.ok) throw new Error("Error al cargar datos");
+
+        const [servData, idData] = await Promise.all([
+          servRes.json(),
+          idRes.json(),
+        ]);
+
+        setServicios(servData);
+        setIdentificaciones(idData);
+      } catch (error) {
+        console.error("Error al obtener datos:", error);
+      }
+    };
+
+    fetchData();
   }, []);
 
-  // === Funciones del flujo ===
+  // --- Control del flujo ---
   const comenzar = () => {
     setEstado("Identificador");
     setTurno(null);
   };
 
-  const seleccionarServicio = (tipo) => {
-    // console.log("numero tipo",tipo, val);
-    const nuevo = generarTurno(tipo, val);
-    
-    setTurno(nuevo);
-    setEstado("confirmado");
+  const seleccionarId = (name, size) => {
+    setEstado(["started", name, size]);
   };
 
-  const seleccionarId = (tipo, label, size) => {
-    setEstado(["started", tipo, label, size]);
-  };
-
-  const aceptar = () => {
-    setEstado("inicio");
-    setTurno(null);
-  };
-
-  // === Mapeo dinámico de íconos según tipo ===
-  const iconoServicio = (tipo) => {
-    switch (tipo) {
-      case "Caja":
-        return <FcCurrencyExchange />;
-      case "Servicios":
-        return <FcReadingEbook />;
-      case "Informes":
-        return <FcInfo />;
-      default:
-        return <FcBusinessContact />;
+  const seleccionarServicio = async (tipo) => {
+    try {
+      const nuevoTurno = await generarTurno(tipo, val);
+      setTurno(nuevoTurno);
+      setEstado("confirmado");
+    } catch (error) {
+      console.error("Error generando turno:", error);
     }
   };
 
-  // console.log("turnooo",turno);
+  const aceptar = (num) => {
+    const limpio = num.replace(/-/g, "");
+    SendTwilioSms("enviado desde tw", limpio);
+    setEstado("inicio");
+    setTurno(null);
+    setVal("");
+  };
 
+  // --- Íconos por tipo ---
+  const iconoServicio = (tipo) => {
+    const iconos = {
+      Caja: <FcCurrencyExchange />,
+      Servicios: <FcReadingEbook />,
+      Informes: <FcInfo />,
+    };
+    return iconos[tipo] || <FcBusinessContact />;
+  };
+
+  // --- Renderizado ---
   return (
-    <div className="cliente-container input-page-container_index">
-      <div className="overlay" />
-
+    <div
+      className={`
+        ${estado[0] === "started" ? "cliente-container" : ""}
+        ${["Identificador", "seleccion", "confirmado"].includes(estado)
+          ? "cliente-container"
+          : ""}
+      `}
+    >
+      {/* --- PANTALLA INICIO --- */}
       {estado === "inicio" && (
-        <AnimatedButton
-          style={{ justifyContent: "center" }}
-          icon={
-            <ImgCustoms style={{ margin: "30px" }} src={ImgLogo} width="90px" />
-          }
-          label="Comenzar"
-          onClick={comenzar}
-        />
+        <div className="inicio-container">
+          <div className="inicio-content">
+            <div className="inicio-logo">
+              <ImgCustoms src={ImgLogo} width="140px" alt="UCNE Logo" />
+            </div>
+            <h1 className="inicio-titulo">Bienvenidos a UCNE</h1>
+            <p className="inicio-subtitulo">
+              Presiona Comenzar para crear un ticket.
+            </p>
+
+            <button className="inicio-btn" onClick={comenzar}>
+              Comenzar
+            </button>
+          </div>
+        </div>
       )}
 
+      {/* --- IDENTIFICADOR --- */}
       {estado === "Identificador" && (
-        <div className="formattedInputContainer">
-          <h1>Selecciona un método de identificación</h1>
-          <div className="botones">
-            {identificaciones.map(({ tipo, name, size }) => (
-              <AnimatedButton
+        <div className="identificador-container">
+          <div className="identificador-header">
+            <h1 style={{ color: "white" }}>
+              Selecciona un método de identificación
+            </h1>
+            <p style={{ color: "#a2ceffff" }} className="identificador-subtitle">
+              Elige cómo deseas identificarte para continuar.
+            </p>
+          </div>
+
+          <div className="identificador-grid">
+            {identificaciones.map(({ name, size }) => (
+              <div
                 key={name}
-                icon={<FaIdCard />}
-                label={name}
-                onClick={() => seleccionarId(tipo, name, size)}
-              />
+                className="identificador-card"
+                onClick={() => seleccionarId(name, size)}
+              >
+                <div className="identificador-icon">
+                  <FaIdCard />
+                </div>
+                <h2 className="identificador-nombre">{name}</h2>
+              </div>
             ))}
           </div>
         </div>
       )}
-      
+
+      {/* --- INPUT DE IDENTIFICACIÓN --- */}
       {estado[0] === "started" && (
         <FormattedInput
           tipo={estado[1]}
           setEstado={setEstado}
           setVal={setVal}
-          label={estado[2]}
-          size={estado[3]}
+          size={estado[2]}
         />
       )}
 
+      {/* --- SERVICIOS --- */}
       {estado === "seleccion" && (
-        <div className="formattedInputContainer">
-          <h1>Seleccione el servicio</h1>
-          <div className="botones">
+        <div className="servicio-container">
+          <div className="servicio-header">
+            <h1 style={{ color: "white" }}>
+              Seleccione el servicio que desea
+            </h1>
+            <p style={{ color: "#afd7ffff" }} className="servicio-subtitle">
+              Elige una opción para generar tu turno.
+            </p>
+          </div>
+
+          <div className="servicio-grid">
             {servicios.map(({ service_id, name }) => (
-              <AnimatedButton
+              <div
                 key={service_id}
-                icon={iconoServicio(name)}
-                label={name}
+                className="servicio-card"
                 onClick={() => seleccionarServicio(service_id)}
-              />
+              >
+                <div className="servicio-icon">{iconoServicio(name)}</div>
+                <h2 className="servicio-nombre">{name}</h2>
+              </div>
             ))}
           </div>
         </div>
       )}
 
-
+      {/* --- CONFIRMACIÓN --- */}
       {estado === "confirmado" && turno && (
         <div className="modal">
           <div className="modal-content">
             <h2>Tu turno se ha generado</h2>
             <p>
-              <FaTicketAlt
-                style={{ margin: "-20px", fontSize: 40, color: "green" }}
-              />
+              Se ha enviado un SMS a: <strong>{val}</strong> con tu número de
+              ticket.
             </p>
-            <p className="turno">
-              <strong>
-                {turno && turno.tipo
-                  ? `${turno.tipo[0]}-${turno.numero}`
-                  : "Ningún turno"}
-              </strong>
-            </p>
-            <p>
-              Dirección:{" "}
-              <strong>
-                {turno.tipo} valor{val}
-              </strong>
-            </p>
-            <button className="aceptar-btn" onClick={aceptar}>
+            <button className="aceptar-btn" onClick={() => aceptar(val)}>
               Aceptar
             </button>
           </div>

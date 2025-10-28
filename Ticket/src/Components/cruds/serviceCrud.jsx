@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
-import './Crud.css'
-import { FaCircleXmark, FaRecycle } from 'react-icons/fa6';
+import './Crud.css';
+import { FaCircleXmark, FaPen, FaRecycle } from 'react-icons/fa6';
 
 const API_URL = 'http://localhost:4001/api/services';
 
@@ -11,7 +11,6 @@ export default function ServiceCrud() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
 
-  // Obtener todos los servicios
   const fetchServices = async () => {
     setLoading(true);
     try {
@@ -19,7 +18,7 @@ export default function ServiceCrud() {
       const data = await res.json();
       setServices(data);
     } catch (err) {
-      setError('Error al cargar servicios',err);
+      setError('Error al cargar servicios');
     } finally {
       setLoading(false);
     }
@@ -29,7 +28,6 @@ export default function ServiceCrud() {
     fetchServices();
   }, []);
 
-  // Manejar inputs
   const handleChange = e => {
     const { name, value, type, checked } = e.target;
     setForm(prev => ({
@@ -38,20 +36,17 @@ export default function ServiceCrud() {
     }));
   };
 
-  // Crear o actualizar servicio
   const handleSubmit = async e => {
     e.preventDefault();
     setLoading(true);
     try {
       if (editingId) {
-        // Update
         await fetch(`${API_URL}/${editingId}`, {
           method: 'PUT',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify(form)
         });
       } else {
-        // Create
         await fetch(API_URL, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
@@ -68,7 +63,6 @@ export default function ServiceCrud() {
     }
   };
 
-  // Editar servicio
   const handleEdit = service => {
     setForm({
       name: service.name,
@@ -76,9 +70,9 @@ export default function ServiceCrud() {
       is_active: service.is_active === 1 || service.is_active === true
     });
     setEditingId(service.service_id);
+    setError(null);
   };
 
-  // Eliminar servicio
   const handleDelete = async id => {
     if (!window.confirm('¿Seguro que deseas eliminar este servicio?')) return;
     setLoading(true);
@@ -93,14 +87,15 @@ export default function ServiceCrud() {
   };
 
   return (
-    <div style={{ maxWidth: 600, margin: 'auto', fontFamily: 'Arial, sans-serif' }}>
+    <div className="crud-container">
       <h2>{editingId ? 'Editar Servicio' : 'Agregar Servicio'}</h2>
-      {error && <p style={{ color: 'red' }}>{error}</p>}
+      {error && <p className="error-msg">{error}</p>}
 
-      <form onSubmit={handleSubmit} style={{ marginBottom: 20 }}>
-        <div >
-          <label>Nombre: </label>
-          <input className='textBox'
+      <form onSubmit={handleSubmit} className="crud-form">
+        <div className="form-group">
+          <label>Nombre:</label>
+          <input
+            className="textBox"
             name="name"
             value={form.name}
             onChange={handleChange}
@@ -108,16 +103,17 @@ export default function ServiceCrud() {
             disabled={loading}
           />
         </div>
-        <div >
-          <label>Descripción: </label>
-          <input className='textBox'
+        <div className="form-group">
+          <label>Descripción:</label>
+          <input
+            className="textBox"
             name="description"
             value={form.description}
             onChange={handleChange}
             disabled={loading}
           />
         </div>
-        <div >
+        <div className="form-group checkbox">
           <label>
             <input
               type="checkbox"
@@ -129,28 +125,31 @@ export default function ServiceCrud() {
             Activo
           </label>
         </div>
-        <div >
-        <button className='btn' type="submit" disabled={loading}>
-          {editingId ? 'Actualizar' : 'Crear'}
-        </button>
-        {editingId && (
-          <button className='delete-btn btn' 
-            type="button"
-            onClick={() => {
-              setEditingId(null);
-              setForm({ name: '', description: '', is_active: true });
-              setError(null);
-            }}
-            disabled={loading}
-          >
-            Cancelar
+        <div className="form-buttons">
+          <button className="btn submit-btn" type="submit" disabled={loading}>
+            {editingId ? 'Actualizar' : 'Crear'}
           </button>
-        )}</div>
+          {editingId && (
+            <button
+              className="btn cancel-btn"
+              type="button"
+              onClick={() => {
+                setEditingId(null);
+                setForm({ name: '', description: '', is_active: true });
+                setError(null);
+              }}
+              disabled={loading}
+            >
+              Cancelar
+            </button>
+          )}
+        </div>
       </form>
 
       <h3>Lista de Servicios</h3>
-      {loading && <p>Cargando...</p>}
-      <table >
+      {loading && <p className="info-msg">Cargando...</p>}
+
+      <table className="crud-table">
         <thead>
           <tr>
             <th>ID</th>
@@ -174,13 +173,16 @@ export default function ServiceCrud() {
               <td>{service.name}</td>
               <td>{service.description}</td>
               <td>{service.is_active ? 'Sí' : 'No'}</td>
-              <td className='flex'>
-                <button className='edit-btn' onClick={() => handleEdit(service)} disabled={loading}>
-                  Editar
-                </button>{' '}
-                <button className='delete-btn' onClick={() => handleDelete(service.service_id)} disabled={loading}>
-                   
-                  <span>Eliminar</span>
+              <td className="action-buttons">
+                <button className="edit-btn" onClick={() => handleEdit(service)} disabled={loading}>
+                  <FaPen/> Editar
+                </button>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(service.service_id)}
+                  disabled={loading}
+                >
+                  <FaCircleXmark /> Eliminar
                 </button>
               </td>
             </tr>

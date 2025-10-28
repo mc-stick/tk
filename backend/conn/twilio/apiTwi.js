@@ -5,11 +5,11 @@ const router = express.Router();
 
 // Crear msg
 router.post('/', async (req, res) => {
-  const { msg,from,to } = req.body;
-  console.log(msg,from,to)
+  const { msg,to } = req.body;
+  //console.log(msg,from,to)
   try {
-    console.log(msg,from,to)
-    const result = await createMessage(msg,from,to);
+    //console.log(msg,from,to)
+    const result = await createMessage(msg,to);
     res.json({ success: true, result });
   } catch (error) {
     console.error(error);

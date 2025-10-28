@@ -1,31 +1,30 @@
-import { useState } from 'react';
+import { useState } from "react";
 import "./TabsComponents.css";
-import { FaDisplay } from 'react-icons/fa6';
 
 const TabsNavigation = ({ tabs = [] }) => {
-  const [activeTab, setActiveTab] = useState(tabs[0]?.id || '');
+  const [activeTab, setActiveTab] = useState(tabs[0]?.id || "");
 
-  const activeContent = tabs.find(tab => tab.id === activeTab)?.content;
+  const activeContent = tabs.find((tab) => tab.id === activeTab)?.content;
 
   return (
-    <div>
-      {/* Tabs en la parte superior */}
+    <div className="tabs-wrapper">
+      {/* Encabezado de pestañas */}
       <div className="tabs-container">
         {tabs.map((tab) => (
           <button
             key={tab.id}
-            className={`tab ${activeTab === tab.id ? 'active' : ''}`}
+            className={`tab-btn ${activeTab === tab.id ? "active" : ""}`}
             onClick={() => setActiveTab(tab.id)}
           >
-            <span style={{marginRight:'10px', marginBottom:'-5px', fontSize:'1.2rem'}}>{tab.icon}</span>
-            {tab.label}
+            {tab.icon && <span className="tab-icon">{tab.icon}</span>}
+            <span className="tab-label">{tab.label}</span>
           </button>
         ))}
       </div>
 
-      {/* Contenido de la pestaña */}
+      {/* Contenido de pestaña activa */}
       <div className="tab-content">
-        {activeContent}
+        {activeContent ? activeContent : <p>Selecciona una pestaña</p>}
       </div>
     </div>
   );
