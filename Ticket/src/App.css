@@ -2,7 +2,9 @@ body {
   margin: 0 !important;
   padding: 0 !important;
 }
-
+.rootdiv{
+  background-color: black;
+}
 /*
 .logo {
   height: 6em;

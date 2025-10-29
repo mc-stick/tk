@@ -75,7 +75,7 @@ export default function EditProfile({ employeeId }) {
         throw new Error(errData.message || "Error actualizando perfil");
       }
 
-      setSuccessMsg("Perfil actualizado correctamente");
+      setSuccessMsg(`¡Perfil actualizado con éxito!`);
       setForm((f) => ({ ...f, password: "" }));
     } catch (err) {
       setError(err.message);
@@ -90,7 +90,7 @@ export default function EditProfile({ employeeId }) {
 
       {loading && <p className="info-msg">Cargando...</p>}
       {error && <p className="error-msg">{error}</p>}
-      {successMsg && <p className="success-msg">{successMsg}</p>}
+      {successMsg && <p className="success-msg"><strong>{successMsg} </strong><br />Los cambios se aplicarán en tu próximo inicio de sesión.</p>}
 
       <form onSubmit={handleSubmit} className="edit-profile-form">
         <div className="form-group">

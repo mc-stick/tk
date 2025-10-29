@@ -16,6 +16,9 @@ import "../Inputs/input.css";
 import ImgCustoms from "../widgets/ImgCustoms";
 import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 import { SendTwilioSms } from "../twilio/TwMsg";
+import Modal from "../Buttons/Modal";
+import handleFullscreen from "../Buttons/FullScreenbtn";
+import { FaTicket } from "react-icons/fa6";
 
 const TicketGenerator = () => {
   const { generarTurno } = useTurno();
@@ -26,6 +29,8 @@ const TicketGenerator = () => {
   const [servicios, setServicios] = useState([]);
   const [identificaciones, setIdentificaciones] = useState([]);
 
+  const [open, setOpen] = useState(false);
+
   const timerRef = useRef(null);
 
   // --- 🔹 Detección de inactividad ---
@@ -34,11 +39,10 @@ const TicketGenerator = () => {
       if (timerRef.current) clearTimeout(timerRef.current);
       if (estado !== "inicio") {
         timerRef.current = setTimeout(() => {
-         
           setEstado("inicio");
           setTurno(null);
           setVal("");
-        }, 6000); // 1 minuto = 60,000 ms
+        }, 600000); // 1 minuto = 60,000 ms
       }
     };
 
@@ -56,32 +60,38 @@ const TicketGenerator = () => {
   }, [estado]);
 
   // --- Cargar datos iniciales ---
+  const fetchData = async () => {
+    try {
+      const [servRes, idRes] = await Promise.all([
+        fetch("http://localhost:4001/api/services"),
+        fetch("http://localhost:4001/api/docs"),
+      ]);
+
+      if (!servRes.ok || !idRes.ok) throw new Error("Error al cargar datos");
+
+      const [servData, idData] = await Promise.all([
+        servRes.json(),
+        idRes.json(),
+      ]);
+
+      const servActive = servData.filter((item) => item.is_active === 1);
+
+      setServicios(servActive);
+      setIdentificaciones(idData);
+    } catch (error) {
+      console.error("Error al obtener datos:", error);
+    }
+  };
   useEffect(() => {
     document.title = "UCNE | Cliente";
 
-    const fetchData = async () => {
-      try {
-        const [servRes, idRes] = await Promise.all([
-          fetch("http://localhost:4001/api/services"),
-          fetch("http://localhost:4001/api/docs"),
-        ]);
-
-        if (!servRes.ok || !idRes.ok) throw new Error("Error al cargar datos");
-
-        const [servData, idData] = await Promise.all([
-          servRes.json(),
-          idRes.json(),
-        ]);
-
-        setServicios(servData);
-        setIdentificaciones(idData);
-      } catch (error) {
-        console.error("Error al obtener datos:", error);
-      }
-    };
-
     fetchData();
   }, []);
+
+  const ReloadPage = () => {
+    handleFullscreen();
+    fetchData();
+  };
 
   // --- Control del flujo ---
   const comenzar = () => {
@@ -90,12 +100,13 @@ const TicketGenerator = () => {
   };
 
   const seleccionarId = (name, size) => {
-    setEstado(["started", name, size]);
+    size !== 0 ? setEstado(["started", name, size]) : setEstado("seleccion");
   };
 
   const seleccionarServicio = async (tipo) => {
     try {
       const nuevoTurno = await generarTurno(tipo, val);
+      //console.log('nuevo turno',tipo,"<-tip",val,"val", nuevoTurno);
       setTurno(nuevoTurno);
       setEstado("confirmado");
     } catch (error) {
@@ -105,10 +116,18 @@ const TicketGenerator = () => {
 
   const aceptar = (num) => {
     const limpio = num.replace(/-/g, "");
-    SendTwilioSms("enviado desde tw", limpio);
+    limpio === 10 ? SendTwilioSms("enviado desde tw", limpio) : "";
     setEstado("inicio");
     setTurno(null);
     setVal("");
+    fetchData();
+  };
+
+  const handleConfirm = () => {
+    setOpen(false);
+    fetchData();
+    setEstado("inicio");
+    //alert("Confirmado!");
   };
 
   // --- Íconos por tipo ---
@@ -126,16 +145,17 @@ const TicketGenerator = () => {
     <div
       className={`
         ${estado[0] === "started" ? "cliente-container" : ""}
-        ${["Identificador", "seleccion", "confirmado"].includes(estado)
-          ? "cliente-container"
-          : ""}
-      `}
-    >
+        ${
+          ["Identificador", "seleccion", "confirmado"].includes(estado)
+            ? "cliente-container"
+            : ""
+        }
+      `}>
       {/* --- PANTALLA INICIO --- */}
       {estado === "inicio" && (
         <div className="inicio-container">
           <div className="inicio-content">
-            <div className="inicio-logo">
+            <div className="inicio-logo" onClick={ReloadPage}>
               <ImgCustoms src={ImgLogo} width="140px" alt="UCNE Logo" />
             </div>
             <h1 className="inicio-titulo">Bienvenidos a UCNE</h1>
@@ -157,7 +177,9 @@ const TicketGenerator = () => {
             <h1 style={{ color: "white" }}>
               Selecciona un método de identificación
             </h1>
-            <p style={{ color: "#a2ceffff" }} className="identificador-subtitle">
+            <p
+              style={{ color: "#a2ceffff" }}
+              className="identificador-subtitle">
               Elige cómo deseas identificarte para continuar.
             </p>
           </div>
@@ -167,8 +189,7 @@ const TicketGenerator = () => {
               <div
                 key={name}
                 className="identificador-card"
-                onClick={() => seleccionarId(name, size)}
-              >
+                onClick={() => seleccionarId(name, size)}>
                 <div className="identificador-icon">
                   <FaIdCard />
                 </div>
@@ -180,7 +201,8 @@ const TicketGenerator = () => {
       )}
 
       {/* --- INPUT DE IDENTIFICACIÓN --- */}
-      {estado[0] === "started" && (
+
+      {estado[0] === "started" && estado[2] !== 0 && (
         <FormattedInput
           tipo={estado[1]}
           setEstado={setEstado}
@@ -193,9 +215,7 @@ const TicketGenerator = () => {
       {estado === "seleccion" && (
         <div className="servicio-container">
           <div className="servicio-header">
-            <h1 style={{ color: "white" }}>
-              Seleccione el servicio que desea
-            </h1>
+            <h1 style={{ color: "white" }}>Seleccione un servicio</h1>
             <p style={{ color: "#afd7ffff" }} className="servicio-subtitle">
               Elige una opción para generar tu turno.
             </p>
@@ -206,13 +226,24 @@ const TicketGenerator = () => {
               <div
                 key={service_id}
                 className="servicio-card"
-                onClick={() => seleccionarServicio(service_id)}
-              >
+                onClick={() => seleccionarServicio(service_id)}>
                 <div className="servicio-icon">{iconoServicio(name)}</div>
                 <h2 className="servicio-nombre">{name}</h2>
               </div>
             ))}
           </div>
+          <br />
+          <br />
+          <button
+            style={{
+              backgroundColor: "#ffcc00",
+              border: "1px solid white",
+              color: "#0003afff",
+            }}
+            className="aceptar-btn"
+            onClick={() => setOpen(true)}>
+            <strong>Volver al inicio</strong>
+          </button>
         </div>
       )}
 
@@ -221,16 +252,51 @@ const TicketGenerator = () => {
         <div className="modal">
           <div className="modal-content">
             <h2>Tu turno se ha generado</h2>
-            <p>
-              Se ha enviado un SMS a: <strong>{val}</strong> con tu número de
-              ticket.
-            </p>
-            <button className="aceptar-btn" onClick={() => aceptar(val)}>
-              Aceptar
+            {val.length === 8 && (
+              <p>
+                Se ha generado un turno para la matrícula.{" "}
+                <strong>{val}</strong>
+              </p>
+            )}
+            {val.length === 12 && (
+              <p>
+                Se ha enviado un SMS a: <strong>{val}</strong> con tu número de
+                ticket.
+              </p>
+            )}
+            {(val === 0 || "") && <p>Se ha generado tu número de ticket.</p>}{" "}
+            <>
+             
+              <hr />
+              <h2 >
+                <strong>{turno}</strong>
+              </h2>
+
+              <hr />
+             
+            </>
+            <button
+              className="aceptar-btn"
+              style={{
+                backgroundColor: "#ffcc00",
+                border: "1px solid white",
+                color: "#0003afff",
+              }}
+              onClick={() => aceptar(val)}>
+              <strong>Aceptar</strong>
             </button>
           </div>
         </div>
       )}
+
+      <Modal
+        isOpen={open}
+        title="Confirmar acción"
+        onClose={() => setOpen(false)}
+        onConfirm={() => handleConfirm()}
+        confirmText="Sí">
+        <p>¿Descartar cambios y volver a la pantalla inicial?</p>
+      </Modal>
     </div>
   );
 };

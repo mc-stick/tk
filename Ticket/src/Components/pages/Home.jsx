@@ -8,6 +8,7 @@ import {
 import { useEffect } from "react";
 import iconlg from "../../assets/img/UcneLogoIcon.png";
 import "./Home.css";
+import handleFullscreen from "../Buttons/FullScreenbtn";
 
 const Home = () => {
   const navigate = useNavigate();
@@ -17,6 +18,14 @@ const Home = () => {
     const favicon = document.querySelector("link[rel='icon']");
     if (favicon) favicon.href = iconlg;
   }, []);
+
+
+ const handleDisplay =(label, route)=>{
+    if(['Cliente', 'Pantalla'].includes(label)){
+      handleFullscreen();
+    }
+    navigate(route)
+ }
 
   const opciones = [
     {
@@ -60,7 +69,7 @@ const Home = () => {
           <button
             key={label}
             className="home-card"
-            onClick={() => navigate(route)}
+            onClick={() => handleDisplay(label,route)}
             style={{ borderTop: `5px solid ${color}` }}
           >
             <div className="home-icon">{icon}</div>

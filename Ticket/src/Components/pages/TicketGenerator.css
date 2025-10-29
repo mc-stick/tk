@@ -141,7 +141,7 @@ h1 {
   background: linear-gradient(135deg, #003366 0%, #0066cc 100%);
   color: #fff;
   text-align: center;
-  animation: fadeIn 0.8s ease-in-out;
+  animation: fadeIn 0.5s ease-in-out;
 }
 
 /* Contenedor del contenido */
@@ -206,8 +206,8 @@ h1 {
 /* Animaciones */
 @keyframes fadeIn {
   from {
-    opacity: 0;
-    transform: scale(0.97);
+    opacity: 0.9;
+    transform: scale(0.90);
   }
   to {
     opacity: 1;

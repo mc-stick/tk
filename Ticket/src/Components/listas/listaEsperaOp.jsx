@@ -2,7 +2,7 @@ import React, { useEffect, useState, useRef } from "react";
 import "./OpListEspera.css";
 import { FaBell, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 
-const OpListEspera = ({ data, onLlamarTurno, btn }) => {
+const OpListEspera = ({ data, onLlamarTurno }) => {
   const [ultimoAnimado, setUltimoAnimado] = useState(null);
   const [mostrarAnimacion, setMostrarAnimacion] = useState(false);
   const prevTurnosRef = useRef([]);
@@ -99,7 +99,7 @@ const OpListEspera = ({ data, onLlamarTurno, btn }) => {
                 }`}
               >
                 <span className="turno-info">
-                  #{t.ticket_id ?? t.id} - {t.service_name ?? t.tipo}
+                  #{t.nticket ?? t.id} - {t.service_name ?? t.tipo}
                 </span>
                 <button
                   className="btn-turno success"
@@ -129,7 +129,7 @@ const OpListEspera = ({ data, onLlamarTurno, btn }) => {
                 }`}
               >
                 <span className="turno-info">
-                  #{t.ticket_id ?? t.id} - {t.service_name ?? t.tipo}
+                  #{t.nticket ?? t.id} - {t.service_name ?? t.tipo}
                 </span>
                 <button
                   className="btn-turno primary"

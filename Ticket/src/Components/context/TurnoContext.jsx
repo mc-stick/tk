@@ -63,7 +63,9 @@ export const TurnoProvider = ({ children }) => {
   //   }
   // };
   const generarTurno = async ( tipo, val ) => {
-    console.log('turno context', tipo, val);
+    
+    val = val.trim() !== "" ? val : "Cliente sin ID";
+    //console.log('turno context trim',val);
   try {
     const res = await axios.post("http://localhost:4001/api/tickets", {
       service_id:tipo,
@@ -77,8 +79,8 @@ export const TurnoProvider = ({ children }) => {
     });
     await fetchTickets();
     //console.log(res.data,"genera turno")
-    //return res.data || null;
-    return tipo, val || null;
+    return res.data || null;
+    // return tipo, val || null;
   } catch (error) {
     console.error("Error al generar ticket:", error);
     return null;
@@ -87,30 +89,30 @@ export const TurnoProvider = ({ children }) => {
 
 
   // 🔹 Llamar siguiente ticket (primer pendiente) y actualizar estado usando procedure
-  const llamarSiguiente = async (employee_id) => {
-    if (cola.length === 0) return null;
+  // const llamarSiguiente = async (employee_id) => {
+  //   if (cola.length === 0) return null;
 
-    const siguiente = cola[0]; // primer ticket pendiente
-    try {
-      await axios.put(
-        `http://localhost:4001/api/tickets/${siguiente.ticket_id}/status`,
-        {
-          new_status_id: 2, // Llamado
-          employee_id,
-          comment: "Llamado al cliente"
-        }
-      );
-      await fetchTickets();
-      return siguiente;
-    } catch (error) {
-      console.error("Error al llamar siguiente ticket:", error);
-      return null;
-    }
-  };
+  //   const siguiente = cola[0]; // primer ticket pendiente
+  //   try {
+  //     await axios.put(
+  //       `http://localhost:4001/api/tickets/${siguiente.ticket_id}/status`,
+  //       {
+  //         new_status_id: 2, // Llamado
+  //         employee_id,
+  //         comment: "Llamado al cliente"
+  //       }
+  //     );
+  //     await fetchTickets();
+  //     return siguiente;
+  //   } catch (error) {
+  //     console.error("Error al llamar siguiente ticket:", error);
+  //     return null;
+  //   }
+  // };
 
   // 🔹 Llamar un ticket específico por ID
   const llamarTurnoPorId = async (ticket_id, employee_id, service_id, status_id) => {
-    console.log('llamar turno tcontx new',ticket_id,employee_id,status_id, service_id)
+    //console.log('llamar turno tcontx new',ticket_id,employee_id,status_id, service_id)
     try {
       await axios.put(
         `http://localhost:4001/api/tickets/${ticket_id}/status`,
@@ -135,7 +137,7 @@ export const TurnoProvider = ({ children }) => {
         turnoActual,
         cola,
         generarTurno,
-        llamarSiguiente,
+        //llamarSiguiente,
         llamarTurnoPorId,
         loading,
         totalatend,

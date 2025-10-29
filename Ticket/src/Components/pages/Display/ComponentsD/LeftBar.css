@@ -34,6 +34,19 @@
   overflow-y: auto;
   scrollbar-width: thin;
 }
+.leftbar-title-list {
+  
+  padding: 14px 16px;
+  margin-bottom: 10px;
+  color: #e6f0ff;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-weight: 500;
+  font-size: 3rem;
+  transition: all 0.3s ease;
+  animation: slideUp 0.4s ease-in-out;
+}
 
 /* ITEM DE TURNO */
 .leftbar-item {
@@ -62,21 +75,22 @@
 .leftbar-item-active {
   background: #ffee00;
   color: #003366;
-  transform: scale(.9);
+  transform: scale(0.9);
   box-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
   animation: highlight 1.5s ease-in-out;
 }
 
 /* ELEMENTOS INTERNOS */
 .leftbar-ticket {
-  font-size: 1.3rem;
+  font-size: 2rem;
   font-weight: 700;
+  padding-left: 1rem;
 }
 
 .leftbar-puesto {
-  font-size: 1rem;
+  font-size: 2rem;
   font-weight: 500;
-  color: #cce0ff;
+  padding-right: 1rem;
 }
 
 /* ANIMACIONES */

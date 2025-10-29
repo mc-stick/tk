@@ -11,7 +11,7 @@ import "./OperatorPanel.css";
 
 const OperatorPanel = () => {
   const { user } = useAuth();
-  const { llamarSiguiente, turnoActual, cola, llamarTurnoPorId } = useTurno();
+  const { turnoActual, cola, llamarTurnoPorId } = useTurno();
   const [showBTNFIN, setShowBTNFIN] = useState(false);
 
   useEffect(() => {
@@ -19,11 +19,11 @@ const OperatorPanel = () => {
   }, []);
 
  
-  const handleLlamarSiguiente = async () => {
-    const puesto = user?.username || "#1";
-    const siguiente = await llamarSiguiente(puesto);
-    setShowBTNFIN(!!siguiente);
-  };
+  // const handleLlamarSiguiente = async () => {
+  //   const puesto = user?.username || "#1";
+  //   const siguiente = await llamarSiguiente(puesto);
+  //   setShowBTNFIN(!!siguiente);
+  // };
 
   const handleLlamarTurnoManual = async (turno) => {
     const puesto = user?.puesto_id;
@@ -49,11 +49,7 @@ const OperatorPanel = () => {
         <OpListEspera
           data={{ turnoActual, cola, user }}
           onLlamarTurno={handleLlamarTurnoManual}
-          btn={
-            <OpTurnoManager
-              data={{ turnoActual, cola, showBTNFIN, handleLlamarSiguiente }}
-            />
-          }
+          
         />
       ),
     },

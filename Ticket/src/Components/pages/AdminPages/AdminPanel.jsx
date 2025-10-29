@@ -114,9 +114,9 @@ const AdminPanel = () => {
   // { id: 'home', label: 'Inicio', content: <AdminPage/>, icon:<FaHouse/> },
   { id: 'file', label: 'Pantalla Principal', content: <FileManager/>, icon:<FaDisplay /> },
   { id: 'services', label: 'Servicios', content: <ServiceCrud/>, icon:<FaServicestack /> },
-  { id: 'roles', label: 'Roles', content: <RoleCrud/>, icon:<FaPersonCircleExclamation /> },
+  //{ id: 'roles', label: 'Roles', content: <RoleCrud/>, icon:<FaPersonCircleExclamation /> },
   { id: 'puesto', label: 'Puestos', content: <PuestoCrud/>, icon:<FaPersonChalkboard /> },
-  { id: 'docs', label: 'Tipos de documentos', content: <DocTypeCrud/>, icon:<FaIdCard /> },
+  //{ id: 'docs', label: 'Tipos de documentos', content: <DocTypeCrud/>, icon:<FaIdCard /> },
   { id: 'emplid', label: 'Empleados', content: <EmployeeCrud/>, icon:<FaPerson /> },
 ];
 

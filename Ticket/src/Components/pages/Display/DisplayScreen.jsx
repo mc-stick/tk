@@ -11,7 +11,7 @@ const DisplayScreen = () => {
   const [imagenes, setImagenes] = useState([]);
   const [actual, setActual] = useState(0);
   const intervalRef = useRef(null);
-  const [usuarioLlamado, setUsuarioLlamado] = useState(null);
+  //const [usuarioLlamado, setUsuarioLlamado] = useState(null);
 
   const API_URL = "http://localhost:4001/api/img"; // Ajusta según tu backend
   //console.log(turnoActual, cola,"desde display screen")

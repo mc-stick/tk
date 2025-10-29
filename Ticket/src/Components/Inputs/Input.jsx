@@ -4,6 +4,8 @@ import './input.css'
 import { FcNext } from "react-icons/fc";
 import { FaArrowLeft, FaLeftLong, FaRightLong } from "react-icons/fa6";
 import { FaCheck} from "react-icons/fa";
+import Modal from "../Buttons/Modal";
+
 
 
 
@@ -26,10 +28,17 @@ import { FaCheck} from "react-icons/fa";
 // };
 
 const FormattedInput = ({ tipo, setEstado,  setVal, size }) => {
+
+  const [open, setOpen] = useState(false);
+
+  
   
   const [valor, setValor] = useState('');
   const [validate, setValidate] = useState(true);
-  console.log("logsss",tipo, size )
+  //console.log("logsss",tipo, size )
+  
+  
+  
 
   const formatearValor = (valorBruto) => {
     let limpio = valorBruto.replace(/\D/g, '');
@@ -85,17 +94,27 @@ const FormattedInput = ({ tipo, setEstado,  setVal, size }) => {
 
 
   const Submit =(x)=>{
-    console.log(x.toString().length, size, x)
+    //console.log(x.toString().length, size, x)
     
-    if (x.toString().length == size+2) {
-    setVal(x);
     
-    setValidate(true)
+    if (x.toString().length == size+2) { 
+      setVal(x);
+      
+      setValidate(true) 
+      setOpen(true)
+     //handleConfirm(x)
     
-    setEstado('seleccion');
     }else{setValidate(false)}
     
   }
+
+  const handleConfirm = () => {
+   setOpen(false);
+    
+    setEstado('seleccion');
+    //alert("Confirmado!");
+    
+  };
 
   return (
     <div className="">
@@ -119,7 +138,7 @@ const FormattedInput = ({ tipo, setEstado,  setVal, size }) => {
       value={valor}
       onChange={handleChange}
       placeholder={`Ingrese su ${tipo}`}
-      readOnly
+      //readOnly
     />
 
     {!validate && (
@@ -141,11 +160,21 @@ const FormattedInput = ({ tipo, setEstado,  setVal, size }) => {
         <FaLeftLong />
       </button>
 
-      <button className="key-btn accept-btn" onClick={() => Submit(valor)}>
+      <button className="key-btn accept-btn" onClick={() => Submit(valor)  }>
         <FaCheck size={32} />
       </button>
     </div>
   </div>
+
+   <Modal
+        isOpen={open}
+        title="Confirmar acción"
+        onClose={() => setOpen(false)}
+        onConfirm={() => handleConfirm()}
+        confirmText="Sí, continuar"
+      >
+        <p>¿Es correcto <strong>{valor}</strong> ?</p>
+      </Modal>
 </div>
 
   );
