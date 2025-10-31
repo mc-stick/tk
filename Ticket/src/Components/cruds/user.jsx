@@ -1,43 +1,47 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
 import "./Crud.css";
 import { FaCircleXmark, FaPen } from "react-icons/fa6";
 
-const EMPLOYEES_API = "http://localhost:4001/api/employees";
-const ROLES_API = "http://localhost:4001/api/roles";
-const PUESTO_API = "http://localhost:4001/api/puesto";
+const services = import.meta.env.VITE_SERVICE_API;
+
+const EMPLOYEES_API = `${services}/employees`;
+const ROLES_API = `${services}/roles`;
+const PUESTO_API = `${services}/puesto`;
 
 export default function EmployeeCrud() {
   const [employees, setEmployees] = useState([]);
   const [roles, setRoles] = useState([]);
   const [puestos, setPuestos] = useState([]);
   const [form, setForm] = useState({
+    id: "",
     username: "",
     password_hash: "",
     full_name: "",
     puesto_id: "",
-    roles: "",
+    roles: [], // ✅ ahora es array
     is_active: true,
   });
   const [editingId, setEditingId] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-
+  const usernameRef = useRef(null);
+  // -----------------------------
   // Fetch Roles
+  // -----------------------------
   const fetchRoles = async () => {
     try {
       const res = await fetch(ROLES_API);
       if (!res.ok) throw new Error("Error cargando roles");
       const data = await res.json();
       setRoles(data);
-      if (!form.roles && data.length > 0) {
-        setForm((f) => ({ ...f, roles: data[0].name }));
-      }
     } catch (err) {
       setError(err.message);
     }
   };
 
+  // -----------------------------
   // Fetch Puestos
+  // -----------------------------
   const fetchPuestos = async () => {
     try {
       const res = await fetch(PUESTO_API);
@@ -52,7 +56,9 @@ export default function EmployeeCrud() {
     }
   };
 
+  // -----------------------------
   // Fetch Employees
+  // -----------------------------
   const fetchEmployees = async () => {
     setLoading(true);
     setError(null);
@@ -61,7 +67,6 @@ export default function EmployeeCrud() {
       if (!res.ok) throw new Error("Error al cargar empleados");
       const data = await res.json();
 
-      // Integrar nombres de puestos desde el fetch
       const enriched = data.map((e) => {
         const puestoObj = puestos.find((p) => p.id === e.puesto_id);
         return {
@@ -69,6 +74,7 @@ export default function EmployeeCrud() {
           puesto_nombre: puestoObj ? puestoObj.nombre : e.puesto_id,
         };
       });
+
       setEmployees(enriched);
     } catch (err) {
       setError(err.message);
@@ -77,28 +83,50 @@ export default function EmployeeCrud() {
     }
   };
 
+  // -----------------------------
+  // useEffects
+  // -----------------------------
   useEffect(() => {
     fetchRoles();
     fetchPuestos();
   }, []);
 
-  // Refetch empleados cuando puestos estén cargados
   useEffect(() => {
     if (puestos.length > 0) fetchEmployees();
   }, [puestos]);
 
+  // -----------------------------
+  // handleChange
+  // -----------------------------
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
-    setForm((prev) => ({
-      ...prev,
-      [name]: type === "checkbox" ? checked : value,
-    }));
+
+    if (name === "roles") {
+      // ✅ Manejo de checkboxes múltiples
+      setForm((prev) => {
+        const updatedRoles = checked
+          ? [...prev.roles, value]
+          : prev.roles.filter((r) => r !== value);
+
+        return { ...prev, roles: updatedRoles };
+      });
+    } else {
+      setForm((prev) => ({
+        ...prev,
+        [name]: type === "checkbox" ? checked : value,
+      }));
+    }
   };
 
+  // -----------------------------
+  // handleSubmit
+  // -----------------------------
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!form.username.trim()) return setError("El usuario es obligatorio");
-    if (!form.full_name.trim()) return setError("El nombre completo es obligatorio");
+    if (!form.full_name.trim())
+      return setError("El nombre completo es obligatorio");
     if (!editingId && !form.password_hash.trim())
       return setError("La contraseña es obligatoria para nuevos empleados");
 
@@ -108,21 +136,30 @@ export default function EmployeeCrud() {
     try {
       const method = editingId ? "PUT" : "POST";
       const url = editingId ? `${EMPLOYEES_API}/${editingId}` : EMPLOYEES_API;
+
       const res = await fetch(url, {
         method,
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify(form),
+        body: JSON.stringify({
+          ...form,
+          // ✅ si tu backend espera texto en lugar de array
+          roles: Array.isArray(form.roles) ? form.roles.join(",") : form.roles,
+        }),
       });
+
       if (!res.ok) throw new Error("Error al guardar empleado");
 
+      // Reset del formulario
       setForm({
+        id: "",
         username: "",
         password_hash: "",
         full_name: "",
         puesto_id: puestos.length > 0 ? puestos[0].id : "",
-        roles: roles.length > 0 ? roles[0].name : "",
+        roles: [],
         is_active: true,
       });
+
       setEditingId(null);
       fetchEmployees();
     } catch (err) {
@@ -132,19 +169,35 @@ export default function EmployeeCrud() {
     }
   };
 
+  // -----------------------------
+  // handleEdit
+  // -----------------------------
   const handleEdit = (employee) => {
+    if (usernameRef.current) {
+      usernameRef.current.focus();
+    }
+    window.scrollTo({ top: 0, behavior: "smooth" });
     setForm({
+      id: employee.employee_id,
       username: employee.username,
       password_hash: "",
       full_name: employee.full_name,
       puesto_id: employee.puesto_id,
-      roles: employee.roles,
+      roles: employee.roles
+        ? employee.roles.split(",").map((roleName) => {
+            const roleObj = roles.find((r) => r.name === roleName.trim());
+            return roleObj ? String(roleObj.role_id) : "";
+          })
+        : [],
       is_active: Boolean(employee.is_active),
     });
     setEditingId(employee.employee_id);
     setError(null);
   };
 
+  // -----------------------------
+  // handleDelete
+  // -----------------------------
   const handleDelete = async (id) => {
     if (!window.confirm("¿Seguro que deseas eliminar este empleado?")) return;
     setLoading(true);
@@ -160,6 +213,9 @@ export default function EmployeeCrud() {
     }
   };
 
+  // -----------------------------
+  // Render
+  // -----------------------------
   return (
     <div className="crud-container">
       <h2>{editingId ? "Editar Empleado" : "Agregar Empleado"}</h2>
@@ -169,6 +225,7 @@ export default function EmployeeCrud() {
         <div className="form-group">
           <label htmlFor="username">Usuario:</label>
           <input
+            ref={usernameRef}
             id="username"
             name="username"
             className="textBox"
@@ -213,8 +270,7 @@ export default function EmployeeCrud() {
             className="textBox"
             value={form.puesto_id}
             onChange={handleChange}
-            disabled={loading}
-          >
+            disabled={loading}>
             {puestos.map((p) => (
               <option key={p.id} value={p.id}>
                 {p.nombre} - {p.descripcion}
@@ -224,21 +280,22 @@ export default function EmployeeCrud() {
         </div>
 
         <div className="form-group">
-          <label htmlFor="roles">Rol:</label>
+          <label htmlFor="role_id">Rol:</label>
           <select
-            id="roles"
-            name="roles"
-            className="textBox"
-            value={form.roles}
-            onChange={handleChange}
-            disabled={loading}
-          >
-            {roles.map((r) => (
-              <option key={r.role_id} value={r.name}>
-                {r.name} - {r.description}
-              </option>
-            ))}
-          </select>
+  id="role_id"
+  name="roles"
+  value={form.roles[0] || ""}
+  onChange={(e) => setForm((prev) => ({ ...prev, roles: [e.target.value] }))}
+  disabled={loading}
+  className="textBox"
+>
+  <option value="">Seleccione un rol</option>
+  {roles.map((r) => (
+    <option key={r.role_id} value={String(r.role_id)}>
+      {r.name} - {r.description}
+    </option>
+  ))}
+</select>
         </div>
 
         <div className="form-group checkbox-group">
@@ -267,17 +324,17 @@ export default function EmployeeCrud() {
               onClick={() => {
                 setEditingId(null);
                 setForm({
+                  id: "",
                   username: "",
                   password_hash: "",
                   full_name: "",
                   puesto_id: puestos.length > 0 ? puestos[0].id : "",
-                  roles: roles.length > 0 ? roles[0].name : "",
+                  roles: [],
                   is_active: true,
                 });
                 setError(null);
               }}
-              disabled={loading}
-            >
+              disabled={loading}>
               Cancelar
             </button>
           )}
@@ -286,7 +343,9 @@ export default function EmployeeCrud() {
 
       <h3>Lista de Empleados</h3>
       {loading && <p className="info-msg">Cargando empleados...</p>}
-      {!loading && employees.length === 0 && <p className="info-msg">No hay empleados registrados.</p>}
+      {!loading && employees.length === 0 && (
+        <p className="info-msg">No hay empleados registrados.</p>
+      )}
 
       <table className="crud-table">
         <thead>
@@ -295,25 +354,45 @@ export default function EmployeeCrud() {
             <th>Usuario</th>
             <th>Nombre completo</th>
             <th>Puesto</th>
-            <th>Rol</th>
+            <th>Roles</th>
             <th>Activo</th>
             <th>Acciones</th>
           </tr>
         </thead>
         <tbody>
           {employees.map((e) => (
-            <tr key={e.employee_id}>
+            <tr
+              key={e.employee_id}
+              style={{ color: e.is_active ? "" : "#fddddd" }}>
               <td>{e.employee_id}</td>
               <td>{e.username}</td>
               <td>{e.full_name}</td>
               <td>{e.puesto_nombre}</td>
-              <td>{e.roles}</td>
-              <td>{e.is_active ? "Sí" : "No"}</td>
+              <td
+                style={{
+                  color: e.roles ? "" : "red",
+                  fontWeight: e.roles ? "" : "Bold",
+                }}>
+                {e.roles ? e.roles : "No Asignado"}
+              </td>
+              <td
+                style={{
+                  color: e.is_active ? "green" : "red",
+                  fontWeight: "bold",
+                }}>
+                {e.is_active ? "Sí" : "No"}
+              </td>
               <td className="action-buttons">
-                <button className="edit-btn" onClick={() => handleEdit(e)} disabled={loading}>
-                 <FaPen/> Editar
+                <button
+                  className="edit-btn"
+                  onClick={() => handleEdit(e)}
+                  disabled={e.employee_id > 1 ? false : true}>
+                  <FaPen /> Editar
                 </button>
-                <button className="delete-btn" onClick={() => handleDelete(e.employee_id)} disabled={loading}>
+                <button
+                  className="delete-btn"
+                  onClick={() => handleDelete(e.employee_id)}
+                  disabled={e.employee_id > 1 ? false : true}>
                   <FaCircleXmark /> Eliminar
                 </button>
               </td>

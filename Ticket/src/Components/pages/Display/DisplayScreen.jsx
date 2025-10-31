@@ -13,7 +13,9 @@ const DisplayScreen = () => {
   const intervalRef = useRef(null);
   //const [usuarioLlamado, setUsuarioLlamado] = useState(null);
 
-  const API_URL = "http://localhost:4001/api/img"; // Ajusta según tu backend
+  const services = import.meta.env.VITE_SERVICE_API;
+
+  const API_URL = `${services}/img`; // Ajusta según tu backend
   //console.log(turnoActual, cola,"desde display screen")
 
   // Función para traer imágenes desde la DB

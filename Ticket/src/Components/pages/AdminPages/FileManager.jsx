@@ -3,7 +3,8 @@ import ThemeToggle from "../../theme/themeToggle";
 import "./FileManager.css";
 import { FaWindowClose } from "react-icons/fa";
 
-const API_URL = "http://localhost:4001/api/img"; // 🔹 Ajusta el puerto según tu backend
+const services = import.meta.env.VITE_SERVICE_API;
+const API_URL = `${services}/img`; // 🔹 Ajusta el puerto según tu backend
 
 const FileManager = () => {
   const [imagenes, setImagenes] = useState([]);

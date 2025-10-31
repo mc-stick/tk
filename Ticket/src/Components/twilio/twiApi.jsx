@@ -6,9 +6,11 @@ function Twilio_app() {
   const [to, setTo] = useState("");
   const [respuesta, setRespuesta] = useState(null);
 
+  const services = import.meta.env.VITE_SERVICE_API;
+
   const enviarMensaje = async () => {
     try {
-      const response = await fetch("http://localhost:4001/api/msg", {
+      const response = await fetch(`${services}/msg`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({ msg, from, to }),

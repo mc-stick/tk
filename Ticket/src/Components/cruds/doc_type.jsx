@@ -2,7 +2,8 @@ import React, { useEffect, useState } from "react";
 import './Crud.css';
 import { FaCircleXmark, FaPen } from "react-icons/fa6";
 
-const API_URL = "http://localhost:4001/api/docs";
+const services = import.meta.env.VITE_SERVICE_API;
+const API_URL = `${services}/docs`;
 
 export default function DocTypeCrud() {
   const [docs, setDocs] = useState([]);

@@ -18,7 +18,7 @@ const Modal = ({ isOpen, title, children, onClose, confirmText = "Aceptar", onCo
 
         <div className="modal-footer">
           <button className="btn-cancel" onClick={onClose}>
-            Volver
+            Cancelar
           </button>
           <button className="btn-confirm" onClick={onConfirm}>
             {confirmText}

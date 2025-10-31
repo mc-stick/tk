@@ -2,6 +2,7 @@
 .admin-container {
   max-width: 1200px;
   margin: 2rem auto;
+  margin-top:120px;
   padding: 1rem;
   background: #ffffff;
   border-radius: 12px;
@@ -107,14 +108,30 @@
   transition: all 0.3s ease;
 }
 
-.imagen-wrapper.activo .imagen-thumbnail {
+.imagen-wrapper.activo {
   opacity: 1;
-  border: 2px solid #00cc66;
+  border: 2px solid #3acc00;
+  border-bottom: 5px solid #3acc00;
 }
 
-.imagen-wrapper.desactivado .imagen-thumbnail {
-  opacity: 0.3;
-  border: 2px solid #ffcc00;
+/* .imagen-wrapper.desactivado .imagen-thumbnail { */
+.imagen-wrapper.desactivado {
+  opacity: 0.7;
+  border: 2px solid #ff1100;
+  border-bottom: 5px solid #ff0000;
+}
+
+.imagen-wrapper.desactivado::before {
+  content: "";
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 200%;
+  height: 4px;
+  background-color: #ff0000;
+  transform: rotate(-325deg);
+  transform-origin: left;
+  z-index: 2;
 }
 
 /* ======== Botón eliminar ======== */

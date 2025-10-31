@@ -57,8 +57,9 @@ const Home = () => {
   return (
     <div className="home-container">
       <div className="home-header">
+        <h1 className="home-title" style={{marginBottom:'1rem'}}>Universidad Católica Nordestana - UCNE</h1>
         <img src={iconlg} alt="UCNE Logo" className="home-logo" />
-        <h1 className="home-title">Sistema de Gestión de Turnos UCNE</h1>
+        <h1 className="home-title">Sistema de Gestión de Turnos</h1>
         <p className="home-subtitle">
           Selecciona el tipo de dispositivo para continuar
         </p>

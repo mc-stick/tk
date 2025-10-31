@@ -21,6 +21,7 @@ router.get('/', async (req, res) => {
     ORDER BY e.employee_id;
   `);
   res.json(rows);
+  console.log("get emplid",rows)
 });
 
 // 🔹 Obtener un empleado por ID
@@ -40,40 +41,123 @@ router.get('/:id', async (req, res) => {
 });
 
 // Crear empleado
+// router.post('/', async (req, res) => {
+//   const { username, password_hash, full_name, puesto_id, roles, id } = req.body;
+
+
+//   const [rows] = await pool.query('CALL sp_add_employee(?, ?, ?, ?)', [
+//     username, password_hash, full_name, puesto_id
+//   ]);
+
+//   const [rows1] = await pool.query('CALL sp_add_employee_role(?,?)', [
+//     rows[0][0].new_employee_id, roles
+//   ]);
+
+
+//   res.json({ message: 'Empleado agregado', data: rows[0][0] });
+// });
+
+// Crear empleado
 router.post('/', async (req, res) => {
-  const { username, password_hash, full_name, puesto_id } = req.body;
-  const [rows] = await pool.query('CALL sp_add_employee(?, ?, ?, ?)', [
-    username, password_hash, full_name, puesto_id
-  ]);
-  res.json({ message: 'Empleado agregado', data: rows[0][0] });
+  try {
+    const { username, password_hash, full_name, puesto_id, roles } = req.body;
+
+    // Crear empleado
+    const [rows] = await pool.query('CALL sp_add_employee(?, ?, ?, ?)', [
+      username,
+      password_hash,
+      full_name,
+      puesto_id,
+    ]);
+
+    const newId = rows[0][0].new_employee_id;
+
+    // Convertir roles a array si vienen como texto
+    const parsedRoles = Array.isArray(roles)
+      ? roles
+      : typeof roles === "string"
+      ? roles.split(",").map((r) => r.trim())
+      : [];
+
+    // Insertar roles uno por uno
+    for (const roleId of parsedRoles) {
+      await pool.query('CALL sp_add_employee_role(?, ?)', [newId, roleId]);
+    }
+
+    res.json({ message: "Empleado agregado", data: rows[0][0] });
+  } catch (err) {
+    console.error("Error al crear empleado:", err);
+    res.status(500).json({ message: "Error al crear empleado" });
+  }
 });
 
+
 // Actualizar empleado
-router.put('/:id', async (req, res) => {
-  const { username,password_hash, full_name, puesto_id, is_active, edit } = req.body;
-  const { id } = req.params;
+// router.put('/:id', async (req, res) => {
+//   const { username,password_hash, full_name, puesto_id, is_active, edit, roles } = req.body;
+//   const { id } = req.params;
   
 
-  edit ? (
+//   edit ? (
     
-    await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?)', [
-        id, username, full_name, password_hash
-      ])
+//     await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?)', [
+//         id, username, full_name, password_hash
+//       ])
      
 
-  ) : (
+//   ) : (
 
-      await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
-      id, username, full_name, puesto_id, is_active, password_hash
-    ])
+//       await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
+//       id, username, full_name, puesto_id, is_active, password_hash
+//     ])
 
-  )
+//   )
+
+//   await pool.query('CALL sp_add_employee_role(?,?)', [
+//     id, roles
+//   ]);
 
  
 
   
-  res.json({ message: 'Empleado actualizado' });
+//   res.json({ message: 'Empleado actualizado' });
+// });
+router.put('/:id', async (req, res) => {
+  try {
+    const { username, password_hash, full_name, puesto_id, is_active, edit, roles } = req.body;
+    const { id } = req.params;
+
+    if (edit) {
+      await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?)', [
+        id, username, full_name, password_hash
+      ]);
+    } else {
+      await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
+        id, username, full_name, puesto_id, is_active, password_hash
+      ]);
+    }
+
+    // 🔹 Eliminar roles actuales del empleado
+    await pool.query('DELETE FROM employee_roles WHERE employee_id = ?', [id]);
+
+    // 🔹 Volver a insertar los nuevos roles
+    const parsedRoles = Array.isArray(roles)
+      ? roles
+      : typeof roles === "string"
+      ? roles.split(",").map((r) => r.trim())
+      : [];
+
+    for (const roleId of parsedRoles) {
+      await pool.query('CALL sp_add_employee_role(?, ?)', [id, roleId]);
+    }
+
+    res.json({ message: "Empleado actualizado" });
+  } catch (err) {
+    console.error("Error al actualizar empleado:", err);
+    res.status(500).json({ message: "Error al actualizar empleado" });
+  }
 });
+
 
 // Eliminar empleado
 router.delete('/:id', async (req, res) => {

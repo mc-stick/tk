@@ -30,15 +30,15 @@ router.post('/', async (req, res) => {
   const [rows] = await pool.query('CALL sp_add_puesto(?, ?)', [
     nombre, descripcion
   ]);
-  res.json({ message: 'Puesto creado', data: rows[0][0] });
+  res.json({ message: 'Puesto creado', data: rows[0] });
 });
 
 // Actualizar puesto
 router.put('/:id', async (req, res) => {
-  const { nombre, descripcion, estado } = req.body;
+  const { nombre, descripcion } = req.body;
   const { id } = req.params;
-  await pool.query('CALL sp_update_puesto(?, ?, ?, ?)', [
-    id, nombre, descripcion, estado
+  await pool.query('CALL sp_update_puesto(?, ?, ?)', [
+    id, nombre, descripcion
   ]);
   res.json({ message: 'Puesto actualizado' });
 });

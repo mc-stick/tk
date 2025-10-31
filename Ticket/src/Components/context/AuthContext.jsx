@@ -8,6 +8,8 @@ export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true); // estado de carga inicial
 
+  const services = import.meta.env.VITE_SERVICE_API;
+
   useEffect(() => {
     const checkStoredToken = () => {
       const token = localStorage.getItem("token");
@@ -48,7 +50,7 @@ export const AuthProvider = ({ children }) => {
 
   const login = async (username, password) => {
     try {
-      const res = await axios.post("http://localhost:4001/api/employees/login", {
+      const res = await axios.post(`${services}/employees/login`, {
         username,
         password,
       });

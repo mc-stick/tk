@@ -1,7 +1,9 @@
 import React, { useEffect, useState } from "react";
 import "./EditProfile.css"; // Nuevo archivo de estilos
 
-const API_URL = "http://localhost:4001/api/employees";
+const services = import.meta.env.VITE_SERVICE_API;
+
+const API_URL = `${services}/employees`;
 
 export default function EditProfile({ employeeId }) {
   const [form, setForm] = useState({

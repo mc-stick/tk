@@ -2,7 +2,8 @@ import React, { useEffect, useState } from 'react';
 import './Crud.css';
 import { FaCircleXmark, FaPen, FaRecycle } from 'react-icons/fa6';
 
-const API_URL = 'http://localhost:4001/api/services';
+const services = import.meta.env.VITE_SERVICE_API;
+const API_URL = `${services}/services`;
 
 export default function ServiceCrud() {
   const [services, setServices] = useState([]);

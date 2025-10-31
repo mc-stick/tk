@@ -1,8 +1,11 @@
 import React, { useEffect, useState } from "react";
 import './Crud.css';
+
 import { FaCircleXmark, FaPen } from "react-icons/fa6";
 
-const API_URL = "http://localhost:4001/api/puesto";
+const services = import.meta.env.VITE_SERVICE_API;
+
+const API_URL = `${services}/puesto`;
 
 export default function PuestoCrud() {
   const [puestos, setPuestos] = useState([]);
@@ -166,14 +169,14 @@ export default function PuestoCrud() {
                 <button
                   className="edit-btn"
                   onClick={() => handleEdit(puesto)}
-                  disabled={loading}
+                  disabled={puesto.id > 1 ? false : true} 
                 >
                  <FaPen/> Editar
                 </button>
                 <button
                   className="delete-btn"
                   onClick={() => handleDelete(puesto.id)}
-                  disabled={loading}
+                  disabled={puesto.id > 1 ? false : true} 
                 >
                  <FaCircleXmark/>  Eliminar
                 </button>

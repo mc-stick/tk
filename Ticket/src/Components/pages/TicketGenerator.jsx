@@ -20,6 +20,10 @@ import Modal from "../Buttons/Modal";
 import handleFullscreen from "../Buttons/FullScreenbtn";
 import { FaTicket } from "react-icons/fa6";
 
+
+const services = import.meta.env.VITE_SERVICE_API;
+
+
 const TicketGenerator = () => {
   const { generarTurno } = useTurno();
 
@@ -59,12 +63,14 @@ const TicketGenerator = () => {
     };
   }, [estado]);
 
+  console.log(services)
+
   // --- Cargar datos iniciales ---
   const fetchData = async () => {
     try {
       const [servRes, idRes] = await Promise.all([
-        fetch("http://localhost:4001/api/services"),
-        fetch("http://localhost:4001/api/docs"),
+        fetch(`${services}/services`),
+        fetch(`${services}/docs`),
       ]);
 
       if (!servRes.ok || !idRes.ok) throw new Error("Error al cargar datos");
@@ -114,9 +120,14 @@ const TicketGenerator = () => {
     }
   };
 
+  const print = ()=>{
+
+    console.log('printing....',turno)
+  }
+
   const aceptar = (num) => {
     const limpio = num.replace(/-/g, "");
-    limpio === 10 ? SendTwilioSms("enviado desde tw", limpio) : "";
+    limpio === 10 ? SendTwilioSms("enviado desde tw", limpio) : (print())
     setEstado("inicio");
     setTurno(null);
     setVal("");
@@ -217,7 +228,13 @@ const TicketGenerator = () => {
           <div className="servicio-header">
             <h1 style={{ color: "white" }}>Seleccione un servicio</h1>
             <p style={{ color: "#afd7ffff" }} className="servicio-subtitle">
-              Elige una opción para generar tu turno.
+
+              {servicios.length > 0 ? ("Elige una opción para generar tu turno.") :
+               (<>
+                <h4>No hay servicios disponibles</h4>
+                <hr />
+                Agrega los servicios desde el panel de administrador.</>) }
+              
             </p>
           </div>
 

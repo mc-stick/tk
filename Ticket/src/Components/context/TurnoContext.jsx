@@ -8,13 +8,15 @@ export const TurnoProvider = ({ children }) => {
   const [turnoActual, setTurnoActual] = useState(null); // Ticket en atención
   const [totalatend, setTotalatend] = useState(null); // Ticket en atención
   const [loading, setLoading] = useState(true);
+
+  const services = import.meta.env.VITE_SERVICE_API;
   
 
   // 🔹 Traer todos los tickets y separar turnoActual y cola
   const fetchTickets = async () => {
     try {
       setLoading(true);
-      const res = await axios.get("http://localhost:4001/api/tickets");
+      const res = await axios.get(`${services}/tickets`);
       const tickets = res.data || [];
 
       //console.log('tickets',tickets)
@@ -67,7 +69,7 @@ export const TurnoProvider = ({ children }) => {
     val = val.trim() !== "" ? val : "Cliente sin ID";
     //console.log('turno context trim',val);
   try {
-    const res = await axios.post("http://localhost:4001/api/tickets", {
+    const res = await axios.post(`${services}/tickets`, {
       service_id:tipo,
       client_identifier:val,
       status_id: 1,              // Pendiente
@@ -115,7 +117,7 @@ export const TurnoProvider = ({ children }) => {
     //console.log('llamar turno tcontx new',ticket_id,employee_id,status_id, service_id)
     try {
       await axios.put(
-        `http://localhost:4001/api/tickets/${ticket_id}/status`,
+        `${services}/tickets/${ticket_id}/status`,
         {
           status_id,
           employee_id,

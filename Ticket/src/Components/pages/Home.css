@@ -19,9 +19,9 @@
 }
 
 .home-logo {
-  width: 110px;
+  width: 120px;
   height: auto;
-  margin-bottom: 100px;
+  margin-bottom: 50px;
   animation: float 3s ease-in-out infinite;
 }
 
