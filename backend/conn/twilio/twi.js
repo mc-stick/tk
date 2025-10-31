@@ -14,8 +14,8 @@ export async function createMessage(msg,to) {
   const message = await client.messages.create({
     body: msg, // "This is the ship that made the Kessel Run in fourteen parsecs?",
     from: phone, // "+15017122661",
-    //to: "+1"+to, // "+15558675310",
-    to: "", // "+15558675310",
+    to: "+1"+to, // "+15558675310",
+    //to: "", // "+15558675310",
   });
 
   console.log("sccId:",accountSid, " atk:",authToken, " TWph:",phone, " mgs:",msg || 'errOutPut', " toPh:",to);

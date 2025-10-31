@@ -127,7 +127,7 @@ const TicketGenerator = () => {
 
   const aceptar = (num) => {
     const limpio = num.replace(/-/g, "");
-    limpio === 10 ? SendTwilioSms("enviado desde tw", limpio) : (print())
+    //limpio === 10 ? SendTwilioSms("Numero de ticket generado: ", limpio) : (print())
     setEstado("inicio");
     setTurno(null);
     setVal("");

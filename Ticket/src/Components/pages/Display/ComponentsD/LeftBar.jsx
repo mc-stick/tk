@@ -14,6 +14,48 @@ const LeftBar = ({ data }) => {
     data?.totalatend?.filter((t) => t.status_name === "Atendiendo") || [];
 
   // Detectar nuevo turno
+// useEffect(() => {
+//   if (!turnosVisibles || turnosVisibles.length === 0) return;
+
+//   // Convertimos el arreglo actual en un string único
+//   // para comparar también contenido, no solo IDs
+//   const currentSignature = JSON.stringify(turnosVisibles);
+
+//   // Solo ejecutar si cambió realmente respecto al render anterior
+//   if (prevTurnosRef.current.signature !== currentSignature) {
+//     const prevIds = (prevTurnosRef.current.data || []).map(t => t.id);
+//     const nuevos = turnosVisibles.filter(t => !prevIds.includes(t.id));
+
+//     // Si hay nuevos turnos, usamos el primero. Si no, usamos el primero visible.
+//     const turno = nuevos.length > 0 ? nuevos[0] : turnosVisibles[0];
+
+//     // 🔁 Reiniciar animación y sonido
+//     setNuevoTurno(null);
+//     setTimeout(() => {
+//       setNuevoTurno(turno.id);
+
+//       // 🎵 Reproducir sonido
+//       if (audioRef.current) {
+//         audioRef.current.currentTime = 0;
+//         audioRef.current
+//           .play()
+//           .catch(err => console.warn("No se pudo reproducir audio:", err));
+//       }
+
+//       // ⏱️ Quitar animación luego de 3s
+//       setTimeout(() => setNuevoTurno(null), 3000);
+//     }, 300);
+
+//     // Guardamos referencia actualizada
+//     prevTurnosRef.current = {
+//       data: [...turnosVisibles],
+//       signature: currentSignature
+//     };
+//   }
+// }, [turnosVisibles]);
+
+// codigo antiguo
+
   useEffect(() => {
     setView(false)
     const prevIds = prevTurnosRef.current.map((t) => t.id);
@@ -42,6 +84,7 @@ const LeftBar = ({ data }) => {
     setView(true)
     prevTurnosRef.current = turnosVisibles;
   }, [turnosVisibles]);
+
 
   if (turnosVisibles.length === 0) return null;
 
