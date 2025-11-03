@@ -15,6 +15,7 @@ const OpListEspera = ({ data, onLlamarTurno }) => {
     turnosTotales.push(data.turnoActual);
     turnosTotales.map((t) => atender.push(t));
   }
+ 
 
   if (data.cola && data.cola.length > 0) {
     if (data.cola.status_name !== "En espera") turnosTotales.push(...data.cola);

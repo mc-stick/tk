@@ -20,6 +20,7 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const decoded = jwtDecode(token);
+        //console.log('decode',decoded)
 
         // 🔐 Verificar expiración
         if (decoded.exp * 1000 > Date.now()) {
@@ -30,6 +31,7 @@ export const AuthProvider = ({ children }) => {
             puesto_id: decoded.puesto_id,
             puesto_name: decoded.puesto_name,
             employee_id: decoded.employee_id,
+            full_name: decoded.full_name,
           });
         } else {
           // Token expirado

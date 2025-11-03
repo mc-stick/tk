@@ -24,9 +24,9 @@ const Login = ({ role }) => {
     if (res.success && res.is_active) {
       const userRole = res.role;
 
-      if (role === "admin" && userRole.includes("admin")) {
+      if (role === "admin" && userRole?.includes("admin")) {
         navigate("/administrador");
-      } else if (role === "operator" && userRole.includes("operator")) {
+      } else if (role === "operator" && userRole?.includes("operator")) {
         navigate("/operador");
       } else {
         setError("No tienes permisos para acceder a esta sección");

@@ -18,13 +18,6 @@ const OperatorPanel = () => {
     document.title = "UCNE | Panel de operaciones";
   }, []);
 
- 
-  // const handleLlamarSiguiente = async () => {
-  //   const puesto = user?.username || "#1";
-  //   const siguiente = await llamarSiguiente(puesto);
-  //   setShowBTNFIN(!!siguiente);
-  // };
-
   const handleLlamarTurnoManual = async (turno) => {
     const puesto = user?.puesto_id;
     try {
@@ -62,7 +55,7 @@ const OperatorPanel = () => {
 
   return (
     <div className="operator-container">
-      <TopMenu />
+      <TopMenu datausr={user} />
 
       <div className="operator-content">
         <TabsNavigation tabs={tabs} />

@@ -28,14 +28,15 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   const { id } = req.params;
   const [rows] = await pool.query(`
-    SELECT e.*,p.nombre AS puesto_nombre,
-     GROUP_CONCAT(r.name SEPARATOR ', ') AS roles
-    FROM employees e
-    LEFT JOIN employee_roles er ON e.employee_id = er.employee_id
-    LEFT JOIN roles r ON er.role_id = r.role_id
-    LEFT JOIN puesto p ON e.puesto_id = p.id
-    WHERE e.employee_id = ?
-    GROUP BY e.employee_id;
+    SELECT e.*, p.nombre AS puesto_nombre,
+  GROUP_CONCAT(r.name SEPARATOR ', ') AS roles,
+  GROUP_CONCAT(r.role_id SEPARATOR ', ') AS role_ids
+  FROM employees e
+  LEFT JOIN employee_roles er ON e.employee_id = er.employee_id
+  LEFT JOIN roles r ON er.role_id = r.role_id
+  LEFT JOIN puesto p ON e.puesto_id = p.id
+  WHERE e.employee_id = ?
+  GROUP BY e.employee_id;
   `, [id]);
   res.json(rows[0] || null);
 });
@@ -126,30 +127,37 @@ router.put('/:id', async (req, res) => {
   try {
     const { username, password_hash, full_name, puesto_id, is_active, edit, roles } = req.body;
     const { id } = req.params;
+    
+     
 
     if (edit) {
-      await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?)', [
-        id, username, full_name, password_hash
+      await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?, ?)', [
+        id, username, full_name, password_hash, roles
       ]);
+      
+      console.log('entro en emplidPROFILE --------- ')
     } else {
       await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
         id, username, full_name, puesto_id, is_active, password_hash
       ]);
+      console.log('----------- NO ENTOR EN PFORL')
     }
 
     // 🔹 Eliminar roles actuales del empleado
     await pool.query('DELETE FROM employee_roles WHERE employee_id = ?', [id]);
 
     // 🔹 Volver a insertar los nuevos roles
-    const parsedRoles = Array.isArray(roles)
-      ? roles
-      : typeof roles === "string"
-      ? roles.split(",").map((r) => r.trim())
-      : [];
 
-    for (const roleId of parsedRoles) {
-      await pool.query('CALL sp_add_employee_role(?, ?)', [id, roleId]);
-    }
+      const parsedRoles = Array.isArray(roles)
+        ? roles
+        : typeof roles === "string"
+        ? roles.split(",").map((r) => r.trim())
+        : [];
+
+      for (const roleId of parsedRoles) {
+        await pool.query('CALL sp_add_employee_role(?, ?)', [id, roleId]);
+      }
+    
 
     res.json({ message: "Empleado actualizado" });
   } catch (err) {

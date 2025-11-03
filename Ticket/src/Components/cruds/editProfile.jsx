@@ -9,7 +9,8 @@ export default function EditProfile({ employeeId }) {
   const [form, setForm] = useState({
     username: "",
     full_name: "",
-    email: "",
+    //email: "",
+    roles:"",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -24,10 +25,12 @@ export default function EditProfile({ employeeId }) {
         const res = await fetch(`${API_URL}/${employeeId}`);
         if (!res.ok) throw new Error("Error cargando perfil");
         const data = await res.json();
+        console.log(data,"clog data")
         setForm({
           username: data.username || "",
           full_name: data.full_name || "",
-          email: data.email || "",
+          //email: data.email || "",
+          roles:data.role_ids || "",
           password: "",
         });
       } catch (err) {
@@ -63,8 +66,9 @@ export default function EditProfile({ employeeId }) {
     setSuccessMsg(null);
 
     try {
-      const payload = { username: form.username, full_name: form.full_name, edit: true };
+      const payload = { username: form.username, full_name: form.full_name, edit: true, roles:form.roles };
       if (form.password.trim() !== "") payload.password = form.password;
+      console.log("puesto",form.roles)
 
       const res = await fetch(`${API_URL}/${employeeId}`, {
         method: "PUT",
@@ -117,10 +121,10 @@ export default function EditProfile({ employeeId }) {
           />
         </div>
 
-        <div className="form-group" style={{ display: "none" }}>
+        {/* <div className="form-group" style={{ display: "none" }}>
           <label htmlFor="email">Email:</label>
           <input type="email" id="email" name="email" value={form.email} onChange={handleChange} />
-        </div>
+        </div> */}
 
         <div className="form-group">
           <label htmlFor="password">Nueva contraseña (opcional):</label>

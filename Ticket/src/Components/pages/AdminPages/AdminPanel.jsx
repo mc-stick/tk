@@ -123,6 +123,7 @@ const AdminPanel = () => {
   return (
     <div className="operator-container input-page-container_index">
       <TopMenu
+        datausr={user}
         username={user?.username || "AdminReturn"}
         onLogout={handleLogout}
       />
