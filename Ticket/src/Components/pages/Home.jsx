@@ -73,7 +73,7 @@ const Home = () => {
         <img
           src={iconlg}
           alt="UCNE Logo"
-          className="w-24 h-24 mx-auto my-4 drop-shadow-md"
+          className="mx-auto my-4 size-40 p-auto"
         />
 
         <h2 className="text-2xl md:text-3xl font-semibold text-white">

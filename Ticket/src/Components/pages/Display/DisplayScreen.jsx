@@ -1,6 +1,5 @@
 import { useTurno } from "../../context/TurnoContext.jsx";
 import { useEffect, useState, useRef } from "react";
-import "./DisplayScreen.css";
 import DateTime from "../../widgets/DateTime.jsx";
 
 
@@ -110,7 +109,7 @@ const DisplayScreen = () => {
             <img
               src={imagenes[actual].url}
               alt={`img-${actual}`}
-              className="fade-image"
+              className="fade-image h-full w-full object-fill pt-80"
               onLoad={(e) => e.target.classList.remove("fade-out")}
             />
           )

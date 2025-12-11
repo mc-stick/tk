@@ -60,13 +60,13 @@ const OperatorPanel = () => {
       </div>
 
       {/* Botón flotante "Terminar Turno" */}
-      {showBTNFIN && (
+      {/* {showBTNFIN && (
         <div className="fixed bottom-6 right-6 p-4 bg-blue-500 rounded-full shadow-md hover:scale-105 transition-all">
           <button className="font-semibold text-white">
             Terminar Turno
           </button>
         </div>
-      )}
+      )} */}
     </div>
   );
 };

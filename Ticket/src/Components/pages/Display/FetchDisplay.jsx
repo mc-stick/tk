@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import DisplayScreen from "./DisplayScreen";
-import "./fetch.css";
 import DateTime from "../../widgets/DateTime";
 import DemoSpeaker from "../../TTS/DEMOindex";
 
@@ -13,12 +12,10 @@ export default function TicketPanel() {
   const API_URL = `${services}/tickets/detail`;
 
   useEffect(() => {
-    const fetchTickets = async () => {
-      // agregar btn llamar de nuevo
+    const fetchTickets = async () => { 
       try {
         const response = await fetch(API_URL);
         const tickets = await response.json();
-        //console.log('tk',tickets)
 
         // Agrupar tickets por nombre de servicio
         const agrupados = tickets.reduce((acc, ticket) => {
@@ -41,7 +38,6 @@ export default function TicketPanel() {
 
           return acc;
         }, {});
-        //console.log(agrupados)
 
         // Convertir el objeto agrupado en un arreglo
         const result = Object.values(agrupados);
@@ -58,68 +54,70 @@ export default function TicketPanel() {
     return () => clearInterval(interval);
   }, []);
 
-  preview = data.map((item) =>
-    item.data.filter(
-      (item1) => item1.estado === "Atendiendo" || item1.estado === "En espera"
-    )
-  );
-  //const isEmpty = preview.flat().length === 0;
-  console.log("prev", preview);
-  // console.log("data", data );
+  preview = data.map((item) => item.data.filter((item1) => item1.estado === "Atendiendo" || item1.estado === "En espera"));
 
   return (
-    <div className="bg-blue-900 flex w-screen h-screen">
-  {preview.flat().length === 0 ? (
-    <DisplayScreen />
-  ) : (
-    <div className="w-full max-w-7xl mx-auto p-4">
-      <h1 className="text-3xl font-semibold text-center mb-6">
-        Manténgase al tanto de su llamado.
-      </h1>
-      
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-        {data.map((section, i) => {
-          // Filtramos solo los datos relevantes una sola vez
-          const filteredData = section.data.filter(
-            (item) => item.estado === "Atendiendo" || item.estado === "En espera"
-          );
+    <>
+      {preview.flat().length === 0 ? (
+        <DisplayScreen />
+      ) : (
+        <div className="flex items-center justify-center bg-gradient-to-b from-blue-900 via-blue-800 to-blue-700 min-h-screen p-35 font-sans">
+          {/* Título general */}
+          <h1 className="fixed top-24 text-8xl font-extrabold text-white mb-6">
+            Manténgase al tanto de su llamado.
+          </h1>
 
-          // Si no hay datos válidos, no mostramos nada
-          if (filteredData.length === 0) return null;
+          {/* Grilla de columnas */}
+          <div className="flex grid-cols-4  gap-10 w-full min-w-500 max-w-8xl">
+            {/* <<--- Cambios importantes en grid y max-w-7xl */}
+            {data.map((section, i) => {
+              const filteredData = section.data.filter(
+                (item) => item.estado === "Atendiendo" || item.estado === "En espera"
+              );
 
-          return (
-            <div key={i} className="bg-white p-6 rounded-lg shadow-lg border border-blue-300">
-              <h2 className="text-xl font-bold text-blue-700 mb-4">{section.title}</h2>
+              if (filteredData.length === 0) return null;
 
-              <div className="space-y-4">
-                {filteredData.slice(0, 9).map((item, j) => (
-                  <div
-                    key={j}
-                    className={`p-4 border border-yellow-200 rounded-md flex items-center justify-between ${
-                      item.servicio !== "En espera" ? "bg-blue-100" : "bg-red-100"
-                    }`}
-                  >
-                    {item.servicio !== "En espera" && <DemoSpeaker number={item.id} text={item.servicio} />}
-                    <span className="text-lg font-semibold text-gray-800">{item.id}</span>
-                    <span className="text-sm text-gray-600">{item.servicio}</span>
+              return (
+                <div key={i} className="w-full bg-blue-900 bg-opacity-10 border border-blue-300 rounded-4xl p-15 backdrop-blur-sm shadow-lg">
+                  {/* Título de la columna */}
+                  <h2 className="text-6xl font-bold text-white mb-10 text-center border-b-4 border-cyan-400 pb-8 uppercase">
+                    {section.title}
+                  </h2>
+
+                  {/* Lista de ítems */}
+                  <div className="space-y-4">
+                    {filteredData.slice(0, 9).map((item, j) => (
+                      <div
+                        key={j}
+                        className={`p-8 border border-cyan-400 rounded-md flex justify-between transition-all duration-300 ${
+                          item.servicio !== "En espera" ? "bg-yellow-300" : "bg-gray-100"
+                        }`}
+                      >
+                        {item.servicio !== "En espera" && (
+                          <DemoSpeaker number={item.id} text={item.servicio} />
+                        )}
+                        <span className="text-4xl font-bold text-gray-800">{item.id}</span>
+                        <span className={`text-4xl font-bold ${item.servicio !== "En espera" ? "text-green-800" : "text-gray-600"}`}>
+                          {item.servicio}
+                        </span>
+                      </div>
+                    ))}
+
+                    {/* Si hay más de 10 items */}
+                    {filteredData.length > 10 && (
+                      <div className="p-4 border border-yellow-200 rounded-md bg-yellow-100">
+                        <span className="text-sm text-gray-600">
+                          … y {filteredData.length - 10} turnos más.
+                        </span>
+                      </div>
+                    )}
                   </div>
-                ))}
-
-                {filteredData.length > 10 && (
-                  <div className="p-4 border border-yellow-200 rounded-md bg-yellow-50">
-                    <span className="text-sm text-gray-600">
-                      … y {filteredData.length - 10} turnos más.
-                    </span>
-                  </div>
-                )}
-              </div>
-            </div>
-          );
-        })}
-      </div>
-    </div>
-  )}
-</div>
-
+                </div>
+              );
+            })}
+          </div>
+        </div>
+      )}
+    </>
   );
 }
