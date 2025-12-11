@@ -45,18 +45,18 @@ function App() {
             <Route
               path="/administrador"
               element={
-                <ProtectedRoute roles={["admin"]}>
+                //<ProtectedRoute roles={["admin"]}>
                   <AdminPanel />
-                </ProtectedRoute>
+                //</ProtectedRoute>
               }
             />
 
             <Route
               path="/operador"
               element={
-                <ProtectedRoute roles={["operator"]}>
+                //<ProtectedRoute roles={["operator"]}>
                   <OperatorPanel />
-                </ProtectedRoute>
+                //</ProtectedRoute>
               }
             />
           </Routes>
