@@ -1,7 +1,6 @@
 import { useTurno } from "../../context/TurnoContext.jsx";
 import { useEffect, useState, useRef } from "react";
 import "./DisplayScreen.css";
-
 import DateTime from "../../widgets/DateTime.jsx";
 
 
@@ -88,11 +87,11 @@ const DisplayScreen = () => {
   }, [imagenes, actual]);
 
   return (
-    <div className="pantalla-layout">
+    <div className="flex h-full w-full overflow-hidden z-0">
       <DateTime />
       {/* <LeftBar data={{ turnoActual, cola, DateTime, ImgCustoms, totalatend }} /> */}
 
-      <div className="imagen-panel">
+      <div className="flex bg-black h-screen w-screen  justify-center items-center  ">
         {imagenes.length > 0 ? (
           esVideo(imagenes[actual]) ? (
             <video
@@ -116,7 +115,7 @@ const DisplayScreen = () => {
             />
           )
         ) : (
-          <p style={{ color: "#ccc" }}>Sin archivos disponibles</p>
+          <p className="text-8xl " style={{ color: "#ccc" }}>Sin archivos disponibles</p>
         )}
       </div>
     </div>

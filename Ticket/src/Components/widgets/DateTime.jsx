@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
 import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 import ImgCustoms from "./ImgCustoms";
-import "./DateTime.css";
 
 const DateTime = () => {
   const [now, setNow] = useState(new Date());
@@ -20,15 +19,16 @@ const DateTime = () => {
   });
 
   return (
-    <header className="datetime-header">
-      <div className="datetime-left">
-        <ImgCustoms src={ImgLogo} width="60px" className="datetime-logo" />
-        <h1 className="datetime-title">UCNE</h1>
+    <header className=" fixed top-0 z-40 w-full size-80 bg-sky-500/100 text-white flex 
+    justify-between items-center p-8 shadow-xl/20  font-poppins ">
+      <div className="grid grid-flow-col justify-items-center  ">
+        <ImgCustoms src={ImgLogo}  className=" size-40 p-auto " />
+        <h1 className=" m-auto text-9xl font-bold text-shadow-lg ml-12">UCNE</h1>
       </div>
 
-      <div className="datetime-right">
-        <div className="datetime-time">{time}</div>
-        <div className="datetime-date">{date}</div>
+      <div  className="text-right">
+        <div id="hora" className="text-7xl font-semibold">{time}</div>
+        <div id="fecha" className="text-5xl uppercase mt-auto">{date}</div>
       </div>
     </header>
   );
