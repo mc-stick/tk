@@ -1,0 +1,100 @@
+/* Contenedor principal */
+.operator-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: linear-gradient(90deg, #003366 0%, #005bb5 100%);
+  font-family: "Poppins", sans-serif;
+  color: #fff;
+}
+
+/* Encabezado */
+.operator-header {
+  text-align: center;
+  padding: 3rem 1rem 1.5rem;
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.operator-title {
+  font-size: 2rem;
+  font-weight: 700;
+  color: #ffcc00;
+  margin-bottom: 0.5rem;
+}
+
+.operator-subtitle {
+  font-size: 1rem;
+  color: #e0e8ff;
+}
+
+/* Contenido */
+.operator-content {
+  flex: 1;
+  background-color: linear-gradient(90deg, #003366 0%, #3891eb 100%);
+  color: #333;
+  border-radius: 15px 15px 0 0;
+  box-shadow: 0 -6px 20px rgba(0, 0, 0, 0.2);
+  padding: 2rem;
+  margin-top: 2rem;
+  animation: slideUp 0.7s ease;
+}
+
+/* Tabs personalizados */
+.tabs-navigation {
+  margin-top: 1.5rem;
+}
+
+.tabs-navigation button {
+  background: transparent;
+  border: none;
+  font-weight: 600;
+  color: #003366;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-bottom: 3px solid transparent;
+  transition: all 0.25s ease;
+}
+
+.tabs-navigation button:hover {
+  color: #0066cc;
+  border-bottom: 3px solid #ffcc00;
+}
+
+.tabs-navigation .active {
+  color: #ffcc00;
+  border-bottom: 3px solid #ffcc00;
+}
+
+/* Animaciones */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Responsivo */
+@media (max-width: 768px) {
+  .operator-title {
+    font-size: 1.6rem;
+  }
+
+  .operator-content {
+    padding: 1.5rem;
+  }
+}

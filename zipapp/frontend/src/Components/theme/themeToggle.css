@@ -1,0 +1,30 @@
+.theme-toggle-icon {
+  background-color: white;
+  /* color: var(--toggle-color); */
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  padding-top: 10px;
+  transition: transform 0.2s ease, background-color 0.3s;
+   /* padding: 6px; */
+  border-radius: 50%;
+}
+
+.theme-toggle-icon:hover {
+  transform: scale(1.2);
+  /* background-color: var(--hover-bg); */
+}
+
+/* Variables por tema */
+body.light {
+  --toggle-bg: rgba(0, 0, 0, 0.7);   /* fondo más oscuro para ícono */
+  --toggle-color: #111;
+  --hover-bg: rgba(0, 0, 0, 0.15);
+}
+
+body.dark {
+  --toggle-bg: rgba(255, 196, 0, 0.3); /* fondo más claro para ícono */
+  --toggle-color: #fff;
+  --hover-bg: rgba(255, 255, 255, 0.25);
+  
+}

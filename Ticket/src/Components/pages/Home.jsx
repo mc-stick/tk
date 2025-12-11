@@ -7,7 +7,6 @@ import {
 } from "react-icons/fc";
 import { useEffect } from "react";
 import iconlg from "../../assets/img/UcneLogoIcon.png";
-import "./Home.css";
 import handleFullscreen from "../Buttons/FullScreenbtn";
 
 const Home = () => {
@@ -19,62 +18,87 @@ const Home = () => {
     if (favicon) favicon.href = iconlg;
   }, []);
 
-
- const handleDisplay =(label, route)=>{
-    if(['Cliente', 'Pantalla'].includes(label)){
+  const handleDisplay = (label, route) => {
+    if (["Cliente", "Pantalla"].includes(label)) {
       handleFullscreen();
     }
-    navigate(route)
- }
+    navigate(route);
+  };
 
   const opciones = [
     {
       label: "Cliente",
-      icon: <FcTouchscreenSmartphone size={50} />,
+      icon: <FcTouchscreenSmartphone size={55} />,
       route: "/cliente",
-      color: "#0066cc",
+      color: "from-blue-500 to-blue-600",
     },
     {
       label: "Operador",
-      icon: <FcAssistant size={50} />,
+      icon: <FcAssistant size={55} />,
       route: "/login/operador",
-      color: "#1e8449",
+      color: "from-green-600 to-green-700",
     },
     {
       label: "Pantalla",
-      icon: <FcTabletAndroid size={50} />,
+      icon: <FcTabletAndroid size={55} />,
       route: "/pantalla",
-      color: "#cc8800",
+      color: "from-amber-500 to-amber-600",
     },
     {
       label: "Administrador",
-      icon: <FcAutomatic size={50} />,
+      icon: <FcAutomatic size={55} />,
       route: "/login/admin",
-      color: "#8e44ad",
+      color: "from-purple-600 to-purple-700",
     },
   ];
 
   return (
-    <div className="home-container">
-      <div className="home-header">
-        <h1 className="home-title" style={{marginBottom:'1rem'}}>Universidad Católica Nordestana - UCNE</h1>
-        <img src={iconlg} alt="UCNE Logo" className="home-logo" />
-        <h1 className="home-title">Sistema de Gestión de Turnos</h1>
-        <p className="home-subtitle">
+    <div
+      className="
+        min-h-screen w-full 
+        flex flex-col items-center justify-center 
+        px-4 py-10
+        
+        bg-gradient-to-br 
+        from-blue-900 via-blue-700 to-blue-500
+        bg-fixed
+      "
+    >
+      {/* Header */}
+      <div className="text-center mb-10">
+        <h1 className="text-3xl md:text-4xl font-bold text-white">
+          Universidad Católica Nordestana - UCNE
+        </h1>
+
+        <img
+          src={iconlg}
+          alt="UCNE Logo"
+          className="w-24 h-24 mx-auto my-4 drop-shadow-md"
+        />
+
+        <h2 className="text-2xl md:text-3xl font-semibold text-white">
+          Sistema de Gestión de Turnos
+        </h2>
+
+        <p className="text-blue-200 mt-2 text-lg">
           Selecciona el tipo de dispositivo para continuar
         </p>
       </div>
 
-      <div className="home-grid">
+      {/* Opciones */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-5xl">
         {opciones.map(({ label, icon, route, color }) => (
           <button
             key={label}
-            className="home-card"
-            onClick={() => handleDisplay(label,route)}
-            style={{ borderTop: `5px solid ${color}` }}
+            onClick={() => handleDisplay(label, route)}
+            className={`group bg-white shadow-md rounded-xl p-6 cursor-pointer flex flex-col items-center transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-t-8 bg-gradient-to-b ${color}`}
           >
-            <div className="home-icon">{icon}</div>
-            <h2 className="home-label">{label}</h2>
+            <div className="text-5xl mb-3 group-hover:scale-110 transition-transform">
+              {icon}
+            </div>
+            <h2 className="text-xl font-semibold text-white group-hover:text-white ">
+              {label}
+            </h2>
           </button>
         ))}
       </div>

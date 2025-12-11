@@ -1,0 +1,170 @@
+/* Contenedor principal */
+.board-container {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(180deg, #0f2027, #203a43, #2c5364);
+  color: #fff;
+  min-height: 95vh;
+  padding: 2rem;
+  font-family: "Segoe UI", Roboto, Arial, sans-serif;
+}
+
+/* Título general */
+.board-title {
+  display: flex;
+  position: fixed;
+  top: 100px;
+  font-size: 2.5rem;
+  font-weight: bolder;
+  margin-bottom: 2rem;
+  text-align: center;
+  color: #ffffff;
+  /* text-shadow: 0 0 8px rgba(0, 209, 255, 0.7); */
+}
+
+/* Grilla de columnas */
+.board-grid {
+  margin-top: 100px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 1.5rem;
+  width: 100%;
+  max-width: 1500px;
+}
+
+/* Cada columna */
+.board-column {
+  background: rgba(255, 255, 255, 0.1);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 10px;
+  padding: 1rem;
+  max-width: 600px;
+  backdrop-filter: blur(6px);
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+}
+
+/* Título de columna */
+.column-title {
+  font-size: 2rem;
+  font-weight: bold;
+  text-transform: uppercase;
+  margin-bottom: 1rem;
+  border-bottom: 2px solid #00d1ff;
+  padding-bottom: 0.5rem;
+  color: #ffffff;
+  text-align: center;
+}
+
+/* Lista de ítems */
+.column-items {
+  display: flex;
+  flex-direction: column;
+  gap: 0.8rem;
+}
+
+/* Tarjeta de ítem */
+.item-card {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  background: rgba(0, 209, 255, 0.1);
+  border: 1px solid rgba(0, 209, 255, 0.4);
+  border-radius: 8px;
+  padding: 0.8rem 1rem;
+  transition: all 0.3s ease;
+}
+
+.active{
+     background: rgba(0, 208, 255, 0.411);
+  box-shadow: 0 0 10px rgba(0, 209, 255, 0.4);
+    border: 2px solid rgb(0, 208, 255);
+}
+
+.item-card:hover {
+  background: rgba(0, 209, 255, 0.2);
+  transform: translateY(-2px);
+  box-shadow: 0 0 10px rgba(0, 209, 255, 0.4);
+}
+
+/* ID del turno */
+.item-id {
+  font-size: 1.6rem;
+  font-weight: bold;
+  color: #fff;
+}
+
+/* Ventanilla o servicio */
+.item-window {
+  font-size: 1.5rem;
+  font-weight: 500;
+  color: #ffffff;
+}
+
+/* Estado “cargando” */
+.loading-text {
+  color: #ccc;
+  font-style: italic;
+  text-align: center;
+  margin-top: 2rem;
+}
+
+/* Adaptable a móviles */
+@media (max-width: 600px) {
+  .board-title {
+    font-size: 1.5rem;
+  }
+
+  .item-card {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 0.4rem;
+  }
+
+  .item-id {
+    font-size: 1rem;
+  }
+}
+
+.item-card {
+  transition: all 0.3s ease;
+}
+
+/* Animación que se activa solo cuando el elemento tiene la clase .active */
+.item-card.active {
+  animation: pop 3s ease forwards;
+}
+
+/* Define el efecto de la animación */
+@keyframes pop {
+  0% {
+    transform: scale(1);
+    background: rgb(0, 208, 255);
+    border: 2px solid rgb(255, 251, 0);
+    color: black;
+  }
+  20% {
+    transform: scale(1.1);
+    background-color: rgb(0, 142, 173);
+    border: 2px solid rgb(255, 251, 0);
+    color: black;
+  }
+  80% {
+    transform: scale(1.1);
+    background-color:rgb(0, 108, 133);
+    border: 2px solid rgb(255, 251, 0);
+    color: black;
+  }
+  100% {
+    transform: scale(1);
+    background-color:rgba(0, 208, 255, 0.658);
+    border: 2px solid rgb(255, 251, 0);
+    color: black;
+  }
+}
+
+.more-items{
+  background-color: rgba(255, 166, 0, 0.425);
+  /* color: black; */
+}

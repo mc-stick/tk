@@ -7,8 +7,6 @@ import { OpTurnoManager } from "./OpTurnoManager";
 import OpListEspera from "../listas/listaEsperaOp";
 import EditProfile from "../cruds/editProfile";
 
-import "./OperatorPanel.css";
-
 const OperatorPanel = () => {
   const { user } = useAuth();
   const { turnoActual, cola, llamarTurnoPorId } = useTurno();
@@ -33,7 +31,6 @@ const OperatorPanel = () => {
     }
   };
 
-
   const tabs = [
     {
       id: "next",
@@ -42,7 +39,6 @@ const OperatorPanel = () => {
         <OpListEspera
           data={{ turnoActual, cola, user }}
           onLlamarTurno={handleLlamarTurnoManual}
-          
         />
       ),
     },
@@ -54,12 +50,23 @@ const OperatorPanel = () => {
   ];
 
   return (
-    <div className="operator-container">
+    <div className="bg-blue-800 min-h-screen flex flex-col text-gray-100">
+      {/* Top Menu */}
       <TopMenu datausr={user} />
 
-      <div className="operator-content">
+      {/* Main Content */}
+      <div className="flex-grow p-6 bg-blue-900 rounded-xl shadow-lg">
         <TabsNavigation tabs={tabs} />
       </div>
+
+      {/* Botón flotante "Terminar Turno" */}
+      {showBTNFIN && (
+        <div className="fixed bottom-6 right-6 p-4 bg-blue-500 rounded-full shadow-md hover:scale-105 transition-all">
+          <button className="font-semibold text-white">
+            Terminar Turno
+          </button>
+        </div>
+      )}
     </div>
   );
 };

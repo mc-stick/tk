@@ -1,0 +1,21 @@
+
+.input-page-container_index {
+  min-height: 100dvh;
+  padding: 20px;
+  background-image: url('./assets/img/ucne_bg.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  z-index: 0;
+
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  height: 100%;
+  width: 100%;
+  background-color: rgba(0, 81, 255, 0.37); /* Negro con 50% opacidad */
+  z-index: -1;
+}

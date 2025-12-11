@@ -3,8 +3,7 @@ import { useEffect, useState, useRef } from "react";
 import "./DisplayScreen.css";
 
 import DateTime from "../../widgets/DateTime.jsx";
-import ImgCustoms from "../../widgets/ImgCustoms.jsx";
-import LeftBar from "./ComponentsD/LeftBar.jsx";
+
 
 const DisplayScreen = () => {
   const { turnoActual, cola, totalatend } = useTurno();
@@ -91,7 +90,7 @@ const DisplayScreen = () => {
   return (
     <div className="pantalla-layout">
       <DateTime />
-      <LeftBar data={{ turnoActual, cola, DateTime, ImgCustoms, totalatend }} />
+      {/* <LeftBar data={{ turnoActual, cola, DateTime, ImgCustoms, totalatend }} /> */}
 
       <div className="imagen-panel">
         {imagenes.length > 0 ? (

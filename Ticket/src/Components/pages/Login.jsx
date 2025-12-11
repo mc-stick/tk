@@ -1,7 +1,6 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import "./Login.css"
 import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 
 const Login = ({ role }) => {
@@ -39,24 +38,35 @@ const Login = ({ role }) => {
   };
 
   return (
-    <div className="login-container">
-      <div className="login-card">
-        <img src={ImgLogo} alt="UCNE Logo" className="login-logo" />
-        <h2 className="login-title">
+    <div className="flex items-center justify-center min-h-screen bg-blue-900 p-4">
+      <div className="bg-blue-800 rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col items-center animate-slide-up">
+        {/* Logo */}
+        <img src={ImgLogo} alt="UCNE Logo" className="w-24 h-24 mb-6" />
+
+        {/* Título */}
+        <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-4 text-center">
           Iniciar sesión{" "}
-          <span>{role === "admin" ? "Administrador" : "Operador"}</span>
+          <span className="text-yellow-400">
+            {role === "admin" ? "Administrador" : "Operador"}
+          </span>
         </h2>
 
-        {error && <p className="login-error">{error}</p>}
+        {/* Error */}
+        {error && (
+          <p className="bg-red-600 bg-opacity-20 text-red-100 px-4 py-2 rounded-lg mb-4 w-full text-center">
+            {error}
+          </p>
+        )}
 
-        <form onSubmit={handleSubmit} className="login-form">
+        {/* Formulario */}
+        <form onSubmit={handleSubmit} className="w-full flex flex-col gap-4">
           <input
             type="text"
             placeholder="Usuario"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
             required
-            className="login-input"
+            className="w-full p-4 rounded-xl border-2 border-gray-300 bg-white text-gray-800 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-300 transition outline-none"
           />
           <input
             type="password"
@@ -64,12 +74,23 @@ const Login = ({ role }) => {
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             required
-            className="login-input"
+            className="w-full p-4 rounded-xl border-2 border-gray-300 bg-white text-gray-800 focus:border-yellow-400 focus:ring-2 focus:ring-yellow-300 transition outline-none"
           />
-          <button type="submit" className="login-btn">
+          <button
+            type="submit"
+            className="w-full bg-yellow-400 hover:bg-yellow-500 text-gray-900 font-bold p-4 rounded-xl shadow-md transition transform active:scale-95 mt-2"
+          >
             Ingresar
           </button>
         </form>
+
+        {/* Footer */}
+        {/* <p className="text-gray-400 text-sm mt-6 text-center">
+          ¿Olvidaste tu contraseña?{" "}
+          <span className="text-red-500 font-semibold cursor-pointer hover:underline">
+            Recuperar
+          </span>
+        </p> */}
       </div>
     </div>
   );

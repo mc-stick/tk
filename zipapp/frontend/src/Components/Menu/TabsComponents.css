@@ -1,0 +1,101 @@
+/* ======== Contenedor principal ======== */
+.tabs-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: stretch;
+  width: 100%;
+  background: #ffffff;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  font-family: "Poppins", sans-serif;
+}
+
+/* ======== Encabezado de pestañas ======== */
+.tabs-container {
+  width: 100%;
+  position: fixed;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: linear-gradient(90deg, #003366 0%, #005bb5 100%);
+  padding: 0.8rem;
+  gap: 0.5rem;
+  padding-top:4rem;
+  flex-wrap: wrap;
+  padding-bottom: 10;
+}
+
+/* ======== Botones de pestañas ======== */
+.tab-btn {
+  background: transparent;
+  border: none;
+  color: #ffffff;
+  font-weight: 600;
+  font-size: 1rem;
+  padding: 10px 20px;
+  border-radius: 8px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  position: relative;
+}
+
+.tab-btn:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+  transform: translateY(2px);
+}
+
+/* ======== Pestaña activa ======== */
+.tab-btn.active {
+  background-color: #ffcc00;
+  color: #003366;
+  font-weight: 700;
+  box-shadow: 0 2px 8px rgba(255, 204, 0, 0.4);
+}
+
+/* Icono en la pestaña */
+.tab-icon {
+  font-size: 1.3rem;
+  display: flex;
+  align-items: center;
+}
+
+/* ======== Contenido de pestaña ======== */
+.tab-content {
+  padding: 2rem;
+  background: linear-gradient(90deg, #003366 0%, #005bb5 100%);
+  min-height: 300px;
+  color: #333;
+  animation: fadeIn 0.4s ease;
+  border-top: 3px solid #ffcc00;
+  border-radius: 0 0 12px 12px;
+}
+
+/* ======== Animaciones ======== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* ======== Responsivo ======== */
+@media (max-width: 768px) {
+  .tabs-container {
+    flex-direction: column;
+    gap: 0.5rem;
+    padding-top:4rem;
+  }
+
+  .tab-btn {
+    width: 100%;
+    justify-content: center;
+  }
+}
