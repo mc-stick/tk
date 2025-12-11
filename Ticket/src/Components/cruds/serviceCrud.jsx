@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import './Crud.css';
-import { FaCircleXmark, FaPen, FaRecycle } from 'react-icons/fa6';
+import { FaCircleXmark, FaPen } from 'react-icons/fa6';
 
 const services = import.meta.env.VITE_SERVICE_API;
 const API_URL = `${services}/services`;
@@ -88,15 +87,15 @@ export default function ServiceCrud() {
   };
 
   return (
-    <div className="crud-container">
-      <h2>{editingId ? 'Editar Servicio' : 'Agregar Servicio'}</h2>
-      {error && <p className="error-msg">{error}</p>}
+    <div className="container mx-auto p-4">
+      <h2 className="text-2xl font-semibold mb-4">{editingId ? 'Editar Servicio' : 'Agregar Servicio'}</h2>
+      {error && <p className="text-red-600 mb-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="crud-form">
-        <div className="form-group">
-          <label>Nombre:</label>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md">
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Nombre:</label>
           <input
-            className="textBox"
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
             name="name"
             value={form.name}
             onChange={handleChange}
@@ -104,35 +103,38 @@ export default function ServiceCrud() {
             disabled={loading}
           />
         </div>
-        <div className="form-group">
-          <label>Descripción:</label>
+        <div className="mb-4">
+          <label className="block text-sm font-medium text-gray-700">Descripción:</label>
           <input
-            className="textBox"
+            className="mt-1 p-2 w-full border border-gray-300 rounded-md"
             name="description"
             value={form.description}
             onChange={handleChange}
             disabled={loading}
           />
         </div>
-        <div className="form-group checkbox">
-          <label>
-            <input
-              type="checkbox"
-              name="is_active"
-              checked={form.is_active}
-              onChange={handleChange}
-              disabled={loading}
-            />
-            Activo
-          </label>
+        <div className="mb-4 flex items-center">
+          <input
+            type="checkbox"
+            name="is_active"
+            checked={form.is_active}
+            onChange={handleChange}
+            disabled={loading}
+            className="mr-2"
+          />
+          <label className="text-sm font-medium text-gray-700">Activo</label>
         </div>
-        <div className="form-buttons">
-          <button className="btn submit-btn" type="submit" disabled={loading}>
+        <div className="flex space-x-4">
+          <button
+            className="w-full px-4 py-2 bg-blue-600 text-white rounded-md hover:bg-blue-700 disabled:bg-gray-300"
+            type="submit"
+            disabled={loading}
+          >
             {editingId ? 'Actualizar' : 'Crear'}
           </button>
           {editingId && (
             <button
-              className="btn cancel-btn"
+              className="w-full px-4 py-2 bg-gray-400 text-white rounded-md hover:bg-gray-500 disabled:bg-gray-300"
               type="button"
               onClick={() => {
                 setEditingId(null);
@@ -147,43 +149,47 @@ export default function ServiceCrud() {
         </div>
       </form>
 
-      <h3>Lista de Servicios</h3>
-      {loading && <p className="info-msg">Cargando...</p>}
+      <h3 className="text-xl font-semibold mt-6 mb-4">Lista de Servicios</h3>
+      {loading && <p className="text-gray-500">Cargando...</p>}
 
-      <table className="crud-table">
-        <thead>
+      <table className="min-w-full bg-white border border-gray-200 rounded-lg overflow-hidden mt-6">
+        <thead className="bg-blue-600 text-white">
           <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Activo</th>
-            <th>Acciones</th>
+            <th className="px-4 py-3 text-left">ID</th>
+            <th className="px-4 py-3 text-left">Nombre</th>
+            <th className="px-4 py-3 text-left">Descripción</th>
+            <th className="px-4 py-3 text-left">Activo</th>
+            <th className="px-4 py-3 text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {services.length === 0 && !loading && (
             <tr>
-              <td colSpan="5" style={{ textAlign: 'center' }}>
+              <td colSpan="5" className="text-center py-4 text-gray-500">
                 No hay servicios
               </td>
             </tr>
           )}
           {services.map(service => (
-            <tr key={service.service_id}>
-              <td>{service.service_id}</td>
-              <td>{service.name}</td>
-              <td>{service.description}</td>
-              <td>{service.is_active ? 'Sí' : 'No'}</td>
-              <td className="action-buttons">
-                <button className="edit-btn" onClick={() => handleEdit(service)} disabled={loading}>
-                  <FaPen/> Editar
+            <tr key={service.service_id} className="border-t hover:bg-blue-50">
+              <td className="px-4 py-2">{service.service_id}</td>
+              <td className="px-4 py-2">{service.name}</td>
+              <td className="px-4 py-2">{service.description}</td>
+              <td className="px-4 py-2">{service.is_active ? 'Sí' : 'No'}</td>
+              <td className="px-4 py-2 text-center">
+                <button
+                  className="px-4 py-2 bg-yellow-500 text-white rounded-md hover:bg-yellow-600 mr-2"
+                  onClick={() => handleEdit(service)}
+                  disabled={loading}
+                >
+                  <FaPen className="inline-block mr-2" /> Editar
                 </button>
                 <button
-                  className="delete-btn"
+                  className="px-4 py-2 bg-red-500 text-white rounded-md hover:bg-red-600"
                   onClick={() => handleDelete(service.service_id)}
                   disabled={loading}
                 >
-                  <FaCircleXmark /> Eliminar
+                  <FaCircleXmark className="inline-block mr-2" /> Eliminar
                 </button>
               </td>
             </tr>

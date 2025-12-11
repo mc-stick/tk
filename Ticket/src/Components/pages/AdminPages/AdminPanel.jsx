@@ -2,12 +2,8 @@ import { useState, useEffect } from "react";
 import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TopMenu from "../../Menu/TopMenu";
-import "../OperatorPanel.css";
-// import CustomButton from "../../Buttons/CustomButton";
 import TabsNavigation from "../../Menu/TabsComponent";
-import '../../../index.css' 
 import { FaDisplay, FaHouse, FaHouseMedical, FaIdCard, FaPerson, FaPersonChalkboard, FaPersonCircleExclamation, FaServicestack } from "react-icons/fa6";
-// import AdminPage from "../../../OBSOLETO/AdminPage";
 import ServiceCrud from "../../cruds/serviceCrud";
 import RoleCrud from "../../cruds/roles";
 import EmployeeCrud from "../../cruds/user";
@@ -15,21 +11,17 @@ import DocTypeCrud from "../../cruds/doc_type";
 import FileManager from "./FileManager";
 import PuestoCrud from "../../cruds/puesto";
 
-
 const AdminPanel = () => {
   const { user, logout } = useAuth();
   const navigate = useNavigate();
-  // Estado modal cambio contraseña
   const [showModal, setShowModal] = useState(false);
 
-  // Campos modal
   const [currentPass, setCurrentPass] = useState("");
   const [newPass, setNewPass] = useState("");
   const [confirmPass, setConfirmPass] = useState("");
   const [errorMsg, setErrorMsg] = useState("");
   const [successMsg, setSuccessMsg] = useState("");
 
-  // Escuchar evento personalizado para abrir modal desde TopMenu
   useEffect(() => {
     const abrirModal = () => setShowModal(true);
     window.addEventListener("abrirCambioPass", abrirModal);
@@ -41,9 +33,6 @@ const AdminPanel = () => {
     localStorage.removeItem("token");
     navigate("/");
   };
-  /////////////////////////////////////////////////
-
-  /////////////////////////////////////////////////
 
   const handleChangePassword = async () => {
     setErrorMsg("");
@@ -95,7 +84,7 @@ const AdminPanel = () => {
         setErrorMsg(data.message || "Error al cambiar la contraseña.");
       }
     } catch (error) {
-      setErrorMsg("Error de conexión. Intenta nuevamente.", error);
+      setErrorMsg("Error de conexión. Intenta nuevamente.");
     }
   };
 
@@ -108,65 +97,66 @@ const AdminPanel = () => {
     setConfirmPass("");
   };
 
-  
-  //TABS
+  // Tabs
   const tabs = [
-  // { id: 'home', label: 'Inicio', content: <AdminPage/>, icon:<FaHouse/> },
-  { id: 'file', label: 'Pantalla Principal', content: <FileManager/>, icon:<FaDisplay /> },
-  { id: 'services', label: 'Servicios', content: <ServiceCrud/>, icon:<FaServicestack /> },
-  //{ id: 'roles', label: 'Roles', content: <RoleCrud/>, icon:<FaPersonCircleExclamation /> },
-  { id: 'puesto', label: 'Puestos', content: <PuestoCrud/>, icon:<FaPersonChalkboard /> },
-  //{ id: 'docs', label: 'Tipos de documentos', content: <DocTypeCrud/>, icon:<FaIdCard /> },
-  { id: 'emplid', label: 'Empleados', content: <EmployeeCrud/>, icon:<FaPerson /> },
-];
+    { id: "file", label: "Pantalla Principal", content: <FileManager />, icon: <FaDisplay /> },
+    { id: "services", label: "Servicios", content: <ServiceCrud />, icon: <FaServicestack /> },
+    { id: "puesto", label: "Puestos", content: <PuestoCrud />, icon: <FaPersonChalkboard /> },
+    { id: "emplid", label: "Empleados", content: <EmployeeCrud />, icon: <FaPerson /> },
+  ];
 
   return (
-    <div className="operator-container input-page-container_index">
-      <TopMenu
-        datausr={user}
-        username={user?.username || "AdminReturn"}
-        onLogout={handleLogout}
-      />
-      <br />
-      {/* <TabsNavigation  /> */}
-      <TabsNavigation style={{ paddingTop: "3rem", margingTop: "3rem" }} tabs={tabs} />
+    <div className="flex flex-col min-h-screen bg-blue-900">
+      <TopMenu datausr={user} username={user?.username || "AdminReturn"} onLogout={handleLogout} />
 
-      {showModal && (
-        <div className="modal-overlay" onClick={closeModal}>
-          <div className="modal-content" onClick={(e) => e.stopPropagation()}>
-            <h3>Cambiar contraseña</h3>
-            {errorMsg && <p className="error-msg">{errorMsg}</p>}
-            {successMsg && <p className="success-msg">{successMsg}</p>}
-            <input
-              type="password"
-              placeholder="Contraseña actual"
-              value={currentPass}
-              onChange={(e) => setCurrentPass(e.target.value)}
-              autoFocus
-            />
-            <input
-              type="password"
-              placeholder="Nueva contraseña"
-              value={newPass}
-              onChange={(e) => setNewPass(e.target.value)}
-            />
-            <input
-              type="password"
-              placeholder="Confirmar nueva contraseña"
-              value={confirmPass}
-              onChange={(e) => setConfirmPass(e.target.value)}
-            />
-            <div className="modal-buttons">
-              <button className="btn btn-accept" onClick={handleChangePassword}>
-                Aceptar
-              </button>
-              <button className="btn btn-cancel" onClick={closeModal}>
-                Cancelar
-              </button>
+      <div className="flex-grow p-6">
+        <TabsNavigation tabs={tabs} />
+
+        {showModal && (
+          <div className="fixed inset-0 bg-gray-800 bg-opacity-50 flex justify-center items-center z-50">
+            <div className="bg-blue-900 p-6 rounded-lg shadow-lg w-96">
+              <h3 className="text-xl font-semibold mb-4">Cambiar contraseña</h3>
+              {errorMsg && <p className="text-red-600 mb-4">{errorMsg}</p>}
+              {successMsg && <p className="text-green-600 mb-4">{successMsg}</p>}
+              <input
+                type="password"
+                placeholder="Contraseña actual"
+                value={currentPass}
+                onChange={(e) => setCurrentPass(e.target.value)}
+                className="w-full mb-4 p-2 border rounded"
+              />
+              <input
+                type="password"
+                placeholder="Nueva contraseña"
+                value={newPass}
+                onChange={(e) => setNewPass(e.target.value)}
+                className="w-full mb-4 p-2 border rounded"
+              />
+              <input
+                type="password"
+                placeholder="Confirmar nueva contraseña"
+                value={confirmPass}
+                onChange={(e) => setConfirmPass(e.target.value)}
+                className="w-full mb-4 p-2 border rounded"
+              />
+              <div className="flex justify-between">
+                <button
+                  onClick={handleChangePassword}
+                  className="bg-blue-500 text-gray-900 py-2 px-4 rounded hover:bg-blue-600 transition-colors"
+                >
+                  Aceptar
+                </button>
+                <button
+                  onClick={closeModal}
+                  className="bg-gray-400 text-white py-2 px-4 rounded hover:bg-gray-500 transition-colors"
+                >
+                  Cancelar
+                </button>
+              </div>
             </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
     </div>
   );
 };

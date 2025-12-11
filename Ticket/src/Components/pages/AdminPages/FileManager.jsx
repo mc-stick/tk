@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import ThemeToggle from "../../theme/themeToggle";
-import "./FileManager.css";
 import { FaWindowClose } from "react-icons/fa";
 
 const services = import.meta.env.VITE_SERVICE_API;
-const API_URL = `${services}/img`; // 🔹 Ajusta el puerto según tu backend
+const API_URL = `${services}/img`;
 
 const FileManager = () => {
   const [imagenes, setImagenes] = useState([]);
@@ -112,102 +111,81 @@ const FileManager = () => {
   };
 
   return (
-    <div className="admin-container">
-      <div className="box-card">
-        <h3
-          style={{
-            display: "flex",
-            alignContent: "center",
-            justifyContent: "center",
-          }}
-        >
-          Aquí puedes gestionar las imágenes y videos que aparecen en la
-          pantalla principal.
+    <div className="admin-container p-6">
+      <div className="box-card bg-white p-6 rounded-lg shadow-md">
+        <h3 className="text-xl font-semibold text-center mb-6">
+          Aquí puedes gestionar las imágenes y videos que aparecen en la pantalla principal.
         </h3>
-       
+
         <div
-          className={`drop-zone ${
-            dragOver ? (dragValid ? "valid" : "invalid") : ""
+          className={`drop-zone p-6 border-2 border-dashed  rounded-lg mb-6 ${
+            dragOver ? (dragValid ? "border-green-500" : "border-red-500") : "border-gray-300"
           }`}
           onDrop={handleDrop}
           onDragOver={handleDragOver}
           onDragLeave={handleDragLeave}
         >
           <div
-            className={`drop-content ${
-              dragOver ? (dragValid ? "valid" : "invalid") : ""
-            }`}
+            className={`drop-content ${dragOver ? (dragValid ? "text-green-500" : "text-red-500") : ""}`}
           >
-            <p>
-              <span className="drop-icon">📂</span>
-              Arrastra y suelta tus <strong>imágenes</strong> o{" "}
-              <strong>videos</strong> aquí
+            <p className="text-center">
+              <span className="text-3xl">📂</span>
+              Arrastra y suelta tus <strong>imágenes</strong> o <strong>videos</strong> aquí
             </p>
             <label
-              className={`upload-label ${
-                dragOver ? (dragValid ? "valid" : "invalid") : ""
+              className={`upload-label block mt-4 text-center cursor-pointer ${
+                dragOver ? (dragValid ? "text-green-500" : "text-red-500") : "text-blue-500"
               }`}
             >
-              <>
-                Seleccionar archivos
-                <input
-                  type="file"
-                  multiple
-                  accept="image/*,video/*"
-                  onChange={handleCargar}
-                  className="hidden-input"
-                />
-              </>
+              Seleccionar archivos
+              <input
+                type="file"
+                multiple
+                accept="image/*,video/*"
+                onChange={handleCargar}
+                className="hidden"
+              />
             </label>
           </div>
         </div>
 
-        {errorMsg && <p className="error-msg">{errorMsg}</p>}
+        {errorMsg && <p className="text-red-600 text-center mb-4">{errorMsg}</p>}
 
-        <h3
-          style={{
-            display: "flex",
-            alignContent: "center",
-            justifyContent: "center",
-          }}
-        >
+        <h3 className="text-xl font-semibold text-center mb-4">
           Las imágenes activas se muestran en la pantalla principal:
         </h3>
-        <p>las imagenes se activan o desactivan haciendo click sobre ellas.</p>
+        <p className="text-center mb-6">Las imágenes se activan o desactivan haciendo clic sobre ellas.</p>
 
-        <div style={{ backgroundColor: "#afafafff" }}>
-          <hr />
-          <div className="imagenes-grid" >
-            {imagenes.map((img) => (
-              <div key={img.id} title={`Haz click para ${img.estado ? 'desactivar' : 'activar' }`} className={`imagen-wrapper ${img.estado ? 'activo' : 'desactivado'  }`}   onClick={() => toggleEstado(img.id, img.estado)}>
-                <img
-                  src={`${API_URL}/${img.id}`}
-                  alt={img.nombre}
-                  className="imagen-thumbnail"
-                  style={{ opacity: img.estado ? 1 : 0.3}}
-                />
-
-                <div className="img-actions">
-                  <button title="Eliminar imagen"
-                   
-                    className="btn-eliminar"
-                    onClick={() => eliminarImagen(img.id)}
-                  >
-                    <span   style={{position:"absolute", top:4, right:10,}}>X</span>
-                  </button>
-                  {/* <button
-                    className="btn-toggle"
-                    onClick={() => toggleEstado(img.id, img.estado)}
-                  >
-                    {img.estado ? "Desactivar" : "Activar"}
-                  </button> */}
-                </div>
+        <div className="imagenes-grid grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">
+          {imagenes.map((img) => (
+            <div
+              key={img.id}
+              title={`Haz click para ${img.estado ? "desactivar" : "activar"}`}
+              className={`imagen-wrapper ${img.estado ? "border-green-500" : "border-red-500"} p-1 border-4 rounded-lg cursor-pointer`}
+              onClick={() => toggleEstado(img.id, img.estado)}
+            ><div className="img-actions relative">
+                <button
+                  title="Eliminar imagen"
+                  className="absolute top-0 right-0 text-red-600 text-xl bg-amber-50"
+                  onClick={(e) => {
+                    e.stopPropagation();
+                    eliminarImagen(img.id);
+                  }}
+                >
+                  <FaWindowClose />
+                </button>
               </div>
-            ))}
-          </div>
+              <img
+                src={`${API_URL}/${img.id}`}
+                alt={img.nombre}
+                className="imagen-thumbnail w-full h-auto rounded-md mb-2"
+                style={{ opacity: img.estado ? 1 : 0.3 }}
+              />
+              
+            </div>
+          ))}
         </div>
       </div>
-      <hr />
     </div>
   );
 };

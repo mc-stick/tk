@@ -1,4 +1,4 @@
-
+/* 
 .cliente-container {
   height: 100vh;
   display: flex;
@@ -54,7 +54,7 @@ h1 {
   align-items: center;
   gap: 10px;
   min-width: 150px;
-} */
+} 
 
 .botones button:hover {
   background-color: #00928b;
@@ -64,7 +64,7 @@ h1 {
   font-size: 1.5rem;
 }
 
-/* Modal */
+
 .modal {
   position: fixed;
   top: 0;
@@ -124,7 +124,7 @@ h1 {
   height: 100vh; 
   background-color: rgba(0, 0, 255, 0.61) ;
   z-index: 999;
-} */
+} 
 
 .center{
   background: radial-gradient(circle, red, green, blue);
@@ -132,7 +132,7 @@ h1 {
 
 
 
-/* Pantalla de inicio completa */
+
 .inicio-container {
   display: flex;
   align-items: center;
@@ -144,7 +144,7 @@ h1 {
   animation: fadeIn 0.5s ease-in-out;
 }
 
-/* Contenedor del contenido */
+
 .inicio-content {
   display: flex;
   flex-direction: column;
@@ -153,7 +153,6 @@ h1 {
   animation: slideUp 0.7s ease-out;
 }
 
-/* Logo */
 .inicio-logo img {
   width: 140px;
   height: auto;
@@ -162,7 +161,7 @@ h1 {
   animation: float 3s ease-in-out infinite;
 }
 
-/* Título principal */
+
 .inicio-titulo {
   font-size: 2.2rem;
   font-weight: 700;
@@ -171,14 +170,13 @@ h1 {
   letter-spacing: 0.5px;
 }
 
-/* Subtítulo */
+
 .inicio-subtitulo {
   font-size: 1.1rem;
   color: #e0e8ff;
   margin-bottom: 40px;
 }
 
-/* Botón principal */
 .inicio-btn {
   background: #ffcc00;
   color: #003366;
@@ -204,7 +202,7 @@ h1 {
   font-size: 1.4rem;
 }
 
-/* Animaciones */
+
 @keyframes fadeIn {
   from {
     opacity: 0.9;
@@ -236,7 +234,6 @@ h1 {
   }
 }
 
-/* Responsive */
 @media (max-width: 600px) {
   .inicio-titulo {
     font-size: 1.7rem;
@@ -255,26 +252,26 @@ h1 {
 
 .registro-header {
   display: flex;
-  align-items: center;      /* centra verticalmente h2 y botón */
-  justify-content: center;  /* centra el h2 horizontalmente */
-  position: relative;       /* necesario para posicionar el botón a la izquierda */
+  align-items: center;      
+  justify-content: center;  
+  position: relative;      
   margin-bottom: 1.5rem;
 }
 
 .back-btn {
-  position: absolute;       /* saca el botón del flujo normal para que h2 siga centrado */
+  position: absolute;      
   left: -35px;
   top: -30px;
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
-             /* opcional, color del botón */
+            
 }
 
 .registro-titulo {
   margin: 0;
   font-size: 1.8rem;
   text-align: center;
-  flex: 1;                  /* asegura que tome espacio central */
-}
+  flex: 1;                 
+} */

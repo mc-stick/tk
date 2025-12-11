@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from "react";
-import './Crud.css';
-
 import { FaCircleXmark, FaPen } from "react-icons/fa6";
 
 const services = import.meta.env.VITE_SERVICE_API;
-
 const API_URL = `${services}/puesto`;
 
 export default function PuestoCrud() {
@@ -94,13 +91,13 @@ export default function PuestoCrud() {
   };
 
   return (
-    <div className="crud-container">
-      <h2>{editingId ? "Editar puesto" : "Agregar puesto"}</h2>
-      {error && <p className="error-msg">{error}</p>}
+    <div className="container mx-auto p-6">
+      <h2 className="text-2xl font-semibold mb-4">{editingId ? "Editar puesto" : "Agregar puesto"}</h2>
+      {error && <p className="text-red-500 mb-4">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="crud-form">
-        <div className="form-group">
-          <label htmlFor="nombre">Nombre del puesto:</label>
+      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6">
+        <div className="mb-4">
+          <label htmlFor="nombre" className="block text-gray-700">Nombre del puesto:</label>
           <input
             id="nombre"
             name="nombre"
@@ -108,31 +105,31 @@ export default function PuestoCrud() {
             onChange={handleChange}
             required
             disabled={loading}
-            className="textBox"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="descripcion">Descripción:</label>
+        <div className="mb-4">
+          <label htmlFor="descripcion" className="block text-gray-700">Descripción:</label>
           <input
             id="descripcion"
             name="descripcion"
             value={form.descripcion}
             onChange={handleChange}
             disabled={loading}
-            className="textBox"
+            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
           />
         </div>
 
-        <div className="form-buttons">
-          <button type="submit" className="btn submit-btn" disabled={loading}>
+        <div className="flex justify-end gap-4">
+          <button type="submit" className="bg-green-600 font-bold text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-200" disabled={loading}>
             {editingId ? "Actualizar" : "Crear"}
           </button>
 
           {editingId && (
             <button
               type="button"
-              className="btn cancel-btn"
+              className="bg-red-500 text-white px-6 py-3 rounded-md font-bold hover:bg-red-600 transition duration-200"
               onClick={() => {
                 setEditingId(null);
                 setForm({ nombre: "", descripcion: "" });
@@ -146,40 +143,41 @@ export default function PuestoCrud() {
         </div>
       </form>
 
-      <h3>Lista de puestos</h3>
-      {loading && <p className="info-msg">Cargando puestos...</p>}
-      {!loading && puestos.length === 0 && <p className="info-msg">No hay puestos registrados.</p>}
+      <h3 className="text-xl font-semibold mb-4">Lista de puestos</h3>
+      {loading && <p className="text-gray-500">Cargando puestos...</p>}
+      {!loading && puestos.length === 0 && <p className="text-gray-500">No hay puestos registrados.</p>}
 
-      <table className="crud-table">
-        <thead>
+      <table className="min-w-full bg-blue border border-blue-200 rounded-lg overflow-hidden">
+        <thead className="bg-blue-600 text-white">
           <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Descripción</th>
-            <th>Acciones</th>
+            <th className="px-4 py-3 text-left">ID</th>
+            <th className="px-4 py-3 text-left">Nombre</th>
+            <th className="px-4 py-3 text-left">Descripción</th>
+            <th className="px-4 py-3 text-left">Acciones</th>
           </tr>
         </thead>
         <tbody>
           {puestos.map((puesto) => (
-            <tr key={puesto.id}>
-              <td>{puesto.id}</td>
-              <td>{puesto.nombre}</td>
-              <td>{puesto.descripcion}</td>
-              <td className="action-buttons">
+            <tr key={puesto.id} className="border-t hover:bg-blue-300">
+              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2`}>{puesto.id}</td>
+              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2`}>{puesto.nombre}</td>
+              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2`}>{puesto.descripcion}</td>
+              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2 text-center flex`}>
+                {puesto.id !== 1 ?<>
                 <button
-                  className="edit-btn"
+                  className={`${puesto.id !== 1 ? "bg-yellow-500 cursor-pointer  hover:bg-yellow-600" :  "bg-gray-400 cursor-not-allowed" } flex text-white px-4 py-2 rounded-md mr-2  transition duration-200`}
                   onClick={() => handleEdit(puesto)}
                   disabled={puesto.id > 1 ? false : true} 
                 >
-                 <FaPen/> Editar
+                  <FaPen className="m-1" />{" "} Editar
                 </button>
                 <button
-                  className="delete-btn"
+                  className={` ${puesto.id !== 1 ? "bg-red-500 cursor-pointer  hover:bg-red-600" :  "bg-gray-400 cursor-not-allowed" } flex text-white px-4 py-2 rounded-md transition duration-200`}
                   onClick={() => handleDelete(puesto.id)}
                   disabled={puesto.id > 1 ? false : true} 
                 >
-                 <FaCircleXmark/>  Eliminar
-                </button>
+                  <FaCircleXmark  className="m-1"  /> Eliminar
+                </button></>:<div className="flex text-gray-400">{" ."}</div> }
               </td>
             </tr>
           ))}

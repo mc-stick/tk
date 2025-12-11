@@ -1,16 +1,13 @@
-import React, { useEffect, useState } from "react";
-import "./EditProfile.css"; // Nuevo archivo de estilos
+import { useEffect, useState } from "react";
 
 const services = import.meta.env.VITE_SERVICE_API;
-
 const API_URL = `${services}/employees`;
 
 export default function EditProfile({ employeeId }) {
   const [form, setForm] = useState({
     username: "",
     full_name: "",
-    //email: "",
-    roles:"",
+    roles: "",
     password: "",
   });
   const [loading, setLoading] = useState(false);
@@ -25,12 +22,10 @@ export default function EditProfile({ employeeId }) {
         const res = await fetch(`${API_URL}/${employeeId}`);
         if (!res.ok) throw new Error("Error cargando perfil");
         const data = await res.json();
-        //(data,"clog data")
         setForm({
           username: data.username || "",
           full_name: data.full_name || "",
-          //email: data.email || "",
-          roles:data.role_ids || "",
+          roles: data.role_ids || "",
           password: "",
         });
       } catch (err) {
@@ -66,9 +61,8 @@ export default function EditProfile({ employeeId }) {
     setSuccessMsg(null);
 
     try {
-      const payload = { username: form.username, full_name: form.full_name, edit: true, roles:form.roles };
+      const payload = { username: form.username, full_name: form.full_name, edit: true, roles: form.roles };
       if (form.password.trim() !== "") payload.password = form.password;
-      //console.log("puesto",form.roles)
 
       const res = await fetch(`${API_URL}/${employeeId}`, {
         method: "PUT",
@@ -91,43 +85,52 @@ export default function EditProfile({ employeeId }) {
   };
 
   return (
-    <div className="edit-profile-container">
-      <h2>Editar Perfil</h2>
+    <div className="max-w-3xl mx-auto p-6 bg-gray-300 shadow-md rounded-lg">
+      <h2 className="text-2xl font-semibold text-center text-cyan-950 mb-6">Editar Perfil</h2>
 
-      {loading && <p className="info-msg">Cargando...</p>}
-      {error && <p className="error-msg">{error}</p>}
-      {successMsg && <p className="success-msg"><strong>{successMsg} </strong><br />Los cambios se aplicarán en tu próximo inicio de sesión.</p>}
+      {loading && <p className="text-gray-500 text-center">Cargando...</p>}
+      {error && <p className="text-red-500 text-center">{error}</p>}
+      {successMsg && (
+        <p className="text-green-800 text-center">
+          <strong>{successMsg}</strong>
+          <br />
+          Los cambios se aplicarán en tu próximo inicio de sesión.
+        </p>
+      )}
 
-      <form onSubmit={handleSubmit} className="edit-profile-form">
-        <div className="form-group">
-          <label htmlFor="username">Username:</label>
+      <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label htmlFor="username" className="block text-sm font-medium text-gray-700">
+            Username:
+          </label>
           <input
             id="username"
             name="username"
             value={form.username}
             onChange={handleChange}
             disabled
+            className="mt-2 p-3 w-full border border-gray-500 rounded-md text-gray-800 bg-gray-200"
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="full_name">Nombre completo:</label>
+        <div>
+          <label htmlFor="full_name" className="block text-sm font-medium text-gray-700">
+            Nombre completo:
+          </label>
           <input
             id="full_name"
             name="full_name"
             value={form.full_name}
             onChange={handleChange}
             disabled={loading}
+            className="mt-2 p-3 w-full border bg-white text-black border-gray-800 rounded-md"
           />
         </div>
 
-        {/* <div className="form-group" style={{ display: "none" }}>
-          <label htmlFor="email">Email:</label>
-          <input type="email" id="email" name="email" value={form.email} onChange={handleChange} />
-        </div> */}
-
-        <div className="form-group">
-          <label htmlFor="password">Nueva contraseña (opcional):</label>
+        <div>
+          <label htmlFor="password" className="block text-sm font-medium text-gray-700">
+            Nueva contraseña (opcional):
+          </label>
           <input
             type="password"
             id="password"
@@ -136,13 +139,20 @@ export default function EditProfile({ employeeId }) {
             onChange={handleChange}
             disabled={loading}
             placeholder="Dejar en blanco para no cambiar"
+            className="mt-2 p-3 w-full border border-gray-800 text-black bg-white rounded-md"
           />
         </div>
 
         {!successMsg && (
-          <button type="submit" disabled={loading} className="submit-btn">
-            Guardar Cambios
-          </button>
+          <div className="flex justify-center">
+            <button
+              type="submit"
+              disabled={loading}
+              className="w-full bg-blue-600 text-white py-3 rounded-md hover:bg-green-700 transition disabled:bg-gray-300 cursor-pointer"
+            >
+              Guardar Cambios
+            </button>
+          </div>
         )}
       </form>
     </div>

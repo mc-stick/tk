@@ -1,11 +1,12 @@
 import { useEffect, useState } from "react";
+import { FaAngleLeft, FaArrowLeft } from "react-icons/fa";
+import { FaLeftLong } from "react-icons/fa6";
 import { FcManager, FcServices } from "react-icons/fc";
 import { useNavigate } from "react-router-dom";
 
 const TopAnimatedHeader = ({ user }) => {
   const [startTransition, setStartTransition] = useState(false);
-
-  const navigate= useNavigate();
+  const navigate = useNavigate();
 
   useEffect(() => {
     const timer = setTimeout(() => {
@@ -16,78 +17,38 @@ const TopAnimatedHeader = ({ user }) => {
 
   return (
     <>
-      <style>{`
-        /* Animaciones */
-        .slide-up {
-          animation: slideUp 0.5s forwards;
-        }
+      {/* Contenedor para el saludo y el título */}
+      <div className="flex  space-y-1">
+        {/* Saludo inicial */}
+        <div
+          onClick={() => navigate("/")}
+          className={`flex items-center space-x-2 cursor-pointer  transition-all duration-500 ${
+            startTransition ? "opacity-100" : "opacity-0"
+          }`}> <FaAngleLeft  size={42} className="mb-1 hover:text-yellow-500  ml-15"/><br />
+          <FcServices size={32} className="mb-1 ml-5" />
+          <strong
+            title="Volver a inicio"
+            className="text-2xl font-semibold transition-colors">
+            Panel de Operaciones
+          </strong>
+        </div>
+       
+        {/* Saludo inicial */}
+        <div
+          className={`flex items-center space-x-2 transition-all duration-1000 ${
+            startTransition
+              ? "transform -translate-y-10 opacity-0"
+              : "opacity-100"
+          }`}>
+           
+          <FcManager size={32} className="mb-1" />
+          <span className="text-xl">
+            Hola, <strong className="text-yellow-500">{user}</strong>
+          </span>
+        </div>
 
-        .slide-down {
-          animation: slideDown 0.5s forwards;
-        }
-
-        @keyframes slideUp {
-          from {
-            opacity: 1;
-            transform: translateY(0);
-          }
-          to {
-            opacity: 0;
-            transform: translateY(-40px);
-          }
-        }
-
-        @keyframes slideDown {
-          from {
-            opacity: 0;
-            transform: translateY(40px);
-          }
-          to {
-            opacity: 1;
-            transform: translateY(0);
-          }
-        }
-
-        /* Oculta visualmente después de la animación */
-        .hidden-after {
-          display: none;
-        }
-
-         /*  volver a home btn */
-         .panelOP{
-          font-size:1.5rem;
-          cursor: pointer;
-
-         }
-
-         .Title-Page:hover{
-          color:#b18700;
-          font-size:1.8rem;
-          
-         }
-
-      `}</style>
-
-      {/* Saludo inicial */}
-      <div
-        className={`topmenu-left ${
-          startTransition ? "slide-up hidden-after" : ""
-        }`}
-      >
-        <span className="user-greeting">
-          <FcManager size={32} style={{ marginBottom: "-5px" }} /> Hola,{" "}
-          <strong className="usr">{user}</strong>
-        </span>
+        {/* Título del panel */}
       </div>
-
-      {/* Título aparece después */}
-      <span
-        onClick={() => navigate("/")}
-        className={`Title-Page ${startTransition ? "slide-down" : "hidden-after"}`}
-      >
-        <FcServices size={32} style={{ marginBottom: "-5px" }} />
-        <strong title="Volver a inicio" className="panelOP" > Panel de Operaciones</strong>
-      </span>
     </>
   );
 };

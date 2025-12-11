@@ -13,7 +13,8 @@ export default function TicketPanel() {
   const API_URL = `${services}/tickets/detail`;
 
   useEffect(() => {
-    const fetchTickets = async () => {  // agregar btn llamar de nuevo
+    const fetchTickets = async () => {
+      // agregar btn llamar de nuevo
       try {
         const response = await fetch(API_URL);
         const tickets = await response.json();
@@ -57,73 +58,68 @@ export default function TicketPanel() {
     return () => clearInterval(interval);
   }, []);
 
-  preview = data.map((item) => item.data.filter((item1)=>item1.estado === "Atendiendo" || item1.estado === "En espera"));
+  preview = data.map((item) =>
+    item.data.filter(
+      (item1) => item1.estado === "Atendiendo" || item1.estado === "En espera"
+    )
+  );
   //const isEmpty = preview.flat().length === 0;
-  console.log("prev", preview );
+  console.log("prev", preview);
   // console.log("data", data );
 
   return (
-    <>
-      {preview.flat().length === 0 ? (
-        //<p style={{ color: "#ccc" }}>Cargando datos...</p>
-        <DisplayScreen />
-      ) : (
-        <div className="board-container">
-          {/* <DateTime /> */}
-          <h1 className="board-title">Manténgase al tanto de su llamado.</h1>
-          <div className="board-grid">
-            {data.map((section, i) => {
-              // Filtramos solo los datos relevantes una sola vez
-              const filteredData = section.data.filter(
-                (item) =>
-                  item.estado === "Atendiendo" || item.estado === "En espera"
-              );
+    <div className="bg-blue-900 flex w-screen h-screen">
+  {preview.flat().length === 0 ? (
+    <DisplayScreen />
+  ) : (
+    <div className="w-full max-w-7xl mx-auto p-4">
+      <h1 className="text-3xl font-semibold text-center mb-6">
+        Manténgase al tanto de su llamado.
+      </h1>
+      
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {data.map((section, i) => {
+          // Filtramos solo los datos relevantes una sola vez
+          const filteredData = section.data.filter(
+            (item) => item.estado === "Atendiendo" || item.estado === "En espera"
+          );
 
-              //console.log("filtered", filteredData);
+          // Si no hay datos válidos, no mostramos nada
+          if (filteredData.length === 0) return null;
 
-              // Si no hay datos válidos, no mostramos nada
-              if (filteredData.length === 0) return null;
+          return (
+            <div key={i} className="bg-white p-6 rounded-lg shadow-lg border border-blue-300">
+              <h2 className="text-xl font-bold text-blue-700 mb-4">{section.title}</h2>
 
-              return (
-                <div key={i} className="board-column">
-                  <h2 className="column-title">{section.title}</h2>
-
-                  <div className="column-items">
-                    {filteredData.slice(0, 9).map((item, j) => (
-                      <div
-                        key={j}
-                        className={`item-card ${
-                          item.servicio !== "En espera" ? "active" : ""
-                        }`}>
-                        {item.servicio !== "En espera" ? (
-                          <DemoSpeaker number={item.id} text={item.servicio} />
-                        ) : (
-                          <></>
-                        )}
-                        <span className="item-id">{item.id}</span>
-                        <span className="item-window">{item.servicio}</span>
-                      </div>
-                    ))}
-                    {filteredData.length > 10 && (
-                      <div className="item-card more-items">
-                        <span className="item-id">
-                          … y {filteredData.length - 10} turnos más.
-                        </span>
-                      </div>
-                    )}
+              <div className="space-y-4">
+                {filteredData.slice(0, 9).map((item, j) => (
+                  <div
+                    key={j}
+                    className={`p-4 border border-yellow-200 rounded-md flex items-center justify-between ${
+                      item.servicio !== "En espera" ? "bg-blue-100" : "bg-red-100"
+                    }`}
+                  >
+                    {item.servicio !== "En espera" && <DemoSpeaker number={item.id} text={item.servicio} />}
+                    <span className="text-lg font-semibold text-gray-800">{item.id}</span>
+                    <span className="text-sm text-gray-600">{item.servicio}</span>
                   </div>
-                </div>
-              );
-            })}
-          </div>
+                ))}
 
-          {/* {current && (
-            <div className="current-customer">
-              Atendiendo <span>{current.name}</span> — {current.servicio}
+                {filteredData.length > 10 && (
+                  <div className="p-4 border border-yellow-200 rounded-md bg-yellow-50">
+                    <span className="text-sm text-gray-600">
+                      … y {filteredData.length - 10} turnos más.
+                    </span>
+                  </div>
+                )}
+              </div>
             </div>
-          )} */}
-        </div>
-      )}
-    </>
+          );
+        })}
+      </div>
+    </div>
+  )}
+</div>
+
   );
 }

@@ -8,6 +8,7 @@ pnpm-debug.log*
 lerna-debug.log*
 *.zip
 zipapp
+zipapp.zip
 
 node_modules
 dist

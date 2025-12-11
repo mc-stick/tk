@@ -1,5 +1,4 @@
 import React, { useEffect, useState, useRef } from "react";
-import "./OpListEspera.css";
 import { FaBell, FaCheckCircle, FaExclamationCircle } from "react-icons/fa";
 
 const OpListEspera = ({ data, onLlamarTurno }) => {
@@ -15,7 +14,6 @@ const OpListEspera = ({ data, onLlamarTurno }) => {
     turnosTotales.push(data.turnoActual);
     turnosTotales.map((t) => atender.push(t));
   }
- 
 
   if (data.cola && data.cola.length > 0) {
     if (data.cola.status_name !== "En espera") turnosTotales.push(...data.cola);
@@ -81,29 +79,29 @@ const OpListEspera = ({ data, onLlamarTurno }) => {
   };
 
   return (
-    <div className="oplist-container">
+    <div className="p-6 space-y-6 bg-gray-50 rounded-xl shadow-lg">
       {turnosVisibles.length > 0 && (
-        <section className="turno-section">
-          <h3 className="turno-title attending">
-            <FaCheckCircle className="icon" /> Turno actual
+        <section>
+          <h3 className="text-2xl font-semibold text-green-700 flex  items-center mb-4">
+            <FaCheckCircle className="mr-3 text-xl" /> Turno actual
           </h3>
-          <p className="turno-description">
+          <p className="text-gray-600 mb-4">
             Cuando finalices el turno, presiona el botón{" "}
             <strong>"ATENDIDO"</strong>.
           </p>
-          <ul className="turno-lista">
+          <ul className="space-y-4">
             {turnosVisibles.map((t, i) => (
               <li
                 key={t.id ?? i}
-                className={`turno-card active ${
-                  t.id === ultimoAnimado && mostrarAnimacion ? "alerta" : ""
+                className={`p-4 bg-gray-300 rounded-lg shadow-lg flex justify-between items-center transition-all duration-300 ease-in-out transform ${
+                  t.id === ultimoAnimado && mostrarAnimacion ? "bg-yellow-100" : ""
                 }`}
               >
-                <span className="turno-info">
+                <span className="text-sm text-gray-800 font-medium">
                   #{t.nticket ?? t.id} - {t.service_name ?? t.tipo}
                 </span>
                 <button
-                  className="btn-turno success"
+                  className="px-4 py-2 bg-green-500 text-white rounded-lg hover:bg-green-600 transition"
                   onClick={() => handleLlamar(t, false)}
                 >
                   Atendido
@@ -114,26 +112,26 @@ const OpListEspera = ({ data, onLlamarTurno }) => {
         </section>
       )}
 
-      <hr className="turno-divider" />
+      <hr className="border-gray-300 my-6" />
 
-      <section className="turno-section">
-        <h3 className="turno-title waiting">
-          <FaBell className="icon" /> Turnos en espera
+      <section>
+        <h3 className="text-2xl font-semibold text-blue-600 flex items-center mb-4">
+          <FaBell className="mr-3 text-xl" /> Turnos en espera
         </h3>
         {turnosEnEspera.length > 0 ? (
-          <ul className="turno-lista">
+          <ul className="space-y-4">
             {turnosEnEspera.reverse().map((t, i) => (
               <li
                 key={t.id ?? i}
-                className={`turno-card ${
-                  t.id === ultimoAnimado && mostrarAnimacion ? "alerta" : ""
+                className={`p-4 bg-gray-300 rounded-lg shadow-lg flex justify-between items-center transition-all duration-300 ease-in-out transform ${
+                  t.id === ultimoAnimado && mostrarAnimacion ? "bg-yellow-100" : ""
                 }`}
               >
-                <span className="turno-info">
+                <span className="text-sm text-gray-800 font-medium">
                   #{t.nticket ?? t.id} - {t.service_name ?? t.tipo}
                 </span>
                 <button
-                  className="btn-turno primary"
+                  className="px-4 py-2 bg-blue-500 text-white rounded-lg hover:bg-blue-600 transition"
                   onClick={() => handleLlamar(t, true)}
                 >
                   Atender
@@ -142,8 +140,8 @@ const OpListEspera = ({ data, onLlamarTurno }) => {
             ))}
           </ul>
         ) : (
-          <div className="no-turnos">
-            <FaExclamationCircle size={20} />{" "}
+          <div className="flex items-center text-red-500 mt-4">
+            <FaExclamationCircle size={20} className="mr-2" />
             <span>No hay turnos en espera</span>
           </div>
         )}

@@ -29,16 +29,16 @@ const TopMenu = ({ datausr }) => {
   }, []);
 
   return (
-    <header className="flex justify-between items-center bg-blue-900 text-white p-4 shadow-md">
+    <header className="flex justify-between items-center bg-blue-800 text-white p-4 shadow-lg">
       {/* Header animado con el nombre del usuario */}
       <TopAnimatedHeader user={datausr.full_name || datausr.username} />
 
       {/* Menú de usuario */}
-      <div className="relative" ref={menuRef}>
-        <span className="mr-4 font-semibold">{datausr.full_name}</span>
+      <div className="relative flex items-center">
+        <span className="text-lg font-medium mr-4">{datausr.full_name}</span>
 
         <button
-          className="text-white hover:text-yellow-400 transition-colors"
+          className="text-white hover:text-yellow-300"
           onClick={() => setShowMenu((prev) => !prev)}
           aria-label="Menú usuario"
         >
@@ -47,12 +47,12 @@ const TopMenu = ({ datausr }) => {
 
         {/* Dropdown del menú de usuario */}
         {showMenu && (
-          <div className="absolute right-0 mt-2 w-48 bg-white text-gray-800 rounded-lg shadow-lg p-2">
+          <div className="absolute right-0 mt-2 w-40 bg-white text-gray-800 rounded-lg shadow-md p-2 z-10">
             <button
               onClick={handleLogout}
-              className="flex items-center w-full text-left p-2 hover:bg-gray-200 rounded-lg transition"
+              className="flex items-center w-full text-left p-2 hover:bg-gray-200 rounded-lg"
             >
-              <FcLeft size={28} className="mr-2" />
+              <FcLeft size={22} className="mr-2" />
               Cerrar sesión
             </button>
           </div>
