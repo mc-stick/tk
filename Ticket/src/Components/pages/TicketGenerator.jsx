@@ -12,7 +12,7 @@ import ImgCustoms from "../widgets/ImgCustoms";
 import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 import Modal from "../Buttons/Modal";
 import { SendTwilioSms } from "../twilio/TwMsg";
-import handleFullscreen from "../Buttons/FullScreenbtn";
+// import handleFullscreen from "../Buttons/FullScreenbtn";
 import Config_params from '../../../Params_config'
 
 const services = import.meta.env.VITE_SERVICE_API;
@@ -180,12 +180,12 @@ const TicketGenerator = () => {
             </p>
           </div>
 
-          <div className="grid grid-cols-3 gap-6 w-full">
+          <div className={`grid grid-cols-${servicios.length > 4 ? "4" : servicios.length} gap-6 w-full`}>
             {servicios.map(({ service_id, name }) => (
               <button
                 key={service_id}
                 onClick={() => seleccionarServicio(service_id)}
-                className="bg-white p-6 rounded-2xl shadow-lg flex flex-col items-center justify-center hover:scale-105 transition transform"
+                className="bg-white p-6 rounded-2xl cursor-pointer shadow-lg flex flex-col items-center justify-center hover:scale-105 transition transform "
               >
                 {iconoServicio(name)}
                 <span className="font-semibold text-gray-800 mt-2">{name}</span>
