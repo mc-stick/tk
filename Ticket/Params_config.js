@@ -4,6 +4,10 @@ const App_params_config = {
     img_logo: "./src/assets/img/UcneLogoIcon.png",
     
   },
+  tw:{
+    msg_title:"Notificaciones de UCNE.\n\n",
+    msg:"Número de ticket generado: "
+  }
   
 };
 

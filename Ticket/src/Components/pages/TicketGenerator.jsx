@@ -13,8 +13,19 @@ import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 import Modal from "../Buttons/Modal";
 import { SendTwilioSms } from "../twilio/TwMsg";
 import handleFullscreen from "../Buttons/FullScreenbtn";
+import Config_params from '../../../Params_config'
 
 const services = import.meta.env.VITE_SERVICE_API;
+
+// -------------------------------------
+//  IDENTIFICACIONES DECLARADAS AQUÍ
+// -------------------------------------
+const IDENTIFICACIONES = [
+  { name: "Matrícula", size: 8 },
+  { name: "Teléfono", size: 10 },
+  { name: "Sin identificación", size: 0 }
+];
+// -------------------------------------
 
 const TicketGenerator = () => {
   const { generarTurno } = useTurno();
@@ -22,7 +33,6 @@ const TicketGenerator = () => {
   const [val, setVal] = useState("");
   const [turno, setTurno] = useState(null);
   const [servicios, setServicios] = useState([]);
-  const [identificaciones, setIdentificaciones] = useState([]);
   const [open, setOpen] = useState(false);
   const timerRef = useRef(null);
 
@@ -35,7 +45,7 @@ const TicketGenerator = () => {
           setEstado("inicio");
           setTurno(null);
           setVal("");
-        }, 600000); // 10 minutos
+        }, 600000);
       }
     };
 
@@ -49,17 +59,15 @@ const TicketGenerator = () => {
     };
   }, [estado]);
 
-  // --- Cargar datos ---
+  // --- Cargar Servicios ---
   const fetchData = async () => {
     try {
-      const [servRes, idRes] = await Promise.all([
-        fetch(`${services}/services`),
-        fetch(`${services}/docs`),
-      ]);
-      if (!servRes.ok || !idRes.ok) throw new Error("Error al cargar datos");
-      const [servData, idData] = await Promise.all([servRes.json(), idRes.json()]);
+      const servRes = await fetch(`${services}/services`);
+      if (!servRes.ok) throw new Error("Error al cargar datos");
+
+      const servData = await servRes.json();
       setServicios(servData.filter((item) => item.is_active === 1));
-      setIdentificaciones(idData);
+
     } catch (error) {
       console.error("Error al obtener datos:", error);
     }
@@ -70,14 +78,10 @@ const TicketGenerator = () => {
     fetchData();
   }, []);
 
-  const ReloadPage = () => {
-    handleFullscreen();
-    fetchData();
-  };
-
-  // --- Flujo ---
   const seleccionarId = (name, size) => {
-    size !== 0 ? setEstado(["started", name, size]) : setEstado("seleccion");
+    size !== 0 
+      ? setEstado(["started", name, size])
+      : setEstado("seleccion");
   };
 
   const seleccionarServicio = async (tipo) => {
@@ -93,8 +97,9 @@ const TicketGenerator = () => {
   const aceptar = (num) => {
     const limpio = num.replace(/-/g, "");
     limpio.length === 10
-      ? SendTwilioSms("Número de ticket generado: " + turno, limpio)
+      ? SendTwilioSms(Config_params.tw.msg_title + turno, limpio)
       : console.log("Imprimir ticket localmente");
+
     setEstado("inicio");
     setTurno(null);
     setVal("");
@@ -107,7 +112,7 @@ const TicketGenerator = () => {
     setEstado("inicio");
   };
 
-  // --- Iconos ---
+  // ICONOS
   const iconoServicio = (tipo) => {
     const iconos = {
       Caja: <FcCurrencyExchange size={48} />,
@@ -128,7 +133,7 @@ const TicketGenerator = () => {
             width="140px"
             alt="UCNE Logo"
             className="cursor-pointer hover:scale-105 transition"
-            onClick={ReloadPage}
+            onClick={fetchData}
           />
           <h1 className="text-4xl font-bold text-white">Bienvenidos a UCNE</h1>
           <div className="text-center">
@@ -139,7 +144,7 @@ const TicketGenerator = () => {
           </div>
 
           <div className="grid grid-cols-3 gap-6 w-full">
-            {identificaciones.map(({ name, size }) => (
+            {IDENTIFICACIONES.map(({ name, size }) => (
               <button
                 key={name}
                 onClick={() => seleccionarId(name, size)}

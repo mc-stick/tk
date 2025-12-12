@@ -73,7 +73,7 @@ const Home = () => {
         <img
           src={iconlg}
           alt="UCNE Logo"
-          className="mx-auto my-4 size-40 p-auto"
+          className="mx-auto my-4 size-40 p-3"
         />
 
         <h2 className="text-2xl md:text-3xl font-semibold text-white">
@@ -84,6 +84,7 @@ const Home = () => {
           Selecciona el tipo de dispositivo para continuar
         </p>
       </div>
+      <br />
 
       {/* Opciones */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 w-full max-w-5xl">

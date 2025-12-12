@@ -1,20 +1,23 @@
 import mysql from 'mysql2/promise';
+import dotenv from 'dotenv';
 
-// export const pool = mysql.createPool({
+dotenv.config();
 
-//   host: process.env.DB_HOST,
-//   user: process.env.DB_USER,
-//   password: process.env.DB_PASSWORD,
-//   database: process.env.DB_NAME,
-// });
+export const pool = mysql.createPool({
+
+  host: process.env.DB_HOST,
+  user: process.env.DB_USER,
+  password: process.env.DB_PASSWORD,
+  database: process.env.DB_NAME,
+});
 
 //🔌 Conexión a MySQL
-export const pool = mysql.createPool({
-  host: 'localhost',
-  user: 'admin',
-  password: 'admin',
-  database: 'tk',
-});
+// export const pool = mysql.createPool({
+//   host: 'localhost',
+//   user: 'admin',
+//   password: 'admin',
+//   database: 'tk',
+// });
 
 // import mariadb from 'mariadb';
 
