@@ -9,11 +9,9 @@ import {
 } from "react-icons/fc";
 import FormattedInput from "../Inputs/Input";
 import ImgCustoms from "../widgets/ImgCustoms";
-import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 import Modal from "../Buttons/Modal";
 import { SendTwilioSms } from "../twilio/TwMsg";
-// import handleFullscreen from "../Buttons/FullScreenbtn";
-import Config_params from '../../../Params_config'
+import App_params_config from "@/Params_config";
 
 const services = import.meta.env.VITE_SERVICE_API;
 
@@ -74,7 +72,7 @@ const TicketGenerator = () => {
   };
 
   useEffect(() => {
-    document.title = "UCNE | Cliente";
+    document.title = "Cliente";
     fetchData();
   }, []);
 
@@ -97,7 +95,7 @@ const TicketGenerator = () => {
   const aceptar = (num) => {
     const limpio = num.replace(/-/g, "");
     limpio.length === 10
-      ? SendTwilioSms(Config_params.tw.msg_title + turno, limpio)
+      ? SendTwilioSms(App_params_config.tw.msg_title + turno, limpio)
       : console.log("Imprimir ticket localmente");
 
     setEstado("inicio");
@@ -129,13 +127,13 @@ const TicketGenerator = () => {
       {estado === "inicio" && (
         <div className="w-full max-w-3xl flex flex-col items-center space-y-6">
           <ImgCustoms
-            src={ImgLogo}
+            src={App_params_config.images.img_logo}
             width="140px"
-            alt="UCNE Logo"
+            alt="Logo"
             className="cursor-pointer hover:scale-105 transition"
             onClick={fetchData}
           />
-          <h1 className="text-4xl font-bold text-white">Bienvenidos a UCNE</h1>
+          <h1 className="text-4xl font-bold text-white">Bienvenidos a {App_params_config.text.shortname || "'insert shortname'"}</h1>
           <div className="text-center">
             <h2 className="text-2xl font-semibold text-white mb-2">
               Selecciona un método de identificación

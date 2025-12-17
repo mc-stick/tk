@@ -1,6 +1,8 @@
 import { useState } from 'react';
 import axios from 'axios';
 
+const services = import.meta.env.VITE_SERVICE_API;
+
 const CreateUser = () => {
   const [form, setForm] = useState({ username: '', password: '', role: '' });
   const [message, setMessage] = useState('');

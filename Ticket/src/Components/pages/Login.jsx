@@ -1,7 +1,8 @@
 import { useState, useEffect } from "react";
 import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
-import ImgLogo from "../../assets/img/UcneLogoIcon.png";
+import App_params_config from "@/Params_config";
+
 
 const Login = ({ role }) => {
   const [username, setUsername] = useState("");
@@ -11,7 +12,7 @@ const Login = ({ role }) => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    document.title = "UCNE | Iniciar sesión";
+    document.title = "Iniciar sesión";
   }, []);
 
   const handleSubmit = async (e) => {
@@ -41,7 +42,7 @@ const Login = ({ role }) => {
     <div className="flex items-center justify-center min-h-screen bg-blue-900 p-4">
       <div className="bg-blue-800 rounded-3xl shadow-2xl w-full max-w-sm p-8 flex flex-col items-center animate-slide-up">
         {/* Logo */}
-        <img src={ImgLogo} alt="UCNE Logo" className="w-24 h-24 mb-6" />
+        <img src={App_params_config.images.img_logo} alt="Logo" className="w-24 h-24 mb-6" />
 
         {/* Título */}
         <h2 className="text-2xl sm:text-3xl font-extrabold text-white mb-4 text-center">

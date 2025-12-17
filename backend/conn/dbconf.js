@@ -3,6 +3,7 @@ import dotenv from 'dotenv';
 
 dotenv.config();
 
+//🔌 Conexión a MySQL
 export const pool = mysql.createPool({
 
   host: process.env.DB_HOST,
@@ -11,13 +12,6 @@ export const pool = mysql.createPool({
   database: process.env.DB_NAME,
 });
 
-//🔌 Conexión a MySQL
-// export const pool = mysql.createPool({
-//   host: 'localhost',
-//   user: 'admin',
-//   password: 'admin',
-//   database: 'tk',
-// });
 
 // import mariadb from 'mariadb';
 

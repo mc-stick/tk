@@ -5,18 +5,13 @@ import {
   FcTouchscreenSmartphone,
   FcTabletAndroid,
 } from "react-icons/fc";
-import { useEffect } from "react";
-import iconlg from "../../assets/img/UcneLogoIcon.png";
 import handleFullscreen from "../Buttons/FullScreenbtn";
+import App_params_config from "@/Params_config";
 
 const Home = () => {
   const navigate = useNavigate();
 
-  useEffect(() => {
-    document.title = "UCNE | Gestor de Colas";
-    const favicon = document.querySelector("link[rel='icon']");
-    if (favicon) favicon.href = iconlg;
-  }, []);
+
 
   const handleDisplay = (label, route) => {
     if (["Cliente", "Pantalla"].includes(label)) {
@@ -60,19 +55,19 @@ const Home = () => {
         px-4 py-10
         
         bg-gradient-to-br 
-        from-blue-900 via-blue-700 to-blue-500
+        from-blue-900 via-blue-800 to-blue-700
         bg-fixed
       "
     >
       {/* Header */}
       <div className="text-center mb-10">
         <h1 className="text-3xl md:text-4xl font-bold text-white">
-          Universidad Católica Nordestana - UCNE
+          {App_params_config.text.longname} - {App_params_config.text.shortname}
         </h1>
 
         <img
-          src={iconlg}
-          alt="UCNE Logo"
+          src={App_params_config.images.img_logo}
+          alt="Logo"
           className="mx-auto my-4 size-40 p-3"
         />
 

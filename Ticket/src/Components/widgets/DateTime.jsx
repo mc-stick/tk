@@ -1,7 +1,6 @@
 import { useEffect, useState } from "react";
-import ImgLogo from "../../assets/img/UcneLogoIcon.png";
 import ImgCustoms from "./ImgCustoms";
-import App_params_config from "../../../Params_config";
+import App_params_config from "@/Params_config";
 
 const DateTime = () => {
   const [now, setNow] = useState(new Date());
@@ -20,11 +19,11 @@ const DateTime = () => {
   });
 
   return (
-    <header className=" fixed top-0 z-40 w-full size-80 bg-sky-500/100 text-white flex 
+    <header className=" fixed top-0 z-40 w-full size-80 bg-gradient-to-t  from-blue-900/700 via-blue-900   to-blue-900 border-slate-500 hover:shadow-slate-500/50 text-white flex 
     justify-between items-center p-8 shadow-xl/20  font-poppins ">
       <div className="grid grid-flow-col justify-items-center  ">
         <ImgCustoms src={App_params_config.images.img_logo}  className=" size-40 p-auto " />
-        <h1 className=" m-auto text-9xl font-bold text-shadow-lg ml-12">UCNE</h1>
+        <h1 className=" m-auto text-9xl font-bold text-shadow-lg ml-12">{App_params_config.text.shortname}</h1>
       </div>
 
       <div  className="text-right">

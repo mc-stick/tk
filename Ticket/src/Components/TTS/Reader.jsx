@@ -1,13 +1,13 @@
 import React, { useRef, useImperativeHandle, forwardRef } from "react";
 import useVoice from "./usevoice";
 import { speakText } from "./TTS";
-import dingSound from "../../assets/sound/dingdong.mp3";
+import App_params_config from "@/Params_config";
 
 const TextSpeaker = forwardRef((props, ref) => {
   const voice = useVoice();
   const queue = useRef([]);
   const isSpeaking = useRef(false);
-  const audioRef = useRef(typeof Audio !== "undefined" ? new Audio(dingSound) : null);
+  const audioRef = useRef(typeof Audio !== "undefined" ? new Audio(App_params_config.sound.dingdong) : null);
 
   const playDingAsync = () => { 
     return new Promise((resolve) => {

@@ -11,16 +11,16 @@ import puestoRoutes from './conn/routes/puesto.js';
 import views from './conn/routes/views.js';
 import msgtw from './conn/twilio/apiTwi.js';
 
+import auth from './conn/routes/auth.routes.js'
 
 const app = express();
 app.use(cors());
 app.use(express.json());
 
-
-
 // Rutas API
 app.use('/api/services', serviceRoutes);
 app.use('/api/employees', employeeRoutes);
+app.use('/api/login', auth);
 app.use('/api/roles', roleRoutes);
 app.use('/api/img', imgRoutes);
 app.use('/api/docs', docRoutes);

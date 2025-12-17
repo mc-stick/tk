@@ -85,9 +85,9 @@ const DisplayScreen = () => {
     };
   }, [imagenes, actual]);
 
-  return (
-    <div className="flex h-full w-full overflow-hidden z-0">
-      <DateTime />
+  return (<>
+    {/* <div className="flex h-full w-full overflow-hidden z-0"> */}
+      {/* <DateTime /> */}
       {/* <LeftBar data={{ turnoActual, cola, DateTime, ImgCustoms, totalatend }} /> */}
 
       <div className="flex bg-black h-screen w-screen  justify-center items-center  ">
@@ -117,7 +117,8 @@ const DisplayScreen = () => {
           <p className="text-8xl " style={{ color: "#ccc" }}>Sin archivos disponibles</p>
         )}
       </div>
-    </div>
+    {/* </div> */}
+    </>
   );
 };
 

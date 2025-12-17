@@ -27,7 +27,7 @@ export default function DemoSpeaker({ number="", text="" }) {
     // Espera 1 segundo antes de hablar
     const timer = setTimeout(() => {
       handleSpeak();
-    }, 1000);
+    }, 500);
 
     // Limpia el timeout si el componente se desmonta antes de 1 segundo
     return () => clearTimeout(timer);

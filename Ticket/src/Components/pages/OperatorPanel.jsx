@@ -3,7 +3,6 @@ import { useTurno } from "../context/TurnoContext";
 import { useAuth } from "../context/AuthContext";
 import TopMenu from "../Menu/TopMenu";
 import TabsNavigation from "../Menu/TabsComponent";
-import { OpTurnoManager } from "./OpTurnoManager";
 import OpListEspera from "../listas/listaEsperaOp";
 import EditProfile from "../cruds/editProfile";
 
@@ -13,7 +12,7 @@ const OperatorPanel = () => {
   const [showBTNFIN, setShowBTNFIN] = useState(false);
 
   useEffect(() => {
-    document.title = "UCNE | Panel de operaciones";
+    document.title = "Panel de operaciones";
   }, []);
 
   const handleLlamarTurnoManual = async (turno) => {

@@ -6,7 +6,7 @@ export default function useVoice() {
   useEffect(() => {
     const loadVoices = () => {
       const voices = window.speechSynthesis.getVoices();
-      if (!voices.length) return; // Evita setear null innecesariamente
+      if (!voices.length) return; 
       const preferredVoices = [
         "Google español de Estados Unidos",
         "Google español (Latinoamérica)",
@@ -32,7 +32,6 @@ export default function useVoice() {
         voices[0];
 
       setVoice(naturalVoice);
-      //console.log(naturalVoice);
     };
 
     loadVoices();
