@@ -3,13 +3,11 @@ import { useAuth } from "../../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import TopMenu from "../../Menu/TopMenu";
 import TabsNavigation from "../../Menu/TabsComponent";
-import { FaDisplay, FaHouse, FaHouseMedical, FaIdCard, FaPerson, FaPersonChalkboard, FaPersonCircleExclamation, FaServicestack } from "react-icons/fa6";
+import { FaDisplay, FaGears, FaHouse, FaHouseMedical, FaIdCard, FaPerson, FaPersonChalkboard, FaPersonCircleExclamation, FaServicestack } from "react-icons/fa6";
 import ServiceCrud from "../../cruds/serviceCrud";
-import RoleCrud from "../../cruds/roles";
-import EmployeeCrud from "../../cruds/user";
-import DocTypeCrud from "../../cruds/doc_type";
+import EmployeeCrud from "../../cruds/EmployeeCrud";
 import FileManager from "./FileManager";
-import PuestoCrud from "../../cruds/puesto";
+import Advanced from "./Advanced";
 
 const AdminPanel = () => {
   const { user, logout } = useAuth();
@@ -101,8 +99,8 @@ const AdminPanel = () => {
   const tabs = [
     { id: "file", label: "Pantalla Principal", content: <FileManager />, icon: <FaDisplay /> },
     { id: "services", label: "Servicios", content: <ServiceCrud />, icon: <FaServicestack /> },
-    { id: "puesto", label: "Puestos", content: <PuestoCrud />, icon: <FaPersonChalkboard /> },
     { id: "emplid", label: "Empleados", content: <EmployeeCrud />, icon: <FaPerson /> },
+    { id: "advence", label: "Avanzado", content: <Advanced />, icon: <FaGears /> },
   ];
 
   return (

@@ -155,7 +155,7 @@ router.post('/', async (req, res) => {
 
     // 4️⃣ Insertar en la DB con la nueva columna `nticket`
     const [rows] = await pool.query(
-      'CALL insert_ticket(?, ?, ?, ?, ?, ?, ?, ?, ?)',
+      'CALL sp_tickets_create(?, ?, ?, ?, ?, ?, ?)',
       [
         nticket,
         service_id,
@@ -163,8 +163,6 @@ router.post('/', async (req, res) => {
         status_id,
         assigned_employee_id,
         puesto_id,
-        called_at || null,
-        completed_at || null,
         notes || null
       ]
     );
@@ -183,7 +181,7 @@ router.put('/:id/status', async (req, res) => {
   const { id } = req.params;
   const { status_id, employee_id, service_id, notes="actualizar" } = req.body;
   //console.log(id,status_id, employee_id,service_id, notes," updated ticket")
-  await pool.query('CALL sp_update_ticket_status_full(?, ?, ?, ?, ?)', [
+  await pool.query('CALL sp_tickets_update(?, ?, ?, ?, ?)', [
     id, status_id, employee_id, service_id, notes
   ]);
   res.json({ message: `Estado del ticket ${id} actualizado a ${status_id}, ${employee_id}, ${ notes}` });

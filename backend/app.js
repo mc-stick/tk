@@ -2,8 +2,8 @@ import express from 'express';
 import cors from 'cors';
 
 import serviceRoutes from './conn/routes/services.js';
+import icon from './conn/routes/icons.js';
 import employeeRoutes from './conn/routes/employees.js';
-import roleRoutes from './conn/routes/roles.js';
 import imgRoutes from './conn/routes/images.js';
 import docRoutes from './conn/routes/Identify.js';
 import ticketRoutes from './conn/routes/ticket.js';
@@ -19,9 +19,9 @@ app.use(express.json());
 
 // Rutas API
 app.use('/api/services', serviceRoutes);
+app.use('/api/icons', icon);
 app.use('/api/employees', employeeRoutes);
 app.use('/api/login', auth);
-app.use('/api/roles', roleRoutes);
 app.use('/api/img', imgRoutes);
 app.use('/api/docs', docRoutes);
 app.use('/api/tickets', ticketRoutes);

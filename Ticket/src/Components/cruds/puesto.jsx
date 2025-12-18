@@ -41,6 +41,7 @@ export default function PuestoCrud() {
       setError("El nombre del puesto es obligatorio");
       return;
     }
+    
     setLoading(true);
     setError(null);
     try {
@@ -70,12 +71,20 @@ export default function PuestoCrud() {
   };
 
   const handleEdit = (puesto) => {
-    setForm({ nombre: puesto.nombre, descripcion: puesto.descripcion || "" });
+    setForm({ 
+      nombre: puesto.nombre, 
+      descripcion: puesto.descripcion || ""
+    });
     setEditingId(puesto.id);
     setError(null);
   };
 
   const handleDelete = async (id) => {
+    if (id === 1) {
+      setError("No se puede eliminar el puesto con ID 1 (está protegido)");
+      return;
+    }
+    
     if (!window.confirm("¿Seguro que deseas eliminar este puesto?")) return;
     setLoading(true);
     setError(null);
@@ -91,98 +100,127 @@ export default function PuestoCrud() {
   };
 
   return (
-    <div className="container mx-auto p-6">
-      <h2 className="text-2xl font-semibold mb-4">{editingId ? "Editar puesto" : "Agregar puesto"}</h2>
-      {error && <p className="text-red-500 mb-4">{error}</p>}
+    <>
+      <div className="">
+        <h2 className="text-2xl font-bold m-5">
+          {editingId ? "Editar Puesto" : "Agregar Puesto"}
+        </h2>
+        {error && <p className="error-msg">{error}</p>}
 
-      <form onSubmit={handleSubmit} className="bg-white p-6 rounded-lg shadow-md mb-6">
-        <div className="mb-4">
-          <label htmlFor="nombre" className="block text-gray-700">Nombre del puesto:</label>
-          <input
-            id="nombre"
-            name="nombre"
-            value={form.nombre}
-            onChange={handleChange}
-            required
-            disabled={loading}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        <div className="mb-4">
-          <label htmlFor="descripcion" className="block text-gray-700">Descripción:</label>
-          <input
-            id="descripcion"
-            name="descripcion"
-            value={form.descripcion}
-            onChange={handleChange}
-            disabled={loading}
-            className="w-full p-3 border border-gray-300 rounded-md focus:ring-2 focus:ring-blue-400"
-          />
-        </div>
-
-        <div className="flex justify-end gap-4">
-          <button type="submit" className="bg-green-600 font-bold text-white px-6 py-3 rounded-md hover:bg-blue-600 transition duration-200" disabled={loading}>
-            {editingId ? "Actualizar" : "Crear"}
-          </button>
-
-          {editingId && (
-            <button
-              type="button"
-              className="bg-red-500 text-white px-6 py-3 rounded-md font-bold hover:bg-red-600 transition duration-200"
-              onClick={() => {
-                setEditingId(null);
-                setForm({ nombre: "", descripcion: "" });
-                setError(null);
-              }}
+        <form onSubmit={handleSubmit} className="crud-form">
+          <div className="form-group">
+            <label htmlFor="nombre">Nombre del puesto:</label>
+            <input
+              id="nombre"
+              name="nombre"
+              value={form.nombre}
+              onChange={handleChange}
+              required
               disabled={loading}
+              className="textBox"
+              placeholder="Ej: Desarrollador Full Stack"
+            />
+          </div>
+
+          <div className="form-group">
+            <label htmlFor="descripcion">Descripción:</label>
+            <textarea
+              id="descripcion"
+              name="descripcion"
+              value={form.descripcion}
+              onChange={handleChange}
+              disabled={loading}
+              className="textBox"
+              placeholder="Ej: Desarrollo de aplicaciones web front-end y back-end"
+              rows="3"
+            />
+          </div>
+
+          <div className="form-buttons">
+            <button 
+              type="submit" 
+              className={`btn text-white ${!loading && form.nombre.trim() ? "bg-green-600 hover:bg-green-700 cursor-pointer" : "bg-gray-300 cursor-not-allowed"}`} 
+              disabled={loading || !form.nombre.trim()}
             >
-              Cancelar
+              {editingId ? "Actualizar" : "Crear"}
             </button>
-          )}
-        </div>
-      </form>
 
-      <h3 className="text-xl font-semibold mb-4">Lista de puestos</h3>
-      {loading && <p className="text-gray-500">Cargando puestos...</p>}
-      {!loading && puestos.length === 0 && <p className="text-gray-500">No hay puestos registrados.</p>}
+            {editingId && (
+              <button
+                type="button"
+                className="btn cancel-btn"
+                onClick={() => {
+                  setEditingId(null);
+                  setForm({ nombre: "", descripcion: "" });
+                  setError(null);
+                }}
+                disabled={loading}
+              >
+                Cancelar
+              </button>
+            )}
+          </div>
+        </form>
 
-      <table className="min-w-full bg-blue border border-blue-200 rounded-lg overflow-hidden">
-        <thead className="bg-blue-600 text-white">
-          <tr>
-            <th className="px-4 py-3 text-left">ID</th>
-            <th className="px-4 py-3 text-left">Nombre</th>
-            <th className="px-4 py-3 text-left">Descripción</th>
-            <th className="px-4 py-3 text-left">Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {puestos.map((puesto) => (
-            <tr key={puesto.id} className="border-t hover:bg-blue-300">
-              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2`}>{puesto.id}</td>
-              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2`}>{puesto.nombre}</td>
-              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2`}>{puesto.descripcion}</td>
-              <td className={`${puesto.id !== 1 ? "" :  "bg-gray-400 cursor-not-allowed font-bold text-white" } px-4 py-2 text-center flex`}>
-                {puesto.id !== 1 ?<>
-                <button
-                  className={`${puesto.id !== 1 ? "bg-yellow-500 cursor-pointer  hover:bg-yellow-600" :  "bg-gray-400 cursor-not-allowed" } flex text-white px-4 py-2 rounded-md mr-2  transition duration-200`}
-                  onClick={() => handleEdit(puesto)}
-                  disabled={puesto.id > 1 ? false : true} 
-                >
-                  <FaPen className="m-1" />{" "} Editar
-                </button>
-                <button
-                  className={` ${puesto.id !== 1 ? "bg-red-500 cursor-pointer  hover:bg-red-600" :  "bg-gray-400 cursor-not-allowed" } flex text-white px-4 py-2 rounded-md transition duration-200`}
-                  onClick={() => handleDelete(puesto.id)}
-                  disabled={puesto.id > 1 ? false : true} 
-                >
-                  <FaCircleXmark  className="m-1"  /> Eliminar
-                </button></>:<div className="flex text-gray-400">{" ."}</div> }
-              </td>
+        <h3>Lista de Puestos</h3>
+        {loading && <p className="info-msg">Cargando puestos...</p>}
+        {!loading && puestos.length === 0 && <p className="info-msg">No hay puestos registrados.</p>}
+
+        <table className="crud-table">
+          <thead>
+            <tr>
+              <th>ID</th>
+              <th>Nombre</th>
+              <th>Descripción</th>
+              <th>Acciones</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+          </thead>
+          <tbody>
+            {puestos.map((puesto) => (
+              <tr 
+                key={puesto.id}
+                className={puesto.id === 1 ? "bg-gray-100" : ""}
+              >
+                <td>
+                  {puesto.id}
+                  {puesto.id === 1 && (
+                    <span className="ml-2 text-xs bg-yellow-200 text-yellow-800 px-2 py-1 rounded">
+                      Protegido
+                    </span>
+                  )}
+                </td>
+                <td className="font-medium">{puesto.nombre}</td>
+                <td>{puesto.descripcion || <span className="text-gray-400 italic">Sin descripción</span>}</td>
+                <td className="action-buttons">
+                  <button
+                    className="edit-btn"
+                    onClick={() => handleEdit(puesto)}
+                    disabled={loading}
+                  >
+                    <FaPen/> Editar
+                  </button>
+                  <button
+                    className={`delete-btn ${puesto.id === 1 ? 'opacity-50 cursor-not-allowed' : ''}`}
+                    onClick={() => handleDelete(puesto.id)}
+                    disabled={loading || puesto.id === 1}
+                    title={puesto.id === 1 ? "Este puesto está protegido y no puede eliminarse" : "Eliminar puesto"}
+                  >
+                    <FaCircleXmark/> Eliminar
+                  </button>
+                </td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+
+        <br /><hr />
+      </div>
+
+      <footer className="text-right gap-2 p-4 text-sm">
+        <span>
+          Gestión de Puestos de Trabajo | Sistema de Recursos Humanos
+        </span>
+      </footer>
+    </>
   );
 }

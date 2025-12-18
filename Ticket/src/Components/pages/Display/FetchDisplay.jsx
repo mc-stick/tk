@@ -29,12 +29,12 @@ export default function TicketPanel() {
           }
 
           ticket.status_name !== "Finalizado"
-            ? acc[servicio].data.push({
+            && acc[servicio].data.push({
                 id: ticket.nticket || ticket.ticket_id,
                 servicio: ticket.puesto_name || "En espera",
                 estado: ticket.estado_ticket || "En espera",
               })
-            : console.log("");
+            ;
 
           return acc;
         }, {});

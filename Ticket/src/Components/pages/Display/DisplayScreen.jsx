@@ -90,7 +90,7 @@ const DisplayScreen = () => {
       {/* <DateTime /> */}
       {/* <LeftBar data={{ turnoActual, cola, DateTime, ImgCustoms, totalatend }} /> */}
 
-      <div className="flex bg-black h-screen w-screen  justify-center items-center  ">
+      <div className="h-screen w-full overflow-hidden ">
         {imagenes.length > 0 ? (
           esVideo(imagenes[actual]) ? (
             <video
@@ -109,7 +109,7 @@ const DisplayScreen = () => {
             <img
               src={imagenes[actual].url}
               alt={`img-${actual}`}
-              className="fade-image h-full w-full object-fill pt-80"
+              className="fade-image h-full w-full object-contain"
               onLoad={(e) => e.target.classList.remove("fade-out")}
             />
           )

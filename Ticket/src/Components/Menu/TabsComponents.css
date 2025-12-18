@@ -1,4 +1,4 @@
-/* ======== Contenedor principal ======== */
+/* 
 .tabs-wrapper {
   display: flex;
   flex-direction: column;
@@ -11,7 +11,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* ======== Encabezado de pestañas ======== */
+
 .tabs-container {
   width: 100%;
   position: fixed;
@@ -26,7 +26,7 @@
   padding-bottom: 10;
 }
 
-/* ======== Botones de pestañas ======== */
+
 .tab-btn {
   background: transparent;
   border: none;
@@ -48,7 +48,7 @@
   transform: translateY(2px);
 }
 
-/* ======== Pestaña activa ======== */
+
 .tab-btn.active {
   background-color: #ffcc00;
   color: #003366;
@@ -56,14 +56,14 @@
   box-shadow: 0 2px 8px rgba(255, 204, 0, 0.4);
 }
 
-/* Icono en la pestaña */
+
 .tab-icon {
   font-size: 1.3rem;
   display: flex;
   align-items: center;
 }
 
-/* ======== Contenido de pestaña ======== */
+
 .tab-content {
   padding: 2rem;
   background: linear-gradient(90deg, #003366 0%, #005bb5 100%);
@@ -74,7 +74,7 @@
   border-radius: 0 0 12px 12px;
 }
 
-/* ======== Animaciones ======== */
+
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -86,7 +86,8 @@
   }
 }
 
-/* ======== Responsivo ======== */
+
+
 @media (max-width: 768px) {
   .tabs-container {
     flex-direction: column;
@@ -98,4 +99,4 @@
     width: 100%;
     justify-content: center;
   }
-}
+} */

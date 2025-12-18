@@ -12,7 +12,7 @@ dist
 dist-ssr
 *.local
 .env
-*LogoIcon.png
+*.png
 *.mp3
 
 # Editor directories and files

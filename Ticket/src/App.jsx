@@ -28,7 +28,7 @@ function App() {
     <AuthProvider>
       <SocketProvider>
         <TurnoProvider>
-          <BrowserRouter basename="/tk">
+          <BrowserRouter basename="/tk/">
             <Routes>
               <Route path="*" element={<Home />} />
               <Route path="/" element={<Home />} />
@@ -38,7 +38,7 @@ function App() {
               <Route path="/login/admin" element={<Login role="admin" />} />
               <Route
                 path="/login/operador"
-                element={<Login role="operator" />}
+                element={<Login role="operador" />}
               />
 
               <Route path="/createUser" element={<CreateUser />} />
@@ -55,7 +55,7 @@ function App() {
               <Route
                 path="/operador"
                 element={
-                  <ProtectedRoute roles={["operator"]}>
+                  <ProtectedRoute roles={["operador"]['admin']}>
                     <OperatorPanel />
                   </ProtectedRoute>
                 }

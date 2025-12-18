@@ -1,6 +1,5 @@
 import express from 'express';
 import { pool } from '../dbconf.js';
-
 import jwt from 'jsonwebtoken';
 import bcrypt from 'bcrypt';
 
@@ -8,239 +7,284 @@ const JWT_SECRET = process.env.JWT_SECRET || "mi_clave_secreta_muy_segura";
 
 const router = express.Router();
 
-// 🔹 Listar todos los empleados
+// 🔹 Obtener todos los empleados
 router.get('/', async (req, res) => {
-  const [rows] = await pool.query(`
-    SELECT e.*,p.nombre AS puesto_nombre,
-     GROUP_CONCAT(r.name SEPARATOR ', ') AS roles
-    FROM employees e
-    LEFT JOIN employee_roles er ON e.employee_id = er.employee_id
-    LEFT JOIN roles r ON er.role_id = r.role_id
-    LEFT JOIN puesto p ON e.puesto_id = p.id
-    GROUP BY e.employee_id
-    ORDER BY e.employee_id;
-  `);
-  res.json(rows);
-  console.log("get emplid",rows)
+  try {
+    const [results] = await pool.query('CALL sp_employees_read_all()');
+    const rows = results[0];
+    console.log('Empleados:', rows);
+    res.json(rows);
+  } catch (error) {
+    console.error('Error al obtener empleados:', error);
+    res.status(500).json({ 
+      message: 'Error al obtener empleados', 
+      error: error.message 
+    });
+  }
 });
 
-// 🔹 Obtener un empleado por ID
+// 🔹 Obtener empleado por ID
 router.get('/:id', async (req, res) => {
-  const { id } = req.params;
-  const [rows] = await pool.query(`
-    SELECT e.*, p.nombre AS puesto_nombre,
-  GROUP_CONCAT(r.name SEPARATOR ', ') AS roles,
-  GROUP_CONCAT(r.role_id SEPARATOR ', ') AS role_ids
-  FROM employees e
-  LEFT JOIN employee_roles er ON e.employee_id = er.employee_id
-  LEFT JOIN roles r ON er.role_id = r.role_id
-  LEFT JOIN puesto p ON e.puesto_id = p.id
-  WHERE e.employee_id = ?
-  GROUP BY e.employee_id;
-  `, [id]);
-  res.json(rows[0] || null);
+  try {
+    const { id } = req.params;
+    const [results] = await pool.query('CALL sp_employees_read_by_id(?)', [id]);
+    const rows = results[0];
+    
+    if (!rows || rows.length === 0) {
+      return res.status(404).json({ 
+        message: 'Empleado no encontrado' 
+      });
+    }
+    
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('Error al obtener empleado:', error);
+    res.status(500).json({ 
+      message: 'Error al obtener empleado', 
+      error: error.message 
+    });
+  }
 });
 
-// Crear empleado
-// router.post('/', async (req, res) => {
-//   const { username, password_hash, full_name, puesto_id, roles, id } = req.body;
-
-
-//   const [rows] = await pool.query('CALL sp_add_employee(?, ?, ?, ?)', [
-//     username, password_hash, full_name, puesto_id
-//   ]);
-
-//   const [rows1] = await pool.query('CALL sp_add_employee_role(?,?)', [
-//     rows[0][0].new_employee_id, roles
-//   ]);
-
-
-//   res.json({ message: 'Empleado agregado', data: rows[0][0] });
-// });
-
-// Crear empleado
+// 🔹 Crear empleado
 router.post('/', async (req, res) => {
   try {
-    const { username, password_hash, full_name, puesto_id, roles } = req.body;
+    const { username, password, full_name, puesto_id, is_active, rol } = req.body;
 
-    // Crear empleado
-    const [rows] = await pool.query('CALL sp_add_employee(?, ?, ?, ?)', [
-      username,
-      password_hash,
-      full_name,
-      puesto_id,
-    ]);
-
-    const newId = rows[0][0].new_employee_id;
-
-    // Convertir roles a array si vienen como texto
-    const parsedRoles = Array.isArray(roles)
-      ? roles
-      : typeof roles === "string"
-      ? roles.split(",").map((r) => r.trim())
-      : [];
-
-    // Insertar roles uno por uno
-    for (const roleId of parsedRoles) {
-      await pool.query('CALL sp_add_employee_role(?, ?)', [newId, roleId]);
+    // Validaciones
+    if (!username || !username.trim()) {
+      return res.status(400).json({ 
+        message: 'El nombre de usuario es obligatorio' 
+      });
     }
 
-    res.json({ message: "Empleado agregado", data: rows[0][0] });
-  } catch (err) {
-    console.error("Error al crear empleado:", err);
-    res.status(500).json({ message: "Error al crear empleado" });
+    if (!full_name || !full_name.trim()) {
+      return res.status(400).json({ 
+        message: 'El nombre completo es obligatorio' 
+      });
+    }
+
+    if (!password || !password.trim()) {
+      return res.status(400).json({ 
+        message: 'La contraseña es obligatoria' 
+      });
+    }
+
+    // Hashear la contraseña
+    const password_hash = await bcrypt.hash(password, 10);
+
+    const [results] = await pool.query(
+      'CALL sp_employees_create(?, ?, ?, ?, ?, ?)',
+      [
+        username,
+        password_hash,
+        full_name,
+        puesto_id || null,
+        is_active !== undefined ? is_active : 1,
+        rol !== undefined ? rol : 0  // Default: Operador
+      ]
+    );
+
+    const newEmployee = results[0][0];
+    res.status(201).json({
+      message: 'Empleado creado exitosamente',
+      data: newEmployee
+    });
+  } catch (error) {
+    console.error('Error al crear empleado:', error);
+    
+    // Manejo de errores específicos
+    if (error.sqlState === '45000') {
+      return res.status(400).json({ 
+        message: error.message 
+      });
+    }
+    
+    res.status(500).json({
+      message: 'Error al crear empleado',
+      error: error.message
+    });
   }
 });
 
-
-// Actualizar empleado
-// router.put('/:id', async (req, res) => {
-//   const { username,password_hash, full_name, puesto_id, is_active, edit, roles } = req.body;
-//   const { id } = req.params;
-  
-
-//   edit ? (
-    
-//     await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?)', [
-//         id, username, full_name, password_hash
-//       ])
-     
-
-//   ) : (
-
-//       await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
-//       id, username, full_name, puesto_id, is_active, password_hash
-//     ])
-
-//   )
-
-//   await pool.query('CALL sp_add_employee_role(?,?)', [
-//     id, roles
-//   ]);
-
- 
-
-  
-//   res.json({ message: 'Empleado actualizado' });
-// });
+// 🔹 Actualizar empleado
 router.put('/:id', async (req, res) => {
   try {
-    const { username, password_hash, full_name, puesto_id, is_active, edit, roles } = req.body;
+    const { username, password, full_name, puesto_id, is_active, rol } = req.body;
     const { id } = req.params;
-    
-     
 
-    if (edit) {
-      await pool.query('CALL sp_update_employee_editpfl(?, ?, ?, ?, ?)', [
-        id, username, full_name, password_hash, roles
-      ]);
-      
-      console.log('entro en emplidPROFILE --------- ')
-    } else {
-      await pool.query('CALL sp_update_employee(?, ?, ?, ?, ?, ?)', [
-        id, username, full_name, puesto_id, is_active, password_hash
-      ]);
-      console.log('----------- NO ENTOR EN PFORL')
+    // Validaciones
+    if (!username || !username.trim()) {
+      return res.status(400).json({ 
+        message: 'El nombre de usuario es obligatorio' 
+      });
     }
 
-    // 🔹 Eliminar roles actuales del empleado
-    await pool.query('DELETE FROM employee_roles WHERE employee_id = ?', [id]);
+    if (!full_name || !full_name.trim()) {
+      return res.status(400).json({ 
+        message: 'El nombre completo es obligatorio' 
+      });
+    }
 
-    // 🔹 Volver a insertar los nuevos roles
+    // Si se proporciona nueva contraseña, hashearla
+    let password_hash = null;
+    if (password && password.trim()) {
+      password_hash = await bcrypt.hash(password, 10);
+    }
 
-      const parsedRoles = Array.isArray(roles)
-        ? roles
-        : typeof roles === "string"
-        ? roles.split(",").map((r) => r.trim())
-        : [];
+    const [results] = await pool.query(
+      'CALL sp_employees_update(?, ?, ?, ?, ?, ?, ?)',
+      [
+        id,
+        username,
+        password_hash,  // Puede ser null si no se cambia
+        full_name,
+        puesto_id || null,
+        is_active !== undefined ? is_active : 1,
+        rol !== undefined ? rol : 0
+      ]
+    );
 
-      for (const roleId of parsedRoles) {
-        await pool.query('CALL sp_add_employee_role(?, ?)', [id, roleId]);
-      }
+    const affectedRows = results[0][0].affected_rows;
     
+    if (affectedRows === 0) {
+      return res.status(404).json({ 
+        message: 'Empleado no encontrado' 
+      });
+    }
 
-    res.json({ message: "Empleado actualizado" });
-  } catch (err) {
-    console.error("Error al actualizar empleado:", err);
-    res.status(500).json({ message: "Error al actualizar empleado" });
+    res.json({
+      message: 'Empleado actualizado exitosamente'
+    });
+  } catch (error) {
+    console.error('Error al actualizar empleado:', error);
+    
+    // Manejo de errores específicos
+    if (error.sqlState === '45000') {
+      return res.status(400).json({ 
+        message: error.message 
+      });
+    }
+    
+    res.status(500).json({
+      message: 'Error al actualizar empleado',
+      error: error.message
+    });
   }
 });
 
-
-// Eliminar empleado
+// 🔹 Eliminar empleado
 router.delete('/:id', async (req, res) => {
-  const { id } = req.params;
-  await pool.query('CALL sp_delete_employee(?)', [id]);
-  res.json({ message: 'Empleado eliminado' });
+  try {
+    const { id } = req.params;
+    const [results] = await pool.query('CALL sp_employees_delete(?)', [id]);
+    const affectedRows = results[0][0].affected_rows;
+    
+    if (affectedRows === 0) {
+      return res.status(404).json({ 
+        message: 'Empleado no encontrado' 
+      });
+    }
+    
+    res.json({
+      message: 'Empleado eliminado exitosamente'
+    });
+  } catch (error) {
+    console.error('Error al eliminar empleado:', error);
+    res.status(500).json({
+      message: 'Error al eliminar empleado',
+      error: error.message
+    });
+  }
 });
 
-
-// LOGIN
+// 🔹 LOGIN
 router.post('/login', async (req, res) => {
   const { username, password } = req.body;
 
   if (!username || !password) {
-    return res.status(400).json({ message: 'Usuario y contraseña son requeridos' });
+    return res.status(400).json({ 
+      message: 'Usuario y contraseña son requeridos' 
+    });
   }
 
   try {
-    // Obtener empleado y password_hash y roles
-    const [rows] = await pool.query(`
+    // Buscar empleado por username
+    const [results] = await pool.query(`
       SELECT 
-    e.*,
-    p.nombre AS puesto_name,           
-    GROUP_CONCAT(r.name SEPARATOR ', ') AS roles
-FROM employees e
-LEFT JOIN puesto p ON e.puesto_id = p.id 
-LEFT JOIN employee_roles er ON e.employee_id = er.employee_id
-LEFT JOIN roles r ON er.role_id = r.role_id
-WHERE e.username = ?
-GROUP BY e.employee_id;
+        e.employee_id,
+        e.username,
+        e.password_hash,
+        e.full_name,
+        e.puesto_id,
+        e.is_active,
+        e.rol,
+        p.nombre AS puesto_nombre
+      FROM employees e
+      LEFT JOIN puesto p ON e.puesto_id = p.id
+      WHERE e.username = ?
     `, [username]);
 
-    if (rows.length === 0) {
-      return res.status(401).json({ message: 'Usuario o contraseña incorrecta.' });
+
+    if (results.length === 0) {
+      return res.status(401).json({ 
+        message: 'Usuario o contraseña incorrecta' 
+      });
     }
 
-    const user = rows[0];
+    const user = results[0];
 
-    // Comparar password con hash
+    // Verificar si el usuario está activo
+    if (!user.is_active) {
+      return res.status(401).json({ 
+        message: 'Usuario inactivo. Contacte al administrador.' 
+      });
+    }
+
+    // Comparar contraseña
     const validPass = await bcrypt.compare(password, user.password_hash);
-    //console.log(password,user.is_active)
-    if (validPass) {
-      return res.status(401).json({ message: 'Usuario o contraseña incorrecta.' });
-    }
-
-
+    console.log(validPass, "pass:",password, "hash",user.password_hash)
     
+    if (!validPass) {
+      return res.status(401).json({ 
+        message: 'Usuario o contraseña incorrecta' 
+      });
+    }
 
     // Crear payload para JWT
-    //console.log(user,"user from employee")
     const payload = {
       employee_id: user.employee_id,
       username: user.username,
-      is_active: user.is_active,
       full_name: user.full_name,
-      roles: user.roles,// string con roles separados por coma
-      puesto_id: user.puesto_id, 
-      puesto_name: user.puesto_name, 
+      puesto_id: user.puesto_id,
+      puesto_name: user.puesto_nombre,  // Usar 'puesto_name' para compatibilidad con AuthContext
+      is_active: user.is_active,
+      rol: user.rol,  // 1 = Admin, 0 = Operador
+      role: user.rol === 1 ? 'admin' : 'operador',  // Agregar 'role' string para AuthContext
+      roles: user.rol === 1 ? 'admin' : 'operador'  // Agregar 'roles' para compatibilidad
     };
 
-   
-      if (user.puesto_id === 1 && user.roles !=='admin') {
-        console.log('user', user.puesto_id, user.roles )
-        return res.status(401).json({ message: 'No tienes un puesto asignado.' })
-      }
-
-    // Generar token (1h expiracion)
+    // Generar token JWT (1 hora de expiración)
     const token = jwt.sign(payload, JWT_SECRET, { expiresIn: '1h' });
-    res.json({ token });
-  } catch (err) {
-    console.error(err);
-    res.status(500).json({ message: 'Error interno del servidor' });
+
+    res.json({ 
+      token,
+      user: {
+        employee_id: user.employee_id,
+        username: user.username,
+        full_name: user.full_name,
+        puesto_name: user.puesto_nombre,
+        rol: user.rol === 1 ? 'Admin' : 'Operador',
+        role: user.rol === 1 ? 'admin' : 'operador'
+      }
+    });
+  } catch (error) {
+    console.error('Error en login:', error);
+    res.status(500).json({ 
+      message: 'Error interno del servidor' 
+    });
   }
 });
 
 
 export default router;
-

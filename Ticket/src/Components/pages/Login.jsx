@@ -3,7 +3,6 @@ import { useAuth } from "../context/AuthContext";
 import { useNavigate } from "react-router-dom";
 import App_params_config from "@/Params_config";
 
-
 const Login = ({ role }) => {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -21,12 +20,24 @@ const Login = ({ role }) => {
 
     const res = await login(username, password);
 
-    if (res.success && res.is_active) {
-      const userRole = res.role;
+  
 
+    if (res.success && res.is_active) {
+      const userRole = res.role; // 'admin' o 'operador'
+        console.log(res)
+      // Verificar rol y redirigir
       if (role === "admin" && userRole?.includes("admin")) {
         navigate("/administrador");
-      } else if (role === "operator" && userRole?.includes("operator")) {
+      } else if (role === "operador" && ["operador", "admin"].includes(userRole)) {
+        if(res.role == "admin"){
+          setError("Acceso solo para operadores, Redirigiendote a panel de administracion ...");
+          setTimeout(() => {
+            navigate("/administrador");
+          }, 3000);
+          
+          return;
+        }
+       
         navigate("/operador");
       } else {
         setError("No tienes permisos para acceder a esta sección");

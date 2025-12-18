@@ -1,4 +1,4 @@
-/* ======== Barra superior principal ======== */
+/* 
 .topmenu-container {
   position: fixed;
   top: 0;
@@ -17,7 +17,7 @@
   font-family: "Poppins", sans-serif;
 }
 
-/* ======== Nombre del usuario ======== */
+
 .profile-name {
   margin-right: 1rem;
   font-weight: bolder;
@@ -27,7 +27,7 @@
   text-shadow: 0 1px 2px rgba(0, 0, 0, 0.3);
 }
 
-/* ======== Botón de menú ======== */
+
 .profile-button {
   background: none;
   border: none;
@@ -43,7 +43,7 @@
   transform: scale(1.05);
 }
 
-/* ======== Menú desplegable ======== */
+
 .profile-dropdown {
   position: absolute;
   top: 65px;
@@ -82,7 +82,7 @@
   border-top: 1px solid #e0e0e0;
 }
 
-/* ======== Animaciones ======== */
+ 
 @keyframes slideDown {
   from {
     transform: translateY(-70px);
@@ -105,7 +105,7 @@
   }
 }
 
-/* ======== Responsivo ======== */
+
 @media (max-width: 768px) {
   .topmenu-container {
     padding: 0 1rem;
@@ -114,4 +114,4 @@
   .profile-name {
     display: none;
   }
-}
+} */
