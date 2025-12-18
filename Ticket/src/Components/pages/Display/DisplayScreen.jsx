@@ -98,7 +98,7 @@ const DisplayScreen = () => {
               src={imagenes[actual].url}
               autoPlay
               muted
-              className="fade-image"
+              className="fade-image  h-full w-full object-contain"
               onEnded={() => {
                 const nextIndex = (actual + 1) % imagenes.length;
                 if (nextIndex === 0) fetchImagenes();
